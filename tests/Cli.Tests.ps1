@@ -628,14 +628,22 @@ Describe 'Archive mode end to end (a real on-disk store, no network)' {
 }
 
 Describe 'Package integrity' {
+    BeforeAll {
+        # A copy of the package without PackageIntegrity.psd1: a release tree carries the signed manifest, a source tree may not.
+        $script:BareTree = Join-Path $TestDrive 'bare-tree'
+        Copy-Item -LiteralPath $script:PackageRoot -Destination $script:BareTree -Recurse
+        foreach ($d in 'out', 'logs') { Remove-Item -LiteralPath (Join-Path $script:BareTree $d) -Recurse -Force -ErrorAction SilentlyContinue }
+        Remove-Item -LiteralPath (Join-Path $script:BareTree 'PackageIntegrity.psd1') -Force -ErrorAction SilentlyContinue
+        $script:BareEntry = Join-Path $script:BareTree 'Invoke-TeamsTransfer.ps1'
+    }
     It 'a source tree without a manifest is refused without -DevelopmentMode (exit 1, explicit message)' {
-        $r = Invoke-Entry -Arguments @('-Mode', 'Status', '-StoreRoot', (Join-Path $TestDrive 'ns')) -NoDevelopmentMode
+        $r = Invoke-Entry -Arguments @('-Mode', 'Status', '-StoreRoot', (Join-Path $TestDrive 'ns')) -NoDevelopmentMode -Script $script:BareEntry
         $r.ExitCode | Should -Be 1
         (Get-Combined $r) | Should -Match 'PackageIntegrity\.psd1 is missing'
         (Get-Combined $r) | Should -Match '-DevelopmentMode'
     }
     It 'a source tree without a manifest runs with -DevelopmentMode and says it is an unverified development tree' {
-        $r = Invoke-Entry -Arguments @('-Mode', 'Export', '-WhatIf', '-StoreRoot', (Join-Path $TestDrive 'ns2'), '-LogFolder', (Join-Path $TestDrive 'lint'))
+        $r = Invoke-Entry -Arguments @('-Mode', 'Export', '-WhatIf', '-StoreRoot', (Join-Path $TestDrive 'ns2'), '-LogFolder', (Join-Path $TestDrive 'lint')) -Script $script:BareEntry
         $r.ExitCode | Should -Be 0 -Because $r.Out
         (Get-Combined $r) | Should -Match 'UnverifiedDevelopmentTree'
         (Get-Combined $r) | Should -Match 'package byte integrity and publisher authentication are not established'
