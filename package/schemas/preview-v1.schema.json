@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TeamsTransfer preview dataset (preview-v1)",
+  "description": "Root = the MANIFEST embedded in index.html (<script type=\"application/json\" id=\"tt-manifest\">). The per-conversation CHUNK (definitions/chunk), the SEARCH file (definitions/search) and the message shape (definitions/message) are validated through their own $ref. Folder archives store chunks as data/<conv>/<month>[.<part>].js = TT.chunk(\"<path>\", <chunk JSON>); and search files as search/<conv>.js = TT.search(\"<path>\", <search JSON>); single-file archives embed the same JSON gzip+base64 in <script type=\"application/x-tt-gzip\" id=\"<chunk f>\"> blocks and images/files in <script type=\"application/x-tt-content\" id=\"i-<ref>\" data-type=\"<mime>\">. All times are Unix epoch milliseconds (UTC).",
+  "type": "object",
+  "required": ["schema", "generator", "generatedUtc", "language", "mode", "title", "viewer", "users", "conversations", "stats"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "preview-v1" },
+    "generator": { "const": "TeamsTransfer" },
+    "generatedUtc": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$" },
+    "language": { "enum": ["en"], "description": "Initial UI language (English only)." },
+    "mode": { "enum": ["folder", "single"] },
+    "accent": { "enum": ["Teams", "House"], "description": "Colour scheme of the viewer (Teams indigo or the house brand)." },
+    "title": { "type": "string" },
+    "scopeLabel": { "type": "string", "description": "Human readable scope (user, team, selection)." },
+    "viewer": { "type": ["integer", "null"], "minimum": 0, "description": "Index in users[] of the person whose messages are drawn on the right; null = nobody." },
+    "users": { "type": "array", "items": { "$ref": "#/definitions/user" }, "description": "Append-only table of every person referenced by the archive (authors, members, reactors, mentioned). Messages reference it by index." },
+    "conversations": { "type": "array", "items": { "$ref": "#/definitions/conversation" } },
+    "stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conversations", "messages", "chunks", "files", "filesExported", "images", "imagesMissing"],
+      "properties": {
+        "conversations": { "type": "integer", "minimum": 0 }, "messages": { "type": "integer", "minimum": 0 }, "chunks": { "type": "integer", "minimum": 0 },
+        "files": { "type": "integer", "minimum": 0 }, "filesExported": { "type": "integer", "minimum": 0 },
+        "images": { "type": "integer", "minimum": 0 }, "imagesMissing": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "definitions": {
+    "user": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["i", "n", "s"],
+      "properties": {
+        "i": { "type": "string", "description": "Entra object id ('' when unknown)." },
+        "n": { "type": "string", "description": "Display name." },
+        "u": { "type": "string", "description": "UPN or mail when known." },
+        "s": { "enum": ["active", "disabled", "deleted", "guest", "external", "unknown"] }
+      }
+    },
+    "conversation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "key", "kind", "title", "members", "memberCount", "count", "first", "last", "chunks"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^c[0-9]+$" },
+        "key": { "type": "string", "description": "Store key: chat:<chatId> or channel:<teamId>/<channelId>." },
+        "kind": { "enum": ["oneOnOne", "group", "meeting", "channel"] },
+        "membership": { "enum": ["standard", "private", "shared"], "description": "Channels only." },
+        "title": { "type": "string" },
+        "team": { "type": "string" },
+        "teamId": { "type": "string" },
+        "members": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "description": "Indexes in users[] (at most 500)." },
+        "memberCount": { "type": "integer", "minimum": 0 },
+        "count": { "type": "integer", "minimum": 0, "description": "Messages in the archive (channel replies included)." },
+        "first": { "type": "integer", "minimum": 0 },
+        "last": { "type": "integer", "minimum": 0 },
+        "preview": { "type": "string", "description": "Plain-text excerpt of the last message." },
+        "previewBy": { "type": "string" },
+        "search": { "type": "string", "description": "Search file path (folder) or block id (single file); absent when no message has text." },
+        "files": { "type": "array", "items": { "$ref": "#/definitions/fileEntry" }, "description": "Files shared in the conversation (Files tab), at most 2000." },
+        "chunks": { "type": "array", "items": { "$ref": "#/definitions/chunkRef" }, "description": "In chronological order." }
+      }
+    },
+    "fileEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["n", "st", "t", "a", "it"],
+      "properties": {
+        "n": { "type": "string" }, "sz": { "type": "integer", "minimum": 0 },
+        "st": { "enum": ["ok", "notembedded", "unknown", "pending", "notfound", "forbidden", "toolarge", "excluded", "failed", "downloaded"] },
+        "ref": { "type": "string", "pattern": "^[0-9a-f]{64}\\.[a-z0-9]{1,5}$" },
+        "t": { "type": "integer", "description": "Time of the message that shared it." }, "a": { "type": "integer", "minimum": -1 },
+        "it": { "type": "integer", "minimum": 0, "description": "Item ordinal of that message in the conversation." }
+      }
+    },
+    "chunkRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["k", "f", "n", "m", "a", "b", "z"],
+      "properties": {
+        "k": { "type": "string", "description": "Label: yyyy-MM, with .<part> when the month was split." },
+        "f": { "type": "string", "description": "Folder: relative path of the data file. Single file: id of the embedded block." },
+        "n": { "type": "integer", "minimum": 0, "description": "Top-level items (chat: messages; channel: posts, each with its replies)." },
+        "m": { "type": "integer", "minimum": 0, "description": "Messages, replies included." },
+        "a": { "type": "integer", "description": "Time of the first item." },
+        "b": { "type": "integer", "description": "Time of the last item." },
+        "z": { "type": "integer", "minimum": 0, "description": "Size of the chunk JSON in bytes." }
+      }
+    },
+    "chunk": { "type": "array", "items": { "$ref": "#/definitions/message" }, "description": "Messages in order; a channel reply follows its root (r = root id)." },
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["i", "t", "a"],
+      "properties": {
+        "i": { "type": "string", "description": "Graph message id." },
+        "t": { "type": "integer", "description": "createdDateTime." },
+        "a": { "type": "integer", "minimum": -1, "description": "Index in users[], -1 when the author is an application or unknown." },
+        "an": { "type": "string", "description": "Author name when a = -1." },
+        "ab": { "type": "boolean", "description": "Author is an application (bot)." },
+        "k": { "const": 1, "description": "System event message (see sy)." },
+        "e": { "type": "integer", "description": "lastEditedDateTime." },
+        "d": { "type": "integer", "description": "deletedDateTime: the message was deleted, no body." },
+        "r": { "type": "string", "description": "replyToId (channel replies)." },
+        "s": { "type": "string", "description": "Subject (channel posts)." },
+        "im": { "enum": ["high", "urgent"] },
+        "f": { "const": "t", "description": "Body is plain text (absent = HTML)." },
+        "b": { "type": "string", "description": "Body. HTML is UNTRUSTED and sanitized by the page; <img src> is already rewritten to tt:<sha256>.<ext> | tt:missing | tt:remote." },
+        "mn": { "type": "array", "items": { "type": "array", "minItems": 3, "maxItems": 3, "items": [{ "type": "integer" }, { "type": "string" }, { "type": "integer", "minimum": -1 }] }, "description": "[<at id>, text, user index or -1]." },
+        "rx": { "type": "array", "items": { "type": "array", "minItems": 2, "maxItems": 2, "items": [{ "type": "string" }, { "type": "array", "items": { "type": ["integer", "string"] } }] }, "description": "[reactionType, [user index | display name, ...]]." },
+        "at": { "type": "array", "items": { "$ref": "#/definitions/attachment" } },
+        "sy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ty"],
+          "properties": {
+            "ty": { "type": "string", "description": "eventDetail type without the Graph suffix, lowerCamel: membersAdded, chatRenamed, callEnded..." },
+            "by": { "type": "string" }, "who": { "type": "array", "items": { "type": "string" } }, "nm": { "type": "string" }, "du": { "type": "integer", "minimum": 0, "description": "Seconds." }
+          }
+        }
+      }
+    },
+    "attachment": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["c", "n", "st"],
+          "properties": {
+            "c": { "const": "file" }, "n": { "type": "string" }, "sz": { "type": "integer", "minimum": 0 },
+            "st": { "enum": ["ok", "notembedded", "unknown", "pending", "notfound", "forbidden", "toolarge", "excluded", "failed", "downloaded"], "description": "ok = a copy is available (ref)." },
+            "ref": { "type": "string", "pattern": "^[0-9a-f]{64}\\.[a-z0-9]{1,5}$", "description": "content/<ref> (folder) or block i-<ref> (single file)." }
+          }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["c"],
+          "properties": { "c": { "const": "card" }, "ty": { "enum": ["adaptive", "hero", "other"] }, "ti": { "type": "string" }, "tx": { "type": "array", "items": { "type": "string" } } }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["c"],
+          "properties": { "c": { "const": "quote" }, "id": { "type": "string" }, "sn": { "type": "string" }, "pv": { "type": "string" } }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["c"],
+          "properties": { "c": { "const": "other" }, "n": { "type": "string" }, "ty": { "type": "string" } }
+        }
+      ]
+    },
+    "search": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "ms", "au", "it"],
+      "description": "Parallel arrays, one entry per message that has text: plain text, time, author index, item ordinal in the conversation (position of the top-level item over all chunks).",
+      "properties": {
+        "x": { "type": "array", "items": { "type": "string" } },
+        "ms": { "type": "array", "items": { "type": "integer" } },
+        "au": { "type": "array", "items": { "type": "integer", "minimum": -1 } },
+        "it": { "type": "array", "items": { "type": "integer", "minimum": 0 } }
+      }
+    }
+  }
+}

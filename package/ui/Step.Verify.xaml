@@ -1,0 +1,64 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+              VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel Margin="0,0,10,12">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <StackPanel>
+        <TextBlock x:Name="VerifyTitle" Text="Before anything is written" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <TextBlock x:Name="VerifyHint" TextWrapping="Wrap" Margin="0,2,0,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+      </StackPanel>
+      <Border x:Name="ModePill" Grid.Column="1" Padding="12,4" CornerRadius="13" VerticalAlignment="Top" Margin="16,4,0,0" Background="{DynamicResource TmtAccentSoft}">
+        <TextBlock x:Name="ModePillText" Text="Preview" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TmtBrandText}" />
+      </Border>
+    </Grid>
+
+    <WrapPanel x:Name="KpiHost" Margin="0,12,0,0" />
+
+    <Border Margin="0,2,0,0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="10" Padding="18,14" AutomationProperties.Name="Checks">
+      <StackPanel>
+        <TextBlock x:Name="ChecksTitle" Text="Checks" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,8" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <StackPanel x:Name="ChecksHost" />
+      </StackPanel>
+    </Border>
+
+    <Border x:Name="BlockersCard" Visibility="Collapsed" Margin="0,12,0,0" Padding="18,12" CornerRadius="10" BorderThickness="1" Background="{DynamicResource TmtCriticalBg}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+      <StackPanel>
+        <TextBlock Text="To fix first" FontWeight="SemiBold" Foreground="{DynamicResource TmtCritical}" />
+        <StackPanel x:Name="BlockersHost" Margin="0,4,0,0" />
+      </StackPanel>
+    </Border>
+
+    <Border x:Name="PreviewCard" Visibility="Collapsed" Margin="0,12,0,0" Padding="18,14" CornerRadius="10" BorderThickness="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" AutomationProperties.Name="Preview details">
+      <StackPanel>
+        <TextBlock x:Name="PreviewTitle" Text="Requests that would be sent" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,6" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <StackPanel x:Name="PreviewHost" />
+      </StackPanel>
+    </Border>
+
+    <Border x:Name="PreviewProgress" Visibility="Collapsed" Margin="0,12,0,0" Padding="18,14" CornerRadius="10" BorderThickness="1"
+            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+      <StackPanel>
+        <TextBlock x:Name="PreviewProgressText" Text="Preparing the preview..." Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <ProgressBar x:Name="PreviewBar" Height="6" Margin="0,8,0,0" IsIndeterminate="True" />
+      </StackPanel>
+    </Border>
+
+    <Border x:Name="ApplyCard" Visibility="Collapsed" Margin="0,12,0,0" Padding="18,12" CornerRadius="10" BorderThickness="1"
+            Background="{DynamicResource TmtCautionBg}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+      <StackPanel>
+        <CheckBox x:Name="ApplyToggle" Content="Apply: write to the target tenant" FontWeight="SemiBold" AutomationProperties.Name="Apply: write to the target tenant" />
+        <TextBlock x:Name="ApplyText" Text="" TextWrapping="Wrap" Margin="28,2,0,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+      </StackPanel>
+    </Border>
+
+    <TextBlock x:Name="CommandText" Margin="0,10,0,0" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" AutomationProperties.Name="Equivalent command line" />
+  </StackPanel>
+</ScrollViewer>

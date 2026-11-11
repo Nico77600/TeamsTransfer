@@ -1,0 +1,31 @@
+# Language statistics: the guides are documentation, not code.
+package/docs/** linguist-documentation
+
+* text=auto
+
+# Binary payloads: managed or native libraries and screenshots.
+*.dll -text
+*.png -text
+
+# Signed and hashed package files are byte-exact: no end-of-line conversion, so the Authenticode signatures and the SHA256 of PackageIntegrity.psd1 stay valid.
+# Do not add a global autocrlf rule for these paths. Everything under package/ is hashed (except the editable configuration); the signed files are listed one by one.
+package/** -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+
+# Owner-signed files (the PowerShell files of the package, the module manifest and the verifier included, and the inventory manifest); cr-at-eol because the signed bytes are kept exactly as signed.
+package/config/Permissions.psd1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/Invoke-TeamsTransfer.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/src/Test-PackageIntegrity.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Archive.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Console.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Export.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Gui.Core.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Gui.Demo.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Gui.Jobs.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Gui.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Gui.Wizard.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Import.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Plan.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.psd1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.psm1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/TeamsTransfer.Verify.ps1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol
+package/PackageIntegrity.psd1 -text whitespace=blank-at-eol,space-before-tab,blank-at-eof,cr-at-eol

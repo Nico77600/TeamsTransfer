@@ -1,0 +1,28 @@
+{
+  "runtimeRoot": "package",
+  "testMode": "pester",
+  "testEntry": null,
+  "tests": [
+    "tests/Archive.Tests.ps1",
+    "tests/Auth.Tests.ps1",
+    "tests/Catalog.Tests.ps1",
+    "tests/Cli.Tests.ps1",
+    "tests/Consistency.Tests.ps1",
+    "tests/Docs.Tests.ps1",
+    "tests/Export.Tests.ps1",
+    "tests/FakeGraph.Tests.ps1",
+    "tests/FileCopy.Tests.ps1",
+    "tests/Ghosts.Tests.ps1",
+    "tests/Graph.Tests.ps1",
+    "tests/Import.Tests.ps1",
+    "tests/Inventory.Tests.ps1",
+    "tests/Lots.Tests.ps1",
+    "tests/Mapping.Tests.ps1",
+    "tests/Plan.Tests.ps1",
+    "tests/Store.Tests.ps1",
+    "tests/Throttle.Tests.ps1",
+    "tests/Verify.Tests.ps1"
+  ],
+  "packageBuilder": ".github/scripts/Build-CIPackage.ps1",
+  "packageEntry": "Invoke-TeamsTransfer.ps1"
+}

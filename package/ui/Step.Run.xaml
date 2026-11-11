@@ -1,0 +1,104 @@
+<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+  <Grid.RowDefinitions>
+    <RowDefinition Height="Auto" />
+    <RowDefinition Height="*" />
+  </Grid.RowDefinitions>
+  <Border Grid.Row="0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="18,12">
+    <StackPanel>
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+          <TextBlock x:Name="RunTitle" Text="Run" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+          <TextBlock x:Name="RunSub" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+        </StackPanel>
+        <Border x:Name="RunPill" Grid.Column="1" Padding="14,4" CornerRadius="13" VerticalAlignment="Top" Background="{DynamicResource TmtInfoBg}">
+          <TextBlock x:Name="RunPillText" Text="Running" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Border>
+      </Grid>
+      <Grid Margin="0,8,0,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <ProgressBar x:Name="RunProgress" Height="6" Minimum="0" Maximum="100" VerticalAlignment="Center" />
+        <TextBlock x:Name="RunCount" Grid.Column="1" Margin="12,0,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+      </Grid>
+    </StackPanel>
+  </Border>
+
+  <Grid Grid.Row="1" Margin="0,12,0,12">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="12" />
+      <ColumnDefinition Width="1.15*" />
+      <ColumnDefinition Width="12" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <Border Grid.Column="0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="16,12">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="StepsTitle" Text="Steps" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <ListBox x:Name="StepsList" Grid.Row="1" BorderThickness="0" Background="Transparent" AutomationProperties.Name="Steps of the run" ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
+      </Grid>
+    </Border>
+
+    <Border Grid.Column="2" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="16,12">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="DetailTitle" Text="" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Border x:Name="DetailPill" Grid.Column="1" Padding="10,2" CornerRadius="10" VerticalAlignment="Top" Background="{DynamicResource TmtInfoBg}">
+              <TextBlock x:Name="DetailPillText" Text="" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+            </Border>
+          </Grid>
+          <TextBlock x:Name="DetailText" TextWrapping="Wrap" Margin="0,4,0,8" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <TextBlock Text="RESULT" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <WrapPanel x:Name="DetailCounts" Margin="0,4,0,8" />
+          <TextBlock Text="WARNINGS AND ERRORS" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <TextBlock x:Name="DetailIssues" Text="Nothing to report so far." TextWrapping="Wrap" Margin="0,4,0,10" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+          <Expander Header="Technical message" Margin="0,0,0,6">
+            <TextBox x:Name="TechBox" IsReadOnly="True" FontFamily="Consolas" FontSize="12" TextWrapping="Wrap" AcceptsReturn="True" MaxHeight="120" VerticalScrollBarVisibility="Auto" />
+          </Expander>
+          <Expander Header="Activity log">
+            <TextBox x:Name="LogBox" IsReadOnly="True" Height="170" FontFamily="Consolas" FontSize="12" TextWrapping="NoWrap" AcceptsReturn="True"
+                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AutomationProperties.Name="Activity log" />
+          </Expander>
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+
+    <Border Grid.Column="4" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10" Padding="16,12">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+          <TextBlock x:Name="JourneyTitle" Text="Journey" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+          <TextBlock x:Name="JourneySub" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <TextBlock Text="JOURNEY" FontSize="11" FontWeight="SemiBold" Margin="0,10,0,4" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <StackPanel x:Name="JourneyHost" />
+          <TextBlock Text="REPORT" FontSize="11" FontWeight="SemiBold" Margin="0,12,0,4" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <Border BorderThickness="1" CornerRadius="6" Padding="8,6" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" Background="{DynamicResource ControlFillColorDefaultBrush}">
+            <TextBlock x:Name="ReportPath" FontFamily="Consolas" FontSize="11" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="Not written yet." />
+          </Border>
+          <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+            <ui:Button x:Name="ReportOpen" Content="Open folder" Margin="0,0,8,0" />
+            <ui:Button x:Name="ReportCopy" Content="Copy path" />
+          </StackPanel>
+          <TextBlock Text="WARNINGS" FontSize="11" FontWeight="SemiBold" Margin="0,12,0,4" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          <TextBlock x:Name="JourneyWarnings" Text="None." TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+  </Grid>
+</Grid>

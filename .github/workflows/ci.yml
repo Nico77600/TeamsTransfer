@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate (${{ matrix.engine }})
+    runs-on: windows-2022
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        include: [{"engine":"PowerShell 7","shell":"pwsh","package":true}]
+    steps:
+      - name: Check out the tested revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Ensure PowerShell 7.5 or later (the engine requires it; the image ships 7.4)
+        shell: pwsh
+        run: .\.github\scripts\Install-PowerShell.ps1
+
+      - name: Show the PowerShell that runs the next steps
+        shell: pwsh
+        run: |
+          $PSVersionTable.PSVersion.ToString()
+          $PSHOME
+          if ($PSVersionTable.PSVersion -lt [version]'7.5.0') { throw 'PowerShell 7.5+ is required.' }
+
+      - name: Load pinned analysis and test modules
+        shell: pwsh
+        run: .\.github\scripts\Initialize-CIModules.ps1 -Destination "$env:RUNNER_TEMP\ci-modules"
+
+      - name: Analyze PowerShell sources (PowerShell 7.5)
+        shell: pwsh
+        run: .\.github\scripts\Invoke-CI.ps1 -Stage Analyze -OutputDirectory "$env:RUNNER_TEMP\ci-results"
+
+      - name: Run the existing project tests (PowerShell 7.5)
+        shell: pwsh
+        run: .\.github\scripts\Invoke-CI.ps1 -Stage Test -OutputDirectory "$env:RUNNER_TEMP\ci-results"
+
+      - name: Build with the existing package tool (PowerShell 7.5)
+        shell: pwsh
+        run: .\.github\scripts\Invoke-CI.ps1 -Stage Package -OutputDirectory "$env:RUNNER_TEMP\ci-results"
+
+      - name: Retain public CI evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ci-powershell-7.5
+          path: |
+            ${{ runner.temp }}/ci-results
+          if-no-files-found: error
+          retention-days: 7

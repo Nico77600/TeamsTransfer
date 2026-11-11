@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "kind": "TeamsTransfer.DependencyLock",
+  "classification": "Pin metadata of the third-party dependencies of Teams Transfer: the GUI libraries of the console and the SQLite libraries of the engine, with the retained licence texts. Packages come from nuget.org only; each package is checked against its published SHA-512 and each selected file against the SHA-256 below before it is copied. The licence texts of SQLite are not inside the packages: they are retained from the official sources named in notices, with their SHA-256.",
+  "target": {
+    "framework": "net8.0-windows",
+    "runtimeIdentifiers": [
+      "win-x64",
+      "win-arm64"
+    ],
+    "reviewedFor": [
+      "PowerShell 7.4",
+      "PowerShell 7.5"
+    ]
+  },
+  "acquisition": {
+    "policy": "Original official packages only; downloaded into a fresh temporary folder; only the selected entries are read; nothing from a package is executed.",
+    "source": "https://www.nuget.org/api/v2/package/{id}/{version} (redirect to globalcdn.nuget.org)",
+    "limits": {
+      "maxPackageBytes": 67108864,
+      "maxEntryBytes": 8388608
+    }
+  },
+  "packages": [
+    {
+      "id": "Microsoft.Web.WebView2",
+      "version": "1.0.4258.31",
+      "bytes": 9801922,
+      "sha512": "HlGVwvyP/IWiXAU8K57Vmg59khY3DWMOxMnH4AHusFRy0/vDAjKItXUIVNXiXXaq4CLfSZyNUic1wOIlnPLsPQ==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "Microsoft WebView2 SDK license (BSD-3-Clause style, see LICENSE.txt / NOTICE.txt)",
+      "selectedFiles": [
+        {
+          "entry": "lib_manual/netcoreapp3.0/Microsoft.Web.WebView2.Core.dll",
+          "bytes": 698208,
+          "sha256": "d60e6e94245078cb56e44ebd5f360dc04bf18e460136be93bfc4cfca43b98505",
+          "target": "lib\\gui\\Microsoft.Web.WebView2.Core.dll",
+          "kind": "runtime-managed"
+        },
+        {
+          "entry": "lib_manual/netcoreapp3.0/Microsoft.Web.WebView2.Wpf.dll",
+          "bytes": 87392,
+          "sha256": "78a08b271412d2f98a5fa3f4472be22d4fcb62f951c6c347234de05bc93eb99e",
+          "target": "lib\\gui\\Microsoft.Web.WebView2.Wpf.dll",
+          "kind": "runtime-managed"
+        },
+        {
+          "entry": "runtimes/win-x64/native/WebView2Loader.dll",
+          "bytes": 194912,
+          "sha256": "3426dcc55fdfb8b5e7ac623cf33b4ccf283fbf68a0c5a65bddfdb4d749a8abee",
+          "target": "lib\\gui\\runtimes\\win-x64\\native\\WebView2Loader.dll",
+          "kind": "runtime-native"
+        },
+        {
+          "entry": "runtimes/win-arm64/native/WebView2Loader.dll",
+          "bytes": 180064,
+          "sha256": "4f48cb32d34298c86cca2108057eea0d900b5e422575e926e8086318a0b9cbf0",
+          "target": "lib\\gui\\runtimes\\win-arm64\\native\\WebView2Loader.dll",
+          "kind": "runtime-native"
+        },
+        {
+          "entry": "LICENSE.txt",
+          "bytes": 1487,
+          "sha256": "0af8f1b807512aae39c2ac1aa4d0cae65cabecb6fd554b8439a5162a0d6eca55",
+          "target": "lib\\licenses\\WebView2\\LICENSE.txt",
+          "kind": "notice"
+        },
+        {
+          "entry": "NOTICE.txt",
+          "bytes": 3894,
+          "sha256": "106423785c5b7eba0a8e61d1837f2132e9c828e20ad530f565d981c1df60dd90",
+          "target": "lib\\licenses\\WebView2\\NOTICE.txt",
+          "kind": "notice"
+        }
+      ]
+    },
+    {
+      "id": "WPF-UI",
+      "version": "4.1.0",
+      "bytes": 15841068,
+      "sha512": "ice0kdV+lRugudIaAeRJZAf4DTDcD5lhmePNBckzKCDKS4VqiqnnLX7E8fHFJxYCMR/aFabMgkK5/qBKVQPXRg==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "MIT with complete embedded-component notices; Segoe font is an OS reference, not a font byte to distribute",
+      "selectedFiles": [
+        {
+          "entry": "lib/net8.0-windows7.0/Wpf.Ui.dll",
+          "bytes": 5992960,
+          "sha256": "27381aef2eeb26e7aa078a85ee4886033c7ba1dbaec2cf18634b71d13b78247d",
+          "target": "lib\\gui\\Wpf.Ui.dll",
+          "kind": "runtime-managed"
+        },
+        {
+          "entry": "LICENSE.md",
+          "bytes": 1143,
+          "sha256": "efb68dbccb1be73cd78729b76f39720132126bacff8194eed934323bab6455b7",
+          "target": "lib\\licenses\\WPF-UI\\LICENSE.md",
+          "kind": "notice"
+        },
+        {
+          "entry": "ThirdPartyNotices.txt",
+          "bytes": 7031,
+          "sha256": "871e788e025383423fae377a97229dafcb9254687ce917d63ebbf7b10f34c588",
+          "target": "lib\\licenses\\WPF-UI\\ThirdPartyNotices.txt",
+          "kind": "notice"
+        }
+      ]
+    },
+    {
+      "id": "WPF-UI.Abstractions",
+      "version": "4.1.0",
+      "bytes": 170231,
+      "sha512": "lk9CST5QYihLHW5Msn60QR92jOb8KFucMJrSfCLOvQPw9n6+tSbb+2GZzo47PUcF+6XAyou3OxBJbHA9KTBRsg==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "MIT; same LICENSE.md / ThirdPartyNotices as WPF-UI",
+      "selectedFiles": [
+        {
+          "entry": "lib/net8.0/Wpf.Ui.Abstractions.dll",
+          "bytes": 7168,
+          "sha256": "e43b690c8f9f543ed6f8fbb420dff50d911640b97ceb318390d5137af0bbf81f",
+          "target": "lib\\gui\\Wpf.Ui.Abstractions.dll",
+          "kind": "runtime-managed"
+        }
+      ]
+    },
+    {
+      "id": "Microsoft.Data.Sqlite.Core",
+      "version": "10.0.12",
+      "bytes": 208143,
+      "sha512": "U6a1XGw24t9M39INjA7yjncLkGl/UrJBKIFKDaqdjB3JIUYH6HjUDNokXrfVX2XVS0WUDPGjmU/aOhW3E62m9Q==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "MIT (Microsoft Corporation); text retained from dotnet/efcore, see notices",
+      "selectedFiles": [
+        {
+          "entry": "lib/net8.0/Microsoft.Data.Sqlite.dll",
+          "bytes": 177464,
+          "sha256": "b98d957462be432895b00dccca012d3c127e118d3d4262418014b92c7bbd66cf",
+          "target": "lib\\sqlite\\Microsoft.Data.Sqlite.dll",
+          "kind": "runtime-managed"
+        }
+      ]
+    },
+    {
+      "id": "SQLitePCLRaw.core",
+      "version": "2.1.12",
+      "bytes": 36016,
+      "sha512": "WgmgyKwGLTR6ZfIf1+1dFNxsOyp9GmsU9YjjeUjgz+NZnw2hyjVB0U8taT1Z1vv21s5+gvhHQ3vtpZajsMKJYg==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "Apache-2.0 (SourceGear, LLC); text retained from ericsink/SQLitePCL.raw, see notices",
+      "selectedFiles": [
+        {
+          "entry": "lib/netstandard2.0/SQLitePCLRaw.core.dll",
+          "bytes": 51200,
+          "sha256": "af340ac9eb9195795660d7fc1114f486b6ab63998f33176e2f24c8e0acb9aa84",
+          "target": "lib\\sqlite\\SQLitePCLRaw.core.dll",
+          "kind": "runtime-managed"
+        }
+      ]
+    },
+    {
+      "id": "SQLitePCLRaw.provider.e_sqlite3",
+      "version": "2.1.12",
+      "bytes": 60225,
+      "sha512": "k4RCblP+Hc1JAc77crV+fFZLiZeJPaY8VjMA8kvki00Z0dohG6xxXw4qkuVyCUC2+HChbhwW+ydhmjmlUZAXUQ==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "Apache-2.0 (SourceGear, LLC); same text as SQLitePCLRaw.core",
+      "selectedFiles": [
+        {
+          "entry": "lib/netstandard2.0/SQLitePCLRaw.provider.e_sqlite3.dll",
+          "bytes": 40448,
+          "sha256": "0bc1d8536c480c3fe66e8ad6dc796073fbe287961781f73a54ad13e59df1359a",
+          "target": "lib\\sqlite\\SQLitePCLRaw.provider.e_sqlite3.dll",
+          "kind": "runtime-managed"
+        }
+      ]
+    },
+    {
+      "id": "SQLitePCLRaw.bundle_e_sqlite3",
+      "version": "2.1.12",
+      "bytes": 34064,
+      "sha512": "KbeKXtiMrpxd7dFgsnorA1Gci/xVRDCBmkfZNdiiE1la6OdUEMtyTTJ3TBeCn9nIvZgXo5uCd9dVCji3Ay6LuA==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "Apache-2.0 (SourceGear, LLC); same text as SQLitePCLRaw.core",
+      "selectedFiles": [
+        {
+          "entry": "lib/netstandard2.0/SQLitePCLRaw.batteries_v2.dll",
+          "bytes": 5120,
+          "sha256": "815ce410c9eab531dd219318e3ba16c5e38e83d361cfbbdbb4bbca222c497b0b",
+          "target": "lib\\sqlite\\SQLitePCLRaw.batteries_v2.dll",
+          "kind": "runtime-managed"
+        }
+      ]
+    },
+    {
+      "id": "SQLitePCLRaw.lib.e_sqlite3",
+      "version": "2.1.12",
+      "bytes": 18762916,
+      "sha512": "Dli+ELKNuRX0g72Uq2I2OZa5zgi4fwSXV4Je3wyF7jH9oz6AKRA9wXIzMwuVeW7RfAZdSVgIcEeZZON59LdtiA==",
+      "sha512Source": "nuget.org package metadata (V2)",
+      "license": "Apache-2.0 (SourceGear, LLC) for the packaging; the SQLite engine inside e_sqlite3.dll is public domain (sqlite.org), see notices",
+      "selectedFiles": [
+        {
+          "entry": "runtimes/win-x64/native/e_sqlite3.dll",
+          "bytes": 1978880,
+          "sha256": "b7385d722c83fb52142a00477a726723745916d22a555711ee89834c1111fb2e",
+          "target": "lib\\sqlite\\runtimes\\win-x64\\e_sqlite3.dll",
+          "kind": "runtime-native"
+        },
+        {
+          "entry": "runtimes/win-arm64/native/e_sqlite3.dll",
+          "bytes": 1814528,
+          "sha256": "4177542756bd94f75b55fb74367e0cf34e66a88ffaf95755489af14c6ca2f792",
+          "target": "lib\\sqlite\\runtimes\\win-arm64\\e_sqlite3.dll",
+          "kind": "runtime-native"
+        }
+      ]
+    }
+  ],
+  "notices": [
+    {
+      "id": "Microsoft.Data.Sqlite",
+      "license": "MIT",
+      "copyright": "(c) Microsoft Corporation. All rights reserved. / The MIT License (MIT), Copyright (c) .NET Foundation and Contributors",
+      "source": "https://raw.githubusercontent.com/dotnet/efcore/v10.0.0/LICENSE.txt",
+      "sourceSha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+      "kind": "text",
+      "retrieved": "2026-11-10",
+      "bytes": 1115,
+      "sha256": "ae48df11a335dc1a615f4f938b69cba73bcf4485c4f97af49b38efb0f216353b",
+      "target": "lib\\licenses\\Microsoft.Data.Sqlite\\LICENSE.txt"
+    },
+    {
+      "id": "SQLitePCLRaw",
+      "license": "Apache-2.0",
+      "copyright": "Copyright 2014-2024 SourceGear, LLC",
+      "source": "https://raw.githubusercontent.com/ericsink/SQLitePCL.raw/v2.1.12/LICENSE.TXT",
+      "sourceSha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "kind": "text",
+      "retrieved": "2026-11-10",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "target": "lib\\licenses\\SQLitePCLRaw\\LICENSE.TXT"
+    },
+    {
+      "id": "SQLite",
+      "license": "Public domain",
+      "copyright": "none (dedicated to the public domain by the authors)",
+      "source": "https://www.sqlite.org/copyright.html",
+      "sourceSha256": "44ca9f793055c8e32fc65f65a4f5bcf813a33f5bdaaa084067dd617a4ed3cc70",
+      "kind": "sqlite-html",
+      "retrieved": "2026-11-10",
+      "bytes": 4210,
+      "sha256": "224303d946dd9da68cbbbd9092d7b41daf157f53ba80a36cb0d2ef5d61f89b18",
+      "target": "lib\\licenses\\SQLite\\PUBLIC-DOMAIN.txt"
+    }
+  ],
+  "notes": [
+    "The WebView2 runtime itself (Microsoft Edge WebView2) is not redistributed: it is installed with Windows 11 and Microsoft 365, or from https://developer.microsoft.com/microsoft-edge/webview2/.",
+    "WPF-UI embeds only the two MIT FluentSystemIcons fonts; Segoe Fluent Icons is an OS font reference and no Segoe font bytes are distributed.",
+    "The SQLite libraries of lib\\sqlite are the original binaries of the packages above, unchanged (SHA-256 of every file recorded). Microsoft.Data.Sqlite.dll is the lib/net8.0 build of Microsoft.Data.Sqlite.Core; the Microsoft.Data.Sqlite and SQLitePCLRaw.bundle_e_sqlite3 meta packages are pinned for batteries_v2.dll only."
+  ]
+}

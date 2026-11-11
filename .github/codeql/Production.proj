@@ -1,0 +1,31 @@
+<Project DefaultTargets="Build">
+  <UsingTask TaskName="Microsoft.CodeAnalysis.BuildTasks.Csc"
+             AssemblyFile="$(MSBuildToolsPath)\Roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll" />
+  <PropertyGroup>
+    <RepositoryRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..'))</RepositoryRoot>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(RepositoryRoot)\$(ProductionSourceRoot)\**\*.cs" />
+    <Compile Include="$(RepositoryRoot)\package\demo\**\*.cs" Condition="Exists('$(RepositoryRoot)\package\demo')" />
+    <Reference Include="$(PowerShellHome)\ref\*.dll" />
+    <Reference Include="$(PowerShellHome)\System.Management.Automation.dll" Condition="'$(RequiresPowerShell)' == 'true'" />
+    <Reference Include="$(RepositoryRoot)\package\lib\sqlite\*.dll" Condition="'$(RequiresSqlite)' == 'true'" />
+    <Reference Include="$(PowerShellHome)\PresentationFramework.dll;$(PowerShellHome)\PresentationCore.dll;$(PowerShellHome)\WindowsBase.dll;$(PowerShellHome)\System.Xaml.dll;$(PowerShellHome)\System.Security.Cryptography.ProtectedData.dll" Condition="'$(RequiresWpf)' == 'true'" />
+    <Reference Include="$(MsalDirectory)\Microsoft.Identity.Client.dll;$(MsalDirectory)\Microsoft.IdentityModel.Abstractions.dll" Condition="'$(MsalDirectory)' != ''" />
+  </ItemGroup>
+  <Target Name="Build">
+    <Error Condition="'$(ProductionSourceRoot)' == '' or '$(OutputDirectory)' == '' or '$(PowerShellHome)' == ''"
+           Text="ProductionSourceRoot, OutputDirectory and PowerShellHome are required." />
+    <Error Condition="'@(Compile)' == ''" Text="No production C# sources were selected." />
+    <Error Condition="'@(Reference)' == ''" Text="PowerShell reference assemblies are unavailable." />
+    <MakeDir Directories="$(OutputDirectory)" />
+    <Csc Sources="@(Compile)" References="@(Reference)"
+         OutputAssembly="$(OutputDirectory)\Production.Analysis.dll"
+         TargetType="Library" NoStandardLib="true" NoConfig="true"
+         UseSharedCompilation="false" Deterministic="true" Optimize="false" />
+    <WriteLinesToFile File="$(OutputDirectory)\compiled-sources.txt"
+                      Lines="@(Compile->'%(FullPath)')" Overwrite="true" Encoding="UTF-8" />
+    <WriteLinesToFile File="$(OutputDirectory)\compiler-references.txt"
+                      Lines="@(Reference->'%(FullPath)')" Overwrite="true" Encoding="UTF-8" />
+  </Target>
+</Project>

@@ -1,0 +1,7 @@
+{
+  "productionSourceRoot": "package\\src",
+  "requiresSqlite": true,
+  "requiresPowerShell": false,
+  "requiresWpf": false,
+  "requiresMsal": false
+}

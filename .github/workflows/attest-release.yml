@@ -1,0 +1,188 @@
+name: Attest release provenance
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing published release tag to attest (default branch only)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: attest-release-${{ github.repository }}-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  attest:
+    if: >-
+      github.repository_owner == 'Nico77600' &&
+      (
+        (github.event_name == 'release' && github.event.action == 'published' && github.event.release.draft == false) ||
+        (github.event_name == 'workflow_dispatch' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download and verify distributed ZIP assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_HOST: github.com
+          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          EXPECTED_RELEASE_ID: ${{ github.event.release.id }}
+          EVENT_ACTION: ${{ github.event.action }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+          from urllib.parse import quote
+          import zipfile
+
+          def fail(message):
+              raise SystemExit(message)
+
+          def positive_integer(value, label):
+              if type(value) is not int or value <= 0:
+                  fail(f"Invalid {label}")
+              return value
+
+          repository = os.environ["GITHUB_REPOSITORY"]
+          if not re.fullmatch(r"Nico77600/[A-Za-z0-9_.-]+", repository):
+              fail("Unexpected repository owner or name")
+          event = os.environ["GITHUB_EVENT_NAME"]
+          if event == "workflow_dispatch":
+              branch = os.environ["DEFAULT_BRANCH"]
+              if not branch or os.environ["GITHUB_REF"] != f"refs/heads/{branch}":
+                  fail("Manual attestation must run from the default branch")
+          elif event == "release":
+              if os.environ["EVENT_ACTION"] != "published":
+                  fail("Only published release events are trusted")
+          else:
+              fail("Unsupported event")
+          tag = os.environ.get("RELEASE_TAG", "")
+          if not tag:
+              fail("An explicit release tag is required")
+          subprocess.run(["git", "check-ref-format", f"refs/tags/{tag}"], check=True)
+          encoded_tag = quote(tag, safe="")
+          base = f"repos/{repository}"
+
+          def api(endpoint, *, paginate=False, output=None):
+              command = [
+                  "gh", "api", "--hostname", "github.com", "--method", "GET",
+                  "-H", "X-GitHub-Api-Version: 2022-11-28",
+                  "-H", "Accept: application/octet-stream" if output is not None
+                  else "Accept: application/vnd.github+json",
+              ]
+              if paginate:
+                  command.extend(["--paginate", "--slurp"])
+              command.append(endpoint)
+              # gh/Go strip Authorization on cross-host redirects; do not add a token header.
+              result = subprocess.run(
+                  command, check=True, stdout=output if output is not None else subprocess.PIPE
+              )
+              if output is None:
+                  return json.loads(result.stdout)
+
+          reference = api(f"{base}/git/ref/tags/{encoded_tag}")
+          if not isinstance(reference, dict) or reference.get("ref") != f"refs/tags/{tag}":
+              fail("The exact release tag does not exist")
+
+          def release():
+              metadata = api(f"{base}/releases/tags/{encoded_tag}")
+              if not isinstance(metadata, dict) or metadata.get("tag_name") != tag:
+                  fail("Release tag does not match the requested tag")
+              if metadata.get("draft") is not False or not metadata.get("published_at"):
+                  fail("The release must be published and not a draft")
+              release_id = positive_integer(metadata.get("id"), "release ID")
+              if event == "release" and str(release_id) != os.environ["EXPECTED_RELEASE_ID"]:
+                  fail("Release ID does not match the published event")
+              return release_id
+
+          def zip_assets(release_id):
+              pages = api(f"{base}/releases/{release_id}/assets?per_page=100", paginate=True)
+              if not isinstance(pages, list) or any(not isinstance(page, list) for page in pages):
+                  fail("Invalid paginated release asset response")
+              assets = [asset for page in pages for asset in page]
+              if not assets:
+                  fail("The release has no distributed assets; no source archive fallback")
+              selected = {}
+              seen = set()
+              for asset in assets:
+                  if not isinstance(asset, dict) or not isinstance(asset.get("name"), str):
+                      fail("Invalid release asset metadata")
+                  asset_id = positive_integer(asset.get("id"), "asset ID")
+                  if asset_id in seen:
+                      fail("Duplicate release asset ID")
+                  seen.add(asset_id)
+                  if not asset["name"].lower().endswith(".zip"):
+                      continue
+                  if asset.get("state") != "uploaded":
+                      fail("A ZIP asset is not fully uploaded")
+                  size = positive_integer(asset.get("size"), "ZIP asset size")
+                  digest = asset.get("digest")
+                  if digest is not None and (
+                      not isinstance(digest, str) or not re.fullmatch(r"sha256:[0-9a-fA-F]{64}", digest)
+                  ):
+                      fail("Invalid or unsupported ZIP asset digest")
+                  selected[asset_id] = (asset["name"], size, digest.lower() if digest else None)
+              if not selected:
+                  fail("The release has no distributed ZIP assets")
+              if len(selected) > 1024:
+                  fail("The release exceeds the attestation action's 1024-subject limit")
+              return selected
+
+          release_id = release()
+          assets = zip_assets(release_id)
+          # A fresh directory and numeric filenames exclude stale files and name/path injection.
+          Path("dist").mkdir()
+          for asset_id, (name, expected_size, expected_digest) in sorted(assets.items()):
+              target = Path("dist") / f"{asset_id}.zip"
+              try:
+                  with target.open("xb") as output:
+                      api(f"{base}/releases/assets/{asset_id}", output=output)
+                  if target.stat().st_size != expected_size:
+                      fail(f"Size mismatch for ZIP asset {asset_id}")
+                  hasher = hashlib.sha256()
+                  with target.open("rb") as stream:
+                      for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                          hasher.update(chunk)
+                      stream.seek(0)
+                      if not zipfile.is_zipfile(stream):
+                          fail(f"Asset {asset_id} is not a ZIP file")
+                  digest = f"sha256:{hasher.hexdigest()}"
+                  if expected_digest is not None and digest != expected_digest:
+                      fail(f"SHA-256 mismatch for ZIP asset {asset_id}")
+                  print(json.dumps({
+                      "asset_id": asset_id, "release_name": name, "subject": str(target),
+                      "size": expected_size, "digest": digest,
+                      "github_digest_verified": expected_digest is not None,
+                  }, ensure_ascii=True))
+              except BaseException:
+                  target.unlink(missing_ok=True)
+                  raise
+          if release() != release_id or zip_assets(release_id) != assets:
+              fail("Release ZIP assets changed during download; retry with a stable release")
+          PY
+
+      # Binds distributed ZIP bytes to this repository/workflow; does not prove their original build.
+      - name: Generate artifact attestation
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: 'dist/*.zip'
+          push-to-registry: false
+          create-storage-record: false
