@@ -6,6 +6,7 @@
 - Run the project's existing validation commands before promoting a change.
 - Keep private configuration, credentials, customer data, and backup files out of commits and release packages.
 - Commits carry only the repository owner's identity. Do not add co-author trailers for assistants or tools.
+- Commit subjects describe the content, because GitHub shows each file's last subject in the file list. Release commits read "Prepare X.Y.Z: <what changed>" and "Sign X.Y.Z: <n> scripts and the package manifest". Never put "unsigned", "draft" or "candidate" in a public commit subject.
 - Preview public changes and obtain the repository owner's approval before publishing.
 
 ## Changes to main
