@@ -1,10 +1,10 @@
 # Teams Transfer
 
-**Author: Nicolas Fabert (Nico77600)** | Version 0.1.0 | [Latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) | MIT license
+**Author: Nicolas Fabert (Nico77600)** | Version 1.0.0 | [Latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) | MIT license
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-banner-dark.svg">
-  <img alt="Teams Transfer: export Teams chats and channels to a local store, browse them offline, import them into a tenant and verify. Version 0.1.0, Windows x64, PowerShell 7.4 or later." src="docs/images/readme-banner-light.svg">
+  <img alt="Teams Transfer: export Teams chats and channels to a local store, browse them offline, import them into a tenant and verify. Version 1.0.0, Windows x64, PowerShell 7.4 or later." src="docs/images/readme-banner-light.svg">
 </picture>
 
 Exports Microsoft Teams chats and channels (messages, reactions, images, files) from a tenant into a verified local store, lets you read them offline in a Teams-like HTML archive, and imports them into a tenant with the Microsoft Graph Teams migration API, in named lots and in waves, with a ghost account for every deleted author and a verification at the end. A guided WPF console and a scriptable command line drive the same engine.

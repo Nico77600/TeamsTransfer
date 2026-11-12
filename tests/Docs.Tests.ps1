@@ -312,7 +312,7 @@ As any scripts you must read carefully the documentation and test it first in a 
         $text | Should -Match '<picture>'
         $text | Should -Match 'readme-banner-dark\.svg'
         $text | Should -Match 'readme-banner-light\.svg'
-        $text | Should -Match 'Version 0\.1\.0'
+        $text | Should -Match 'Version 1\.0\.0'
     }
 
     It 'the package README has the house sections' {
@@ -368,7 +368,7 @@ As any scripts you must read carefully the documentation and test it first in a 
 }
 
 Describe 'Versions agree' {
-    It 'the module, the guides, the readmes and the changelog all say 0.1.0' {
+    It 'the module, the guides, the readmes and the changelog all say the module version' {
         $version = (Import-PowerShellDataFile -LiteralPath (Join-Path $script:Package 'TeamsTransfer.psd1')).ModuleVersion
         foreach ($g in 'TeamsTransfer-UserGuide.md', 'TeamsTransfer-Guide.md') { (Read-Text (Join-Path $script:Docs $g)) | Should -Match "(?m)^version: $([regex]::Escape($version))$" }
         (Read-Text (Join-Path $script:Package 'CHANGELOG.md')) | Should -Match "(?m)^## $([regex]::Escape($version)) "

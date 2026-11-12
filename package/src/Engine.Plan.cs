@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 5c: the dry-run import plan (lot H)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 0.1.0
+//  Version : 1.0.0
 //
 //  ImportPlanner.BuildAsync(store, lot, slices, options, targetClient, ct) answers "what would the import do?" without
 //  doing it. It reads the local store (lot items, conversations, messages, files, users, authors) and, read-only, the target

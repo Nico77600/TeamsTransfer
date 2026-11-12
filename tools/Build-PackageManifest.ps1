@@ -37,7 +37,7 @@
 
 .NOTES
     Author  : Nicolas Fabert
-    Version : 0.1.0
+    Version : 1.0.0
 
     This Script is a Personal project.
     It's provided "AS-IS". It's not an official Microsoft product so no support can be expected from Microsoft.

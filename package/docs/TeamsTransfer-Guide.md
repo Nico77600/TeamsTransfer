@@ -1,7 +1,7 @@
 ---
 title: Teams Transfer
 subtitle: Reference guide
-version: 0.1.0
+version: 1.0.0
 author: Nicolas Fabert
 updated: 2026-11-10
 badges: Windows x64, Microsoft Graph
@@ -9,7 +9,7 @@ badges: Windows x64, Microsoft Graph
 
 # Teams Transfer — Reference guide
 
-> For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the [user guide](TeamsTransfer-UserGuide.md) (file `TeamsTransfer-UserGuide.html`, same `docs` folder). Everything here is derived from the code of version 0.1.0 and from the measurements of the lab (`docs\design\Phase0-Results.md`); a statement that comes from the lab and not from the code is marked *(lab)*.
+> For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the [user guide](TeamsTransfer-UserGuide.md) (file `TeamsTransfer-UserGuide.html`, same `docs` folder). Everything here is derived from the code of version 1.0.0 and from the measurements of the lab (`docs\design\Phase0-Results.md`); a statement that comes from the lab and not from the code is marked *(lab)*.
 
 > [!IMPORTANT]
 > Files downloaded from the Internet may be blocked by Windows and fail to run. Check the publisher first (`Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures: `Nicolas Fabert`), then unblock the extracted folder:
@@ -753,7 +753,7 @@ These come from the service (Phase 0 and the Microsoft documentation) and from t
 <!-- icon: tag -->
 ## 20. Change log
 
-See [CHANGELOG.md](../CHANGELOG.md): version 0.1.0 is the first release. The design and the lab findings are in `docs\design\TeamsTransfer-Design.md` and `docs\design\Phase0-Results.md` of the repository.
+See [CHANGELOG.md](../CHANGELOG.md): version 1.0.0 is the first public release. The design and the lab findings are in `docs\design\TeamsTransfer-Design.md` and `docs\design\Phase0-Results.md` of the repository.
 
 <!-- icon: book -->
 ## Annex A — Certificates and app registrations for engineers

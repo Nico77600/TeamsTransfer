@@ -522,12 +522,12 @@ Describe '8. tools\Build-Package.ps1' {
         $b.ExitCode | Should -Be 0 -Because $b.Out
         $b.Out | Should -Match 'SkipTests'
         $b.Out | Should -Match 'UNSIGNED development ZIP'
-        $zipPath = Join-Path $t 'out\release\TeamsTransfer-0.1.0-win-x64.zip'
+        $zipPath = Join-Path $t 'out\release\TeamsTransfer-1.0.0-win-x64.zip'
         Test-Path -LiteralPath $zipPath | Should -BeTrue
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         $z = [IO.Compression.ZipFile]::OpenRead($zipPath)
         try { $names = @($z.Entries | ForEach-Object FullName) } finally { $z.Dispose() }
-        $top = 'TeamsTransfer-0.1.0/'
+        $top = 'TeamsTransfer-1.0.0/'
         $names | Where-Object { -not $_.StartsWith($top) } | Should -BeNullOrEmpty
         $rel = @($names | ForEach-Object { $_.Substring($top.Length) })
         # exactly the package content: the manifest files + the manifest + the editable configuration
@@ -544,7 +544,7 @@ Describe '8. tools\Build-Package.ps1' {
         $rel | Where-Object { $_ -match '^docs/' } | Should -Not -BeNullOrEmpty
         # SHA256SUMS.txt
         $sums = Get-Content -LiteralPath (Join-Path $t 'out\release\SHA256SUMS.txt') -Raw
-        $sums | Should -Be ("{0}  TeamsTransfer-0.1.0-win-x64.zip`n" -f (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant())
+        $sums | Should -Be ("{0}  TeamsTransfer-1.0.0-win-x64.zip`n" -f (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant())
         # the manifest it wrote verifies (development mode) and the second run needs -Force
         (& (Join-Path $t 'package\src\Test-PackageIntegrity.ps1') -Root (Join-Path $t 'package') -DevelopmentMode).Status | Should -Be 'UnsignedDevelopmentPackage'
         (Invoke-Build $t @('-SkipTests', '-Stage', 'Package')).ExitCode | Should -Not -Be 0
