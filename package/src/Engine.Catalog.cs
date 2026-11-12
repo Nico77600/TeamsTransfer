@@ -1,11 +1,11 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 4b: catalog = work management (lots, slices, leases, import journal, ghosts, merge)
+//  TeamsTransfer - engine: catalog = work management (lots, slices, leases, import journal, ghosts, merge)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  Why this file exists:
-//    The unit of work is the CONVERSATION, never the user (design 3.7): a group chat belongs to several people and is
+//    The unit of work is the CONVERSATION, never the user: a group chat belongs to several people and is
 //    imported once. This part of the catalog turns "these users / teams / chats / channels" into a frozen plan of
 //    (conversation x time slice) items, hands that plan out to workers, and remembers what the importer already did so
 //    that nothing is ever sent twice. It is a partial class of TmtStore (same catalog.db, same writer connection and
@@ -1072,7 +1072,7 @@ ON CONFLICT(source_user_id) DO UPDATE SET ghost_id=COALESCE(excluded.ghost_id,gh
 
         /// <summary>
         /// Message authors that need a ghost: seen as from.user.id but absent from the user inventory, or inventoried as Deleted, with
-        /// no ghost yet (excludeMapped). Guests and federated identities are not candidates (phase 0: accepted as authors).
+        /// no ghost yet (excludeMapped). Guests and federated identities are not candidates (the service accepts them as authors).
         /// </summary>
         public IReadOnlyList<GhostCandidate> FindGhostCandidates(bool excludeMapped = true)
         {
@@ -1096,7 +1096,7 @@ WHERE (u.id IS NULL OR u.state=2) AND (a.identity_type IS NULL OR a.identity_typ
             return s;
         }
 
-        /// <summary>The ghost mapping as CSV for review (design 3.6). Returns the number of rows.</summary>
+        /// <summary>The ghost mapping as CSV for review. Returns the number of rows.</summary>
         public int ExportGhostsCsv(string path)
         {
             int n = 0;

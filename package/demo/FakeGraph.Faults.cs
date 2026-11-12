@@ -1,7 +1,7 @@
 // DEMO-ONLY SOURCE. Part of the Demo mode of the console (-Gui -Demo): a synthetic tenant and a fake Microsoft Graph, compiled together with the engine
 // in Demo mode and by the tests ONLY. It is never loaded by the command line modes and never talks to the network. Single source of truth (the tests compile it from here).
 // =============================================================================
-//  TeamsTransfer - fake Microsoft Graph, part 3: fault injection, quotas and counters
+//  TeamsTransfer - fake Microsoft Graph: fault injection, quotas and counters
 // -----------------------------------------------------------------------------
 //  WHY: the value of the engine's GraphClient and of its adaptive rate limiter is how they behave when Graph misbehaves, and a real
 //  tenant cannot be asked to throttle on cue. Everything here is configurable AND deterministic: probabilistic rules draw from a
@@ -18,7 +18,7 @@
 //   - truncated download streams (premature end of a file or a hosted content, by exception or by a silent short read)
 //   - forced failures on an URL pattern (e.g. 403 on one drive item)
 //  Counters (FakeGraphCounters, transport.Counters): calls per endpoint class, 429 sent, 5xx sent, bytes served, resets, truncations...
-//  They are what the tests assert on and what the phase 0 report compares with the real service.
+//  They are what the tests assert on and what a comparison with the real service uses.
 // =============================================================================
 using System;
 using System.Collections.Concurrent;

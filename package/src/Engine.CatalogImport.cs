@@ -1,8 +1,8 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 5a: catalog persistence of the import maps (lot H)
+//  TeamsTransfer - engine: catalog persistence of the import maps
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  A partial class of TmtStore: it implements the three maps of Engine.ImportContracts.cs on the same catalog.db (same
 //  writer connection and lock as the lots, the journal and the ghosts), so a plan and the maps it is built on can never

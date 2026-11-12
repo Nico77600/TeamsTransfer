@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer - engine, lot F: the Teams-like preview and the offline HTML archive
+//  TeamsTransfer - engine: the Teams-like preview and the offline HTML archive
 // -----------------------------------------------------------------------------
 //  PreviewExporter reads an IStoreReader (raw Graph chatMessage JSON, streamed, never all in memory) and writes either
 //    (a) a FOLDER archive : index.html + data\<conv>\<month>.js + search\<conv>.js + content\<sha256>.<ext>

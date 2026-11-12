@@ -1,8 +1,8 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 5c: the dry-run import plan (lot H)
+//  TeamsTransfer - engine: the dry-run import plan
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  ImportPlanner.BuildAsync(store, lot, slices, options, targetClient, ct) answers "what would the import do?" without
 //  doing it. It reads the local store (lot items, conversations, messages, files, users, authors) and, read-only, the target
@@ -27,7 +27,7 @@
 //  A message without a user author (an application or a bot) is imported under the service account, with the banner.
 //
 //  DURATION: messages / min(application ceiling, parallelism x per-conversation rate), and never less than the largest
-//  conversation / per-conversation rate (5 msg/s per conversation, ~60-90 msg/s per application: Phase0-Results). The
+//  conversation / per-conversation rate (5 msg/s per conversation, ~60-90 msg/s per application). The
 //  ceiling is PlanOptions.AppCeilingMessagesPerSecond (default 75).
 // =============================================================================
 using System;

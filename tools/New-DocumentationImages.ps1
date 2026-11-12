@@ -310,7 +310,7 @@ $drawings['readme-waves'] = @{ W = 1280; H = 560; Draw = {
             [void](Add-Text $(if ($m -eq 0) { 'today' } else { "$m" }) ($x0 + $m * $sc - 40) 226 15 'text3' 'Normal' 80 'Center')
         }
         [void](Add-Text 'A finished conversation is reopened with an earlier start date and filled with older messages. Further waves are possible if configured.' 70 262 17 'text2' 'Normal' 1100)
-        $c = @(@(0xE916, 'About 5 messages per second', 'per conversation: the limit of the service'), @(0xE9D9, 'About 60 to 90 per second', 'per application, as measured in the lab'), @(0xE81C, 'Weeks or months', 'for years of history: re-import what matters, the rest stays in the archive'))
+        $c = @(@(0xE916, 'About 5 messages per second', 'per conversation: the limit of the service'), @(0xE9D9, 'About 60 to 90 per second', 'per application, as measured'), @(0xE81C, 'Weeks or months', 'for years of history: re-import what matters, the rest stays in the archive'))
         $x = 40
         foreach ($t in $c) {
             Add-Card $x 350 385 170

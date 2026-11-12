@@ -1,7 +1,7 @@
 // =============================================================================
-//  TeamsTransfer - engine, lot J part 1: ghost accounts (design 3.6)
+//  TeamsTransfer - engine: ghost accounts
 // -----------------------------------------------------------------------------
-//  Phase 0: a DELETED user cannot be the author of an imported message (400 "could not be found in the tenant"); a DISABLED user can.
+//  A DELETED user cannot be the author of an imported message (400 "could not be found in the tenant"); a DISABLED user can.
 //  So every source author that no longer exists gets, in the TARGET tenant, one disabled, unlicensed "ghost" account:
 //    accountEnabled=false, no licence, a random password that is generated here, sent once and never stored, logged or returned;
 //    displayName per ImportRunOptions.GhostDisplayNameFormat ("First Last (former)"); UPN tt-ghost-<16 hex of SHA-256(source id)>@<domain>;

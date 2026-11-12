@@ -1,7 +1,7 @@
 ---
 title: Teams Transfer
 subtitle: User guide
-version: 1.0.1
+version: 1.0.2
 author: Nicolas Fabert
 updated: 2026-11-10
 badges: Windows x64, Guided console
@@ -15,7 +15,7 @@ badges: Windows x64, Guided console
 > Files downloaded from the Internet may be blocked by Windows and fail to run. Check the publisher first (right-click `Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures: `Nicolas Fabert`), then unblock every file in the folder:
 >
 > ```powershell
-> Get-ChildItem "D:\Tools\TeamsTransfer" -Recurse -File -Force | Unblock-File
+> Get-ChildItem "D:\Tools\TeamsTransfer-1.0.2" -Recurse -File -Force | Unblock-File
 > ```
 >
 > Replace the example path with the folder where you extracted the package.
@@ -213,9 +213,6 @@ Same steps, in the **target** tenant: name `TeamsTransfer Writer`, upload `Teams
 > [!NOTE]
 > Two optional extras. `Group.ReadWrite.All` instead of the two `Group` lines above lets the tool **create** the ghost tracking group itself (`-CreateTrackingGroup`). `User.DeleteRestore.All` is needed only to **purge** removed ghosts (`-Purge`). Skip both unless you need them. The reference guide, [chapter 5](TeamsTransfer-Guide.md#5-minimum-permissions-per-mode), says which mode needs which permission, so you can grant less for a smaller job.
 
-> [!TIP]
-> In a **lab**, the repository has a helper that does steps B and C by script, idempotently, and shows every change before it makes it: `tools\Grant-LabConsent.ps1 -TenantId <tenant> -CertificatePath <.cer> -WhatIf`. Use it for a lab, not as a replacement for your own review in production.
-
 ### Step D · Prepare the target tenant
 
 | What | Why | Example |
@@ -239,14 +236,14 @@ You do this part **one time**.
 
 **Do:**
 
-1. Create the folder `D:\Tools\TeamsTransfer` (any local folder with restricted access works).
-2. Extract the whole release ZIP into it.
+1. Create the folder `D:\Tools` (any local folder with restricted access works).
+2. Extract the whole release ZIP into it. The ZIP holds one folder, so this creates `D:\Tools\TeamsTransfer-1.0.2`: that is the tool folder used in the rest of this guide.
 3. Open **PowerShell 7**: click the Windows **Start** button, type `PowerShell 7`, right-click it, choose **Run as administrator** only if you installed the folder in a protected place.
 4. Check the publisher: right-click `Invoke-TeamsTransfer.ps1`, **Properties**, **Digital Signatures**. The signer must be `Nicolas Fabert`.
 5. Unblock the files:
 
 ```powershell
-Get-ChildItem D:\Tools\TeamsTransfer -Recurse -File -Force | Unblock-File
+Get-ChildItem D:\Tools\TeamsTransfer-1.0.2 -Recurse -File -Force | Unblock-File
 ```
 
 **You should see:** the window comes back with a new empty line. No message means it worked.
@@ -265,7 +262,7 @@ The **store** is where the exported conversations live. It must be on a **local 
 **Do:** create the private settings file. Copy this line into PowerShell and press **Enter**:
 
 ```powershell
-notepad D:\Tools\TeamsTransfer\config\TeamsTransfer.config.local.psd1
+notepad D:\Tools\TeamsTransfer-1.0.2\config\TeamsTransfer.config.local.psd1
 ```
 
 Paste this text, replace the values between the quotes with yours (the ids and thumbprints you wrote down in chapter 2), save, and close Notepad:
@@ -314,7 +311,7 @@ Paste this text, replace the values between the quotes with yours (the ids and t
 **Do:** double-click `Start-TeamsTransferConsole.cmd` in the tool folder. Or copy this line into PowerShell and press **Enter**:
 
 ```powershell
-pwsh -STA -File D:\Tools\TeamsTransfer\Invoke-TeamsTransfer.ps1 -Gui
+pwsh -STA -File D:\Tools\TeamsTransfer-1.0.2\Invoke-TeamsTransfer.ps1 -Gui
 ```
 
 **You should see:** the console opens on the **Setup** page. If you want to look around first without any tenant, add `-Demo`: the console then uses made-up tenants and a temporary store (a yellow **DEMO** badge is always shown).
@@ -820,10 +817,10 @@ Rules to remember:
 A long export or import is best run unattended. Run it under a **dedicated account** that owns the certificate (in `Cert:\LocalMachine\My`, with the key readable by that account). Use a wrapper that repeats the same command while it answers **2**, up to a limit, and stops when a stop file appears.
 
 ```powershell
-# D:\Tools\TeamsTransfer\Run-Export.ps1
+# D:\Tools\TeamsTransfer-1.0.2\Run-Export.ps1
 $stop = 'D:\ttstore\STOP'
 for ($try = 1; $try -le 5; $try++) {
-    & pwsh -NoProfile -File D:\Tools\TeamsTransfer\Invoke-TeamsTransfer.ps1 -Mode Export -StoreRoot D:\ttstore `
+    & pwsh -NoProfile -File D:\Tools\TeamsTransfer-1.0.2\Invoke-TeamsTransfer.ps1 -Mode Export -StoreRoot D:\ttstore `
         -IncludeChannels -IncludeFiles -StopFile $stop
     if ($LASTEXITCODE -ne 2 -or (Test-Path $stop)) { break }
 }
@@ -831,7 +828,7 @@ exit $LASTEXITCODE
 ```
 
 ```bat
-schtasks /Create /F /RU "CONTOSO\svc-teamstransfer" /RP * /RL HIGHEST /TN "Teams Transfer - export" /SC DAILY /ST 20:00 /TR "pwsh.exe -NoProfile -File D:\Tools\TeamsTransfer\Run-Export.ps1"
+schtasks /Create /F /RU "CONTOSO\svc-teamstransfer" /RP * /RL HIGHEST /TN "Teams Transfer - export" /SC DAILY /ST 20:00 /TR "pwsh.exe -NoProfile -File D:\Tools\TeamsTransfer-1.0.2\Run-Export.ps1"
 schtasks /Run /TN "Teams Transfer - export"
 ```
 
@@ -967,7 +964,7 @@ Find what you **see** in the left column. The middle column says what it **means
 | *Archive takes one user at a time in this version* | Archive takes one user or one team. | Run it once per user, or use `-Conversation` with several keys. |
 
 > [!NOTE]
-> This list follows the messages of version 1.0.1. A message that is not here still ends with an exit code and the path of the log: copy the final card and send it to your administrator.
+> This list follows the messages of version 1.0.2. A message that is not here still ends with an exit code and the path of the log: copy the final card and send it to your administrator.
 
 <!-- icon: refresh -->
 ## 8. Clean up and undo

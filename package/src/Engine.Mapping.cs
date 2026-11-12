@@ -1,13 +1,13 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 5b: identity and target mapping (lot H)
+//  TeamsTransfer - engine: identity and target mapping
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  IdentityMapper   decides, for every source user that appears in the planned conversations (message authors AND members),
 //                   who that person is in the target: IdentityKind Mapped | Same | Ghost | ServiceAccount | Unresolved.
 //  TargetMapper     decides, for every planned conversation, where it is imported: TargetKind NewChat | ExistingChat |
-//                   NewChannel | ExistingChannel | ArchiveChannel | Skip (design 3.4, 3.5).
+//                   NewChannel | ExistingChannel | ArchiveChannel | Skip.
 //  TargetDirectory  the READ-ONLY look-ups on the target tenant (users, teams, channels, chats), batched with $batch (20 per
 //                   call) and cached. Nothing in this file writes to a tenant. With no GraphClient the directory is
 //                   "offline": every look-up is skipped, the mappers say so in their notes.
@@ -21,7 +21,7 @@
 //         same UPN (or mail) in the target                                                  Mapped, rule "upn-match"
 //         nothing found                                                                     Unresolved (blocks the plan)
 //    4  scenarios B and C (same tenant): GET /users/{id}: exists -> Same ("same-id"; a disabled user or a guest is a valid
-//       author, phase 0); gone -> same UPN or mail (account recreated: old object id -> new)  Mapped "upn-match"
+//       author); gone -> same UPN or mail (account recreated: old object id -> new)  Mapped "upn-match"
 //    5  deleted / absent from the tenant -> MappingOptions.DeletedAuthors:
 //         Auto (default)  Ghost when ImportRunOptions.GhostDomain is set, else ServiceAccount
 //         Ghost           Ghost (Unresolved when no GhostDomain)       ServiceAccount   ServiceAccount
@@ -341,7 +341,7 @@ namespace TeamsTransfer
         public static string ChannelUrl(string teamId, string channelId) { return "/teams/" + Uri.EscapeDataString(teamId) + "/channels/" + Uri.EscapeDataString(channelId).Replace("%3A", ":").Replace("%40", "@") + "?$select=id"; }
 
         /// <summary>Teams with this exact display name (GET /teams with a displayName filter, which only needs Team.ReadBasic.All;
-        /// /groups needs Group.Read.All: real 403 on the lab, 2026-11-10). The name is compared again here.</summary>
+        /// /groups would need Group.Read.All). The name is compared again here.</summary>
         public async Task<IReadOnlyList<TargetTeamInfo>> FindTeamsByNameAsync(string displayName, CancellationToken ct)
         {
             if (_client == null || string.IsNullOrEmpty(displayName)) return new List<TargetTeamInfo>();
@@ -398,9 +398,9 @@ namespace TeamsTransfer
             _map = map; _run = run ?? new ImportRunOptions(); _opt = options ?? new MappingOptions(); _dir = directory ?? new TargetDirectory(null); _ghosts = ghostLookup;
         }
 
-        /// <summary>The UPN a ghost gets in the target (design 3.6). Null without a domain. Single source of truth:
-        /// GhostProvisioner.UpnFor, the account actually created (the plan announced a 10-hex UPN while the Ghosts stage created a
-        /// 16-hex one: real lab, 2026-11-10).</summary>
+        /// <summary>The UPN a ghost gets in the target. Null without a domain. Single source of truth:
+        /// GhostProvisioner.UpnFor, the account actually created (the plan and the Ghosts stage must announce and create the same
+        /// 16-hex UPN).</summary>
         public static string GhostUpn(string sourceUserId, string ghostDomain)
         {
             if (string.IsNullOrWhiteSpace(ghostDomain)) return null;

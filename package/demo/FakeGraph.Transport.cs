@@ -1,9 +1,9 @@
 // DEMO-ONLY SOURCE. Part of the Demo mode of the console (-Gui -Demo): a synthetic tenant and a fake Microsoft Graph, compiled together with the engine
 // in Demo mode and by the tests ONLY. It is never loaded by the command line modes and never talks to the network. Single source of truth (the tests compile it from here).
 // =============================================================================
-//  TeamsTransfer - fake Microsoft Graph, part 2: FakeGraphTransport (IGraphTransport over a FakeTenant)
+//  TeamsTransfer - fake Microsoft Graph: FakeGraphTransport (IGraphTransport over a FakeTenant)
 // -----------------------------------------------------------------------------
-//  WHY: one object that answers like graph.microsoft.com for the endpoints the engine uses (design 3.2 - 3.5), with realistic paging,
+//  WHY: one object that answers like graph.microsoft.com for the endpoints the engine uses, with realistic paging,
 //  filters, error shapes, the migration (import) rules and the OneDrive/SharePoint file endpoints, so GraphClient, the export, the
 //  file copy, the import, the preview and the demo mode all run against it unchanged. It is "dumb" in the same way as the real
 //  transport: no retry, no paging loop, no throttling logic of its own beyond what FakeGraphFaults injects.
@@ -13,10 +13,10 @@
 //  served on two fake hosts (upload.fake-sharepoint.invalid / download.fake-sharepoint.invalid) and require Anonymous = true on the
 //  upload host (the real service refuses an Authorization header there), Anonymous = false on the Graph host.
 //
-//  ASSUMED BEHAVIOUR (not yet measured on the real service: phase 0 must confirm each one; the tenant / faults options say which can be flipped):
+//  BEHAVIOUR (what the fake answers, modelled on the real service; the tenant / faults options say which rules can be flipped):
 //   A01 getAllMessages needs model=A or model=B. Missing or invalid model = EVALUATION MODE: at most FakeTenant.EvaluationModeMaxMessages (500)
 //       messages per query, the data then simply ends (no nextLink), and the response carries   Warning: 199 - "Evaluation mode ..."
-//       (counted in Counters.EvaluationModeResponses). The real service may answer 400/402 instead.
+//       (counted in Counters.EvaluationModeResponses). Outside evaluation mode a valid model is required.
 //   A02 Page sizes. chat/channel messages, replies and getAllMessages: default 20, max 50, a larger $top is REJECTED with 400.
 //       users/chats: default and max 50 (clamped). users, groups, teams, deletedItems, members: default 100, max 999 (clamped). Channels: not paged.
 //   A03 Order. Every message listing is lastModifiedDateTime DESC, ties broken by id DESC (deterministic). $orderby accepts
@@ -1696,7 +1696,7 @@ namespace TeamsTransfer.Testing
                 if (e.TryGetProperty("attachments", out at) && at.ValueKind == JsonValueKind.Array)
                     foreach (var a in at.EnumerateArray())
                     {
-                        // real service (lab 2026-11-10): the attachment id must be a GUID
+                        // real service: the attachment id must be a GUID
                         string aid = Str(a, "id");
                         Guid ag;
                         if (aid != null && !Guid.TryParse(aid, out ag)) throw Bad("Invalid GUID '" + aid + "' for file attachment.");

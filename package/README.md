@@ -1,10 +1,10 @@
 # Teams Transfer
 
-**Author: Nicolas Fabert (Nico77600)** | Version 1.0.1 | [Latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) | MIT license
+**Author: Nicolas Fabert (Nico77600)** | Version 1.0.2 | [Latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) | MIT license
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-banner-dark.svg">
-  <img alt="Teams Transfer 1.0.1: move Microsoft Teams chats and channels between tenants. Export to a verified local store, read it offline, import in lots and waves, ghost accounts keep the original authors, every write is previewed first. PowerShell 7.4+, MIT license. 13 modes in one tool, 5 messages per second per conversation, 0 messages sent twice." src="docs/images/readme-banner-light.svg">
+  <img alt="Teams Transfer 1.0.2: move Microsoft Teams chats and channels between tenants. Export to a verified local store, read it offline, import in lots and waves, ghost accounts keep the original authors, every write is previewed first. PowerShell 7.4+, MIT license. 13 modes in one tool, 5 messages per second per conversation, 0 messages sent twice." src="docs/images/readme-banner-light.svg">
 </picture>
 
 Exports Microsoft Teams chats and channels (messages, reactions, images, files) from a tenant into a verified local store, lets you read them offline in a Teams-like HTML archive, and imports them into a tenant with the Microsoft Graph Teams migration API, in named lots and in waves, with a ghost account for every deleted author and a verification at the end. A guided WPF console and a scriptable command line drive the same engine.
@@ -44,7 +44,7 @@ This folder contains everything needed to run the tool: `Invoke-TeamsTransfer.ps
 
 ## Quick start
 
-Extract the whole ZIP into a writable, access-restricted local folder, for example `D:\Tools\TeamsTransfer`, and open PowerShell 7 in it. Fill in `config\TeamsTransfer.config.local.psd1` (tenant ids, application ids, certificate thumbprints; see the user guide), or let the console show you what is missing.
+Extract the whole ZIP into a writable, access-restricted local folder, for example `D:\Tools`: it creates `D:\Tools\TeamsTransfer-1.0.2`. Open PowerShell 7 in that folder. Fill in `config\TeamsTransfer.config.local.psd1` (tenant ids, application ids, certificate thumbprints; see the user guide), or let the console show you what is missing.
 
 - **Use the guided console** (start here)
   - Run: `Start-TeamsTransferConsole.cmd` (or `pwsh -STA -File .\Invoke-TeamsTransfer.ps1 -Gui`)

@@ -14,7 +14,7 @@
     pwsh -File tools\New-PreviewScreens.ps1
 .NOTES
     Author  : Nicolas Fabert
-    Version : 1.0.1
+    Version : 1.0.2
 #>
 [CmdletBinding()]
 param(

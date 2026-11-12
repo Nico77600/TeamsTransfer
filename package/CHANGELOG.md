@@ -4,6 +4,10 @@ All notable changes of Teams Transfer. Author: Nicolas Fabert (Nico77600). Versi
 a MAJOR version changes the command line or the configuration file, a MINOR version adds a feature,
 a PATCH version fixes a defect. The archive data format has its own version (`preview-v1`, see the reference guide, chapter 16).
 
+## 1.0.2 — 2026-11-12
+
+New release published. Various syntax fixes, no new features.
+
 ## 1.0.1 — 2026-11-12
 
 Documentation release: no change to the engine, the command line or the configuration.

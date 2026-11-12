@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer - tests of lot E: in-memory IExportStore / IStoreReader + a transport decorator
+//  TeamsTransfer - tests: in-memory IExportStore / IStoreReader + a transport decorator
 // -----------------------------------------------------------------------------
 //  MemoryExportStore    a thread-safe, in-memory implementation of the store contracts (NOT the real store): lets the
 //                       inventory / exporter / assess tests run without SQLite, and the volume test run with KeepBodies = false
@@ -7,7 +7,7 @@
 //                       Content is hashed (SHA-256) while streaming and retained only up to MaxRetainedContentBytes, so a 1 GiB
 //                       file costs no memory; PeakPutBufferBytes shows the biggest buffer it ever needed.
 //                       Hooks: OnAppend (throw to simulate a crash in the store).
-//  ImportedHidingTransport  wraps a transport and reproduces the phase 0 finding the fake does not: messages whose
+//  ImportedHidingTransport  wraps a transport and reproduces a behaviour of the real service that the fake does not: messages whose
 //                       lastModifiedDateTime is 0001-01-01 (imported by a migration) are INVISIBLE to getAllMessages.
 //                       The test builds such messages by setting FakeMessage.ModifiedMs to the minimum date.
 // =============================================================================
@@ -432,7 +432,7 @@ namespace TeamsTransfer.Testing
     }
 
     /// <summary>
-    /// Reproduces the phase 0 finding for the offline tests: a message with lastModifiedDateTime = 0001-01-01 (imported by a migration)
+    /// Reproduces a behaviour of the real service for the offline tests: a message with lastModifiedDateTime = 0001-01-01 (imported by a migration)
     /// is not returned by getAllMessages (users/{id}/chats and teams/{id}/channels), while the per-chat / per-channel listing still returns it.
     /// </summary>
     public sealed class ImportedHidingTransport : IGraphTransport

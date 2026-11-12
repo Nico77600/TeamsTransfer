@@ -1,7 +1,7 @@
 ---
 title: Teams Transfer
 subtitle: Reference guide
-version: 1.0.1
+version: 1.0.2
 author: Nicolas Fabert
 updated: 2026-11-10
 badges: Windows x64, Microsoft Graph
@@ -9,13 +9,13 @@ badges: Windows x64, Microsoft Graph
 
 # Teams Transfer — Reference guide
 
-> For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the [user guide](TeamsTransfer-UserGuide.md) (file `TeamsTransfer-UserGuide.html`, same `docs` folder). Everything here is derived from the code of version 1.0.1 and from the measurements of the lab (`docs\design\Phase0-Results.md`); a statement that comes from the lab and not from the code is marked *(lab)*.
+> For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the [user guide](TeamsTransfer-UserGuide.md) (file `TeamsTransfer-UserGuide.html`, same `docs` folder). Everything here is derived from the code of version 1.0.2 and from measurements made on real tenants; a statement that comes from a measurement and not from the code is marked *(lab)*.
 
 > [!IMPORTANT]
 > Files downloaded from the Internet may be blocked by Windows and fail to run. Check the publisher first (`Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures: `Nicolas Fabert`), then unblock the extracted folder:
 >
 > ```powershell
-> Get-ChildItem "D:\Tools\TeamsTransfer" -Recurse -File -Force | Unblock-File
+> Get-ChildItem "D:\Tools\TeamsTransfer-1.0.2" -Recurse -File -Force | Unblock-File
 > ```
 
 # Part I · Understand
@@ -199,7 +199,7 @@ The configuration is **data**, parsed with `Import-PowerShellDataFile` and never
 
 All permissions are Microsoft Graph **application** permissions with administrator consent. They come from **one table**, `package\config\Permissions.psd1` (per mode and side, required or optional, with the reason), which the console uses for its permission lights; the tables of this chapter are generated from it and `tests\Docs.Tests.ps1` compares them with the file. A broader permission covers a narrower one (`X.ReadWrite.All` covers `X.Read.All`, which covers `X.ReadBasic.All`); the console's check applies the same rule.
 
-**Administrator roles** to create the apps and consent (lab script): *Application Administrator* or *Cloud Application Administrator* for the apps, *Privileged Role Administrator* or *Global Administrator* for the consent of application permissions.
+**Administrator roles** to create the apps and consent: *Application Administrator* or *Cloud Application Administrator* for the apps, *Privileged Role Administrator* or *Global Administrator* for the consent of application permissions.
 
 ### Source app (read only)
 
@@ -246,11 +246,11 @@ R = required by the mode, o = optional (only for the option named in the last co
 | `TeamMember.ReadWrite.All` |  |  |  | R |  | Adds the members of the teams. |
 | `ChannelMessage.Read.All` |  |  |  |  | R | Reads the imported channel messages. |
 
-The lab helper `tools\Grant-LabConsent.ps1` carries its own list; the tables above are the authoritative ones. Note that the Reader also needs `Chat.ReadBasic.All`, the Writer needs `Chat.Read.All`, and `Group.ReadWrite.All` is optional (only for `-CreateTrackingGroup`).
+The tables above are the authoritative ones. Note that the Reader also needs `Chat.ReadBasic.All`, the Writer needs `Chat.Read.All`, and `Group.ReadWrite.All` is optional (only for `-CreateTrackingGroup`).
 
-**Only one application may start, import and complete a migration:** another application cannot import into (400) nor complete (401) a migration that it did not open *(lab, W4)*. The journal records the owner `appId` of each session; never change the target application in the middle of a lot.
+**Only one application may start, import and complete a migration:** another application cannot import into (400) nor complete (401) a migration that it did not open *(lab)*. The journal records the owner `appId` of each session; never change the target application in the middle of a lot.
 
-**Teams protected APIs.** `Chat.Read.All` and `ChannelMessage.Read.All` as application permissions give access to every chat and channel message. Microsoft has documented a request form for this access and has changed the rule over time. In the lab the consent alone was enough *(lab)*. If an export answers `403` while the token shows the roles, ask the tenant administrator to check the current rule early: an approval can take days.
+**Teams protected APIs.** `Chat.Read.All` and `ChannelMessage.Read.All` as application permissions give access to every chat and channel message. Microsoft has documented a request form for this access and has changed the rule over time. In tests on real tenants the consent alone was enough *(lab)*. If an export answers `403` while the token shows the roles, ask the tenant administrator to check the current rule early: an approval can take days.
 
 <!-- icon: gear -->
 ## 6. Graph endpoints, limits and throttling
@@ -520,7 +520,7 @@ The entry script appends a `Hint` to the error text when it recognises the cause
 - **Consistency check.** `-Mode Export` runs the store check at its end; an inconsistent store stops the run with *The store check found n problem(s): see the log.*
 - **Schema** version 1 (`meta.schema_version`).
 
-**Scale** (design figures, to confirm with `Assess`): 1 to 3 billion messages is about 2 to 6 TB of raw JSON (0.5 to 1.5 TB compressed); files can be several tens of TB. Several workstations can share an export (Graph quotas are per application and tenant: more workstations help only up to that ceiling). Procedure: **(1)** write one CSV per workstation (`-LotFile`), with **disjoint** members; **(2)** on each workstation `-Mode Export -Lot wsN -LotFile .\lots\wsN.csv` into its **own** store on its own local disk; **(3)** when a workstation is finished (nothing may write its store), on the **coordinator** run `-Mode Merge -StoreRoot <coordinator store> -FromStore <store of wsN>`, once per workstation (idempotent; the other store is only read; both must have the same `Store.Partitions`); **(4)** on the coordinator run `-Mode Plan -Lot wsN -LotFile .\lots\wsN.csv` with the **same** CSV: the lot is created over the merged store, then planned. Lots, leases and import sessions are not merged: the coordinator's store is authoritative for them. The catalog is never opened over a share by a worker.
+**Scale** (planning figures, to confirm with `Assess`): 1 to 3 billion messages is about 2 to 6 TB of raw JSON (0.5 to 1.5 TB compressed); files can be several tens of TB. Several workstations can share an export (Graph quotas are per application and tenant: more workstations help only up to that ceiling). Procedure: **(1)** write one CSV per workstation (`-LotFile`), with **disjoint** members; **(2)** on each workstation `-Mode Export -Lot wsN -LotFile .\lots\wsN.csv` into its **own** store on its own local disk; **(3)** when a workstation is finished (nothing may write its store), on the **coordinator** run `-Mode Merge -StoreRoot <coordinator store> -FromStore <store of wsN>`, once per workstation (idempotent; the other store is only read; both must have the same `Store.Partitions`); **(4)** on the coordinator run `-Mode Plan -Lot wsN -LotFile .\lots\wsN.csv` with the **same** CSV: the lot is created over the merged store, then planned. Lots, leases and import sessions are not merged: the coordinator's store is authoritative for them. The catalog is never opened over a share by a worker.
 
 <!-- icon: layers -->
 ## 10. Lots, waves and the life cycle
@@ -569,7 +569,7 @@ The journal is **seeded at plan time** (idempotent `INSERT OR IGNORE`, even for 
 **Idempotency rests on two guards.**
 
 1. **The journal.** A message already `Imported` is not sent again.
-2. **The service's `409`.** The `createdDateTime` of a message is a pure function of its position in the slice (a deterministic `DateScope`, including the +1 ms shifts when two messages share a millisecond), so a resumed run recomputes the same values. A message sent just before a crash (not journaled) is sent again with the **same** date, and the service answers **409 Conflict**, recorded as `Conflict409TreatedAsImported`. In the lab a second full pass over 13 threads produced 780 `409` and no duplicate *(lab)*.
+2. **The service's `409`.** The `createdDateTime` of a message is a pure function of its position in the slice (a deterministic `DateScope`, including the +1 ms shifts when two messages share a millisecond), so a resumed run recomputes the same values. A message sent just before a crash (not journaled) is sent again with the **same** date, and the service answers **409 Conflict**, recorded as `Conflict409TreatedAsImported`. In tests on real tenants a second full pass over 13 threads produced 780 `409` and no duplicate *(lab)*.
 
 The same `409` covers a `POST` that `GraphClient` retried after a timeout. Scenario B adds a fingerprint (`createdDateTime`, author, body hash) to skip messages already in the target.
 
@@ -593,7 +593,7 @@ When the author falls back to the service account, the message body starts with 
 
 ### Ghost accounts
 
-Phase 0 showed that Graph accepts a **disabled** account and a **guest** as the `from` of an imported message, but refuses a **deleted** account (even one in the recycle bin) with *400 Specified user ... could not be found in the tenant* *(lab)*. So each deleted author gets a ghost:
+Graph accepts a **disabled** account and a **guest** as the `from` of an imported message, but refuses a **deleted** account (even one in the recycle bin) with *400 Specified user ... could not be found in the tenant* *(lab)*. So each deleted author gets a ghost:
 
 - `accountEnabled = false`, **no license**, a random password that is never stored;
 - display name `{0} (former)` (`Ghosts.DisplayNameFormat`), UPN `tt-ghost-<short hash>@<domain>`;
@@ -623,7 +623,7 @@ Files are copied **before** the messages, in their own resumable stage, so that 
 - **Sharing.** Chats only: `POST /drives/{d}/items/{i}/invite`, role `read`, `requireSignIn`, **no e-mail**, to the members of the target chat (ghosts, the service account and the owner excluded), 50 per call. Channels inherit the folder permissions. A refused recipient (4xx) is counted, not fatal. `-NoShare` skips sharing.
 - **States.** `Pending` → `Uploaded` → `Shared`, or `Failed` / `Skipped` (size or extension). A re-run leaves `Shared` and `Skipped` alone, only shares `Uploaded`, and retries `Failed` and `Pending`. Failures are per file and never stop the run (`filecopy-errors.csv`).
 - **Preview** sends **no request at all**: files and bytes per destination from the maps and the store. With `-Lot -Apply` the lot moves to `Files`.
-- **Download side.** The `Files` stage resolves each `reference` attachment to a `driveItem` through `GET /shares/{u!...}/driveItem` and streams the content to the store. Files that cannot be found, are forbidden, too large or excluded are counted, not fatal. A departed user's file is an open point (*lab: not yet measured*).
+- **Download side.** The `Files` stage resolves each `reference` attachment to a `driveItem` through `GET /shares/{u!...}/driveItem` and streams the content to the store. Files that cannot be found, are forbidden, too large or excluded are counted, not fatal. A departed user's file is an open point (not verified).
 
 <!-- icon: upload -->
 ## 14. The import
@@ -737,7 +737,7 @@ Priority: `Missing` > `NotCompleted` > `Mismatch` > `OK`. When **every** item is
 <!-- icon: tag -->
 ## 19. Known limits
 
-These come from the service (Phase 0 and the Microsoft documentation) and from the design; they are not bugs.
+These come from the service, from the Microsoft documentation and from the design of the tool; they are not bugs.
 
 1. **Import throughput.** 5 messages per second per conversation, about 60 to 90 per second per application and tenant. At about 75 messages per second, 1 to 3 billion messages would take **150 to 460 days** with one application. Re-injecting the whole history of a very large tenant is **not workable**: scope it (window of months, priority users or teams, extension waves) and leave the rest in the archive. The gain of several applications is not demonstrated.
 2. **No rollback.** An imported conversation cannot be undone; the only fix is to delete it in Teams and import again.
@@ -756,20 +756,20 @@ These come from the service (Phase 0 and the Microsoft documentation) and from t
 15. **Language:** the product is English only (`-Language en`).
 16. **Platform:** Windows x64 and PowerShell 7.4+ (7.5 reviewed for the console libraries). The store is never on a network share.
 
-**Still to measure** (Phase 0): the real gain of a second application with two simultaneous runs; the file of a departed user; a bulk export of normally posted messages in volume (an application cannot post native messages in the lab).
+**Still to measure:** the real gain of a second application with two simultaneous runs; the file of a departed user; a bulk export of normally posted messages in volume (an application cannot post native messages in a test tenant).
 
 <!-- icon: tag -->
 ## 20. Change log
 
-See [CHANGELOG.md](../CHANGELOG.md): version 1.0.0 is the first public release, 1.0.1 brings the documentation to the house layout. The design and the lab findings are in `docs\design\TeamsTransfer-Design.md` and `docs\design\Phase0-Results.md` of the repository.
+See [CHANGELOG.md](../CHANGELOG.md): version 1.0.0 is the first public release, 1.0.1 brings the documentation to the house layout, and the change log describes 1.0.2 as: New release published. Various syntax fixes, no new features.
 
 <!-- icon: book -->
 ## Annex A — Certificates and app registrations for engineers
 
-- **Certificate:** RSA 2048 bits or more, SHA256, `KeySpec Signature`, `KeyUsage DigitalSignature`; create it with `New-SelfSignedCertificate` and a **non-exportable** key, export only the public part (`Export-Certificate`, a `.cer`), upload it to the app registration (`keyCredentials`). One year of validity is a good default; `tools\New-LabCertificate.ps1` does exactly this (a `.pfx` only with `-ExportPfx` and a `SecureString` password).
+- **Certificate:** RSA 2048 bits or more, SHA256, `KeySpec Signature`, `KeyUsage DigitalSignature`; create it with `New-SelfSignedCertificate` and a **non-exportable** key, export only the public part (`Export-Certificate`, a `.cer`), upload it to the app registration (`keyCredentials`). One year of validity is a good default.
 - **Service accounts:** use `Cert:\LocalMachine\My` and grant the account read access to the private key.
 - **Sign-in:** OAuth2 client credentials, `client_assertion_type = jwt-bearer`, a JWT signed with the certificate; scope `https://graph.microsoft.com/.default` (or the sovereign cloud equivalent). Tokens are held in memory.
-- **App registrations:** single tenant, no redirect URI, no secret. One for each side. `tools\Grant-LabConsent.ps1` creates or updates both **idempotently**, resolves each permission name against the `appRoles` of the Microsoft Graph service principal of the tenant (a name that does not exist stops the script), keeps existing permissions and keys, grants consent, and with `-WhatIf` shows every change. It is a **lab** tool.
+- **App registrations:** single tenant, no redirect URI, no secret. One for each side. Each permission name must exist in the `appRoles` of the Microsoft Graph service principal of the tenant; when you update an app, keep its existing permissions and keys, then grant admin consent.
 - **Cloud:** `Source.Cloud`/`Target.Cloud` select the Graph and login hosts (`Global`, `USGov`, `USGovDoD`, `China`). Some protected APIs and the billing are not available in every cloud; confirm before a national-cloud project.
 
 ## Annex B — CSV formats
@@ -789,7 +789,7 @@ SQLite (`Microsoft.Data.Sqlite` 10.0.12 with SQLitePCLRaw 2.1.12), WPF-UI 4.1.0 
 
 ## Annex D — Release procedure
 
-Developer side; the repository README repeats it in short. The release ZIP holds exactly the content of `package\` (no tests, tools, `docs\design`, store, `out`, `config\*.local.psd1`).
+Developer side; the repository README repeats it in short. The release ZIP holds exactly the content of `package\` (no tests, tools, store, `out`, `config\*.local.psd1`).
 
 1. **Dependencies.** `tools\Get-TeamsTransferDependencies.ps1` installs the pinned GUI libraries; `-Verify` checks the installed files, the SQLite libraries and the licence texts against `dependency-lock.json` (offline); `-UpdateLock` rewrites the lock from nuget.org (`-Package 'SQLitePCLRaw*'` limits it to some pins). The licence texts of SQLite, SQLitePCLRaw and Microsoft.Data.Sqlite are in `lib\licenses\` and in the lock.
 2. **Sign the PowerShell files.** The owner signs every `*.ps1`, `*.psm1` and `*.psd1` of the package, the verifier `src\Test-PackageIntegrity.ps1` included (timestamped certificate `0F28E442889F17B5F4D251E8F96E7CC6E2C9C6D6`), but **not** the manifest yet.

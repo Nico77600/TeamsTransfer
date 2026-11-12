@@ -1,6 +1,6 @@
 // DEMO-ONLY SOURCE. Part of the Demo mode of the console (-Gui -Demo): a synthetic tenant and a fake Microsoft Graph, compiled together with the engine
 // in Demo mode and by the tests ONLY. It is never loaded by the command line modes and never talks to the network. Single source of truth (the tests compile it from here).
-// Test helpers of lot J (ghosts, file copy, verify): GfGraphTransport wraps the FakeGraphTransport (which is NOT edited) and adds what the fake
+// Test helpers (ghosts, file copy, verify): GfGraphTransport wraps the FakeGraphTransport (which is NOT edited) and adds what the fake
 // does not know yet:
 //   - POST /users, GET /users/{id|upn} with accountEnabled / employeeType, DELETE /users/{id}, DELETE /directory/deletedItems/{id}
 //     (a created ghost is also added to the FakeTenant, so its OneDrive and the drive invitations work);

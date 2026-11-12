@@ -1,14 +1,14 @@
 // =============================================================================
-//  TeamsTransfer - engine, lot E part 2: export (messages, hosted contents, file references) and Files stage
+//  TeamsTransfer - engine: export (messages, hosted contents, file references) and Files stage
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
-//  STRATEGIES (design 3.2, Phase0-Results)
+//  STRATEGIES
 //    U  per user  : GET /users/{id}/chats/getAllMessages?model=B&$filter=lastModifiedDateTime gt .. and lt ..
 //       One paged stream for ALL the chats of a user, routed to the conversations by chatId. Fast (50 messages per call,
 //       ~20 req/s per user, the limit is per user so users run in parallel). Costs: a group chat is read once per member
-//       (the store deduplicates), and MESSAGES IMPORTED BY A MIGRATION ARE INVISIBLE to it (phase 0).
+//       (the store deduplicates), and MESSAGES IMPORTED BY A MIGRATION ARE INVISIBLE to it.
 //    C  per chat  : GET /chats/{id}/messages?$top=50 [&$filter=..&$orderby=lastModifiedDateTime desc]
 //       Reads a conversation exactly once, sees imported messages. About 1 req/s per chat and 20 req/s per app (throttling
 //       page), so it is the exception: conversations flagged HasImportedContent, verification, or explicit choice.
@@ -1261,7 +1261,7 @@ namespace TeamsTransfer
 //    (a channel message belongs to one team). Sizes of hosted contents and files are measured on a small sample of each.
 //    Export duration = requests / requests-per-second, with requests = pages of messages (50 per call) + chat/channel listings
 //    + 1 per hosted content + 2 per file (resolve + download); requests-per-second is MEASURED during the sampling (or given).
-//    Import duration = unique messages / app rate (60, 75, 90 msg/s: phase 0); the longest sampled conversation gives a floor
+//    Import duration = unique messages / app rate (60, 75, 90 msg/s); the longest sampled conversation gives a floor
 //    (messages / 5 per second, a single conversation cannot go faster).
 //    U versus C on a few chats: ids that C returns (created in the window, visible to the sampled members) and U does not are
 //    messages imported by a previous migration: the conversation is flagged HasImportedContent (exported by C from then on).
@@ -1482,7 +1482,7 @@ namespace TeamsTransfer
             var teams = new List<string>();
             if (!_o.TotalTeams.HasValue || _o.SampleTeams > 0)
             {
-                // GET /teams needs only Team.ReadBasic.All (/groups needs Group.Read.All: real 403 on the lab, 2026-11-10).
+                // GET /teams needs only Team.ReadBasic.All (/groups would need Group.Read.All).
                 await foreach (var t in _g.GetPagedAsync("v1.0/teams?$select=id",
                     EndpointClass.Teams, cancellationToken: ct).ConfigureAwait(false))
                 { var id = ExportUtil.Str(t, "id"); if (id != null) teams.Add(id); }
@@ -1738,7 +1738,7 @@ namespace TeamsTransfer
             report.ChatsWithImportedContent = report.Comparisons.Count(c => c.ImportedContent);
             report.ImportedContentDetected = report.ChatsWithImportedContent > 0;
             if (report.ImportedContentDetected)
-                report.Notes.Add("Messages imported by a previous migration are invisible to getAllMessages (phase 0): the flagged conversations are exported by strategy C, which is slower (about 1 request/s per chat).");
+                report.Notes.Add("Messages imported by a previous migration are invisible to getAllMessages: the flagged conversations are exported by strategy C, which is slower (about 1 request/s per chat).");
 
             // measured throughput
             if (metrics != null && m0 != null)

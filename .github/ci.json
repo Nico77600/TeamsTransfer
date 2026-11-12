@@ -14,6 +14,7 @@
     "tests/FileCopy.Tests.ps1",
     "tests/Ghosts.Tests.ps1",
     "tests/Graph.Tests.ps1",
+    "tests/Hygiene.Tests.ps1",
     "tests/Import.Tests.ps1",
     "tests/Inventory.Tests.ps1",
     "tests/Lots.Tests.ps1",

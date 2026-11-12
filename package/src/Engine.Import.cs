@@ -1,8 +1,8 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 9: the Importer (lot I)
+//  TeamsTransfer - engine: the Importer
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  What it does: re-injects the exported Teams messages of a lot into the TARGET tenant with the Microsoft Graph Teams
 //  migration API (startMigration, POST messages with createdDateTime + from, completeMigration), conversation by conversation.
@@ -21,11 +21,11 @@
 //                              each outcome is journaled at once: Imported (target id), Conflict409TreatedAsImported, Rejected
 //                              (400/403 + code), Skipped (system events, deleted messages)
 //    7  completeMigration      retried with an increasing delay on 400 "not in migration mode" (eventual consistency), then GET
-//                              until migrationMode = completed, CompleteImportSession, item -> Completing (lot J verifies)
+//                              until migrationMode = completed, CompleteImportSession, item -> Completing (the Verify stage checks it)
 //
 //  Idempotency and resume (kill -9 safe)
 //    The journal (catalog.db) says what was done. A POST in flight at the kill is not journaled; on the next run the same
-//    message is sent again with the SAME createdDateTime and the service answers 409 Conflict (phase 0), which is journaled as
+//    message is sent again with the SAME createdDateTime and the service answers 409 Conflict, which is journaled as
 //    Conflict409TreatedAsImported. The createdDateTime of a message is a pure function of the slice order (see DateScope): a
 //    resumed run recomputes exactly the same values, including the +1 ms shifts. A session left Started (same appId) is reused.
 //    The GraphClient retries a POST after a timeout, which may duplicate: the same 409 is the guard.
@@ -35,8 +35,6 @@
 //
 //  Limits honoured: 5 requests/s per conversation (ThreadKey = target conversation id, class migration.importMessage),
 //  parallelism across conversations (ConversationParallelism), ~60-90 msg/s per application (the limiter's class rate).
-//
-//  OWNERSHIP: lot I. Contracts (Engine.ImportContracts.cs) are not modified here.
 // =============================================================================
 using System;
 using System.Collections.Concurrent;
@@ -78,14 +76,14 @@ namespace TeamsTransfer
         /// <summary>Payloads kept in a dry run (redacted).</summary>
         public int DryRunSamples { get; set; } = 20;
         public int MaxReactions { get; set; } = 250;
-        /// <summary>Concurrent message POSTs per conversation (phase 0: 3 in flight reach 5.2 msg/s on one thread, 8 degrade). The 5 req/s per thread limiter still applies.</summary>
+        /// <summary>Concurrent message POSTs per conversation (3 in flight reach 5.2 msg/s on one thread, 8 degrade). The 5 req/s per thread limiter still applies.</summary>
         public int InFlightPerConversation { get; set; } = 3;
-        /// <summary>Copy the files of a conversation (lot J FileCopier, scoped to it) right after its target exists and before its messages are imported, so the
+        /// <summary>Copy the files of a conversation (the FileCopier, scoped to it) right after its target exists and before its messages are imported, so the
         /// reference attachments can point to the copied files. Needed for channels (the folder exists only once the channel does). A failure is a warning.</summary>
         public bool CopyFilesInline { get; set; } = true;
         public int FileCopyParallelism { get; set; } = 4;
         /// <summary>Group chats created by the import: after completeMigration every member is removed and re-added with visibleHistoryStartDateTime = 0001-01-01
-        /// (design 3.4 step 6), best effort. Never for 1:1 chats. POST/DELETE chat members are limited to 4 requests/min per chat.</summary>
+        /// best effort. Never for 1:1 chats. POST/DELETE chat members are limited to 4 requests/min per chat.</summary>
         public bool RestoreGroupHistory { get; set; } = true;
         public TimeSpan ChatMemberRequestInterval { get; set; } = TimeSpan.FromSeconds(15);
         /// <summary>A hosted content larger than this is dropped from the message (with a reason).</summary>
@@ -592,7 +590,7 @@ namespace TeamsTransfer
             return l;
         }
 
-        /// <summary>Runs lot J's FileCopier scoped to ONE conversation whose target now exists. Failures are warnings: the attachment is then dropped with AttachmentNotCopied.</summary>
+        /// <summary>Runs the FileCopier scoped to ONE conversation whose target now exists. Failures are warnings: the attachment is then dropped with AttachmentNotCopied.</summary>
         private async Task CopyFilesInlineAsync(string key, LotItem item, CancellationToken ct)
         {
             try
@@ -615,7 +613,7 @@ namespace TeamsTransfer
         private const string HistoryMarker = "[history-restored]";
 
         /// <summary>
-        /// Design 3.4 step 6, best effort: a group chat created by the import gives its members no access to the imported history. Each member is removed and
+        /// Best effort: a group chat created by the import gives its members no access to the imported history. Each member is removed and
         /// re-added at once with visibleHistoryStartDateTime = 0001-01-01. POST/DELETE chat members are limited to 4 requests/min per chat: paced with
         /// ChatMemberRequestInterval. Never for 1:1 chats. A failure is a warning; done once per chat (marker in the target note).
         /// </summary>
@@ -867,7 +865,7 @@ namespace TeamsTransfer
                     w.WriteString("chatType", oneOnOne ? "oneOnOne" : "group");
                     if (!oneOnOne && !string.IsNullOrEmpty(topic)) w.WriteString("topic", topic);
                     w.WriteStartArray("members");
-                    foreach (var m in members) WriteMember(w, m, true, false);   // the service refuses visibleHistoryStartDateTime at creation (lab): see RestoreGroupHistoryAsync
+                    foreach (var m in members) WriteMember(w, m, true, false);   // the service refuses visibleHistoryStartDateTime at creation: see RestoreGroupHistoryAsync
                     w.WriteEndArray();
                     w.WriteEndObject();
                 }
@@ -902,7 +900,7 @@ namespace TeamsTransfer
                 {
                     teamId = _targets.List().Where(x => x.CreateTeamName == teamName && !string.IsNullOrEmpty(x.TargetTeamId)).Select(x => x.TargetTeamId).FirstOrDefault();
                     // A run killed between POST /teams and the Upsert below (or a POST retried after a timeout) already created
-                    // the team: find it by name before creating one (a duplicate team happened on the lab in phase 0).
+                    // the team: find it by name before creating one, so that a retried creation never makes a duplicate team.
                     if (string.IsNullOrEmpty(teamId)) teamId = await FindTeamByNameAsync(teamName, ct).ConfigureAwait(false);
                     if (string.IsNullOrEmpty(teamId))
                     {
@@ -1022,7 +1020,7 @@ namespace TeamsTransfer
                     w.WriteString("template@odata.bind", "https://graph.microsoft.com/v1.0/teamsTemplates('standard')");
                     w.WriteString("displayName", name);
                     w.WriteString("description", "Imported by TeamsTransfer");
-                    w.WriteStartArray("members"); WriteMember(w, ownerId, true, false); w.WriteEndArray();   // phase 0: one member at creation
+                    w.WriteStartArray("members"); WriteMember(w, ownerId, true, false); w.WriteEndArray();   // one member at creation
                     w.WriteEndObject();
                 }
                 json = Encoding.UTF8.GetString(ms.ToArray());

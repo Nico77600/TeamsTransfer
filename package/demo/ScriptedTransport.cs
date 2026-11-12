@@ -1,6 +1,6 @@
 // DEMO-ONLY SOURCE. Part of the Demo mode of the console (-Gui -Demo): a synthetic tenant and a fake Microsoft Graph, compiled together with the engine
 // in Demo mode and by the tests ONLY. It is never loaded by the command line modes and never talks to the network. Single source of truth (the tests compile it from here).
-// Test helpers of lot A (Auth / Graph / Throttle): a scripted IGraphTransport, a virtual clock and a stub HttpMessageHandler.
+// Test helpers (Auth / Graph / Throttle): a scripted IGraphTransport, a virtual clock and a stub HttpMessageHandler.
 // Compiled together with the engine by TestHelpers.ps1. Offline, deterministic, no real sleeping.
 using System;
 using System.Collections.Generic;

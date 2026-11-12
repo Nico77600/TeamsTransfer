@@ -1,23 +1,23 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 0c: import contracts
+//  TeamsTransfer - engine: import contracts
 // -----------------------------------------------------------------------------
-//  The seam between the three import lots:
-//    H  Mapping + Plan    (Engine.Mapping.cs, Engine.Plan.cs)   fills IIdentityMap and ITargetMap, resolves lots,
-//                                                               writes the dry-run plan (ImportPlan).
-//    J  Ghosts + Files + Verify (Engine.Ghosts.cs, Engine.FileCopy.cs, Engine.Verify.cs)
-//                                                               creates ghost accounts (fills IIdentityMap with
-//                                                               Kind=Ghost), copies files (fills IFileCopyMap),
-//                                                               verifies source vs target counts.
-//    I  Importer          (Engine.Import.cs)                    reads the plan, the three maps, the store and the
-//                                                               journal; creates/finds target conversations;
-//                                                               startMigration / import / completeMigration.
-//  Persistence of the three maps lives in catalog.db (lot H implements it in Engine.CatalogImport.cs as a partial of
-//  TmtStore); every lot programs against the interfaces below and tests with in-memory implementations.
+//  The seam between the three import components:
+//    Mapping + Plan    (Engine.Mapping.cs, Engine.Plan.cs)   fills IIdentityMap and ITargetMap, resolves lots,
+//                                                            writes the dry-run plan (ImportPlan).
+//    Ghosts + Files + Verify (Engine.Ghosts.cs, Engine.FileCopy.cs, Engine.Verify.cs)
+//                                                            creates ghost accounts (fills IIdentityMap with
+//                                                            Kind=Ghost), copies files (fills IFileCopyMap),
+//                                                            verifies source vs target counts.
+//    Importer          (Engine.Import.cs)                    reads the plan, the three maps, the store and the
+//                                                            journal; creates/finds target conversations;
+//                                                            startMigration / import / completeMigration.
+//  Persistence of the three maps lives in catalog.db (Engine.CatalogImport.cs, a partial of TmtStore); every component
+//  programs against the interfaces below and tests with in-memory implementations.
 //
-//  Stage order of a lot (design 3.7): Plan -> Ghosts -> Files -> Import -> Verify. Every write stage is a dry run
+//  Stage order of a lot: Plan -> Ghosts -> Files -> Import -> Verify. Every write stage is a dry run
 //  unless ImportRunOptions.Apply is true (the entry script maps -Apply / -WhatIf onto it).
 //
-//  Phase 0 facts the implementations MUST honour (docs\design\Phase0-Results.md):
+//  Service facts the implementations MUST honour:
 //    - a deleted user cannot be an author (400 "could not be found in the tenant"): Ghost or ServiceAccount;
 //      a disabled user or a guest can.
 //    - 5 requests/s per conversation; ~60-90 msg/s per app per tenant; parallelism across conversations.
@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace TeamsTransfer
 {
-    /// <summary>Design 3.5: A tenant-to-tenant, B restore in the same tenant, C archive of departed users.</summary>
+    /// <summary>A tenant-to-tenant, B restore in the same tenant, C archive of departed users.</summary>
     public enum ImportScenario { TenantToTenant, SameTenantRestore, DepartedArchive }
 
     // --- identities ----------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ namespace TeamsTransfer
         Mapped,
         /// <summary>Same object in the target (scenario B, user still exists).</summary>
         Same,
-        /// <summary>Source user deleted/absent: a disabled, unlicensed ghost account in the target (design 3.6).</summary>
+        /// <summary>Source user deleted/absent: a disabled, unlicensed ghost account in the target.</summary>
         Ghost,
         /// <summary>Fallback author: the service account, the message body gets the "Original message from ..." prefix.</summary>
         ServiceAccount,
@@ -161,7 +161,7 @@ namespace TeamsTransfer
         public string GhostDisplayNameFormat { get; set; } = "{0} (former)";
         /// <summary>Ghost UPN domain in the target tenant (verified domain or onmicrosoft.com).</summary>
         public string GhostDomain { get; set; }
-        /// <summary>Above this many ghosts the plan is blocked unless ConfirmGhostCount is set (design 3.6).</summary>
+        /// <summary>Above this many ghosts the plan is blocked unless ConfirmGhostCount is set.</summary>
         public int GhostConfirmThreshold { get; set; } = 5000;
         public bool ConfirmGhostCount { get; set; }
         public int ConversationParallelism { get; set; } = 32;

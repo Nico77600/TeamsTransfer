@@ -1,7 +1,7 @@
 // DEMO-ONLY SOURCE. Part of the Demo mode of the console (-Gui -Demo): a synthetic tenant and a fake Microsoft Graph, compiled together with the engine
 // in Demo mode and by the tests ONLY. It is never loaded by the command line modes and never talks to the network. Single source of truth (the tests compile it from here).
 // =============================================================================
-//  TeamsTransfer - fake Microsoft Graph, part 1: the in-memory tenant model (tests, demo mode, volume tests)
+//  TeamsTransfer - fake Microsoft Graph: the in-memory tenant model (tests, demo mode, volume tests)
 // -----------------------------------------------------------------------------
 //  WHY: the engine must be tested offline, deterministically, and at the scale it will meet in production (a user with
 //  hundreds of thousands of messages, a tenant with millions). This file holds the tenant the fake service answers from:
@@ -482,8 +482,8 @@ namespace TeamsTransfer.Testing
         public readonly Dictionary<string, FakeDriveItem> ItemsById = new Dictionary<string, FakeDriveItem>(StringComparer.OrdinalIgnoreCase);
         public readonly Dictionary<string, FakeDriveItem> ItemsByUrl = new Dictionary<string, FakeDriveItem>(StringComparer.OrdinalIgnoreCase);
 
-        // ---- behaviours that phase 0 must confirm against the real service (each one is documented in FakeGraphTransport) ----
-        /// <summary>Does the import API accept a message whose author is a deleted account? Unknown until phase 0: default false (pessimistic).</summary>
+        // ---- behaviours of the real service that the options below can flip (each one is documented in FakeGraphTransport) ----
+        /// <summary>Does the import API accept a message whose author is a deleted account? The real service refuses it (400), so the default is false.</summary>
         public bool DeletedAuthorsAccepted = false;
         /// <summary>Max body size of an imported message in bytes (the Teams limit is about 28 KB).</summary>
         public int MaxBodyBytes = 28 * 1024;

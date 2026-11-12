@@ -1,8 +1,8 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    Offline tests of the Importer (package\src\Engine.Import.cs, lot I) and of its PowerShell surface (TeamsTransfer.Import.ps1, the Import mode
+    Offline tests of the Importer (package\src\Engine.Import.cs) and of its PowerShell surface (TeamsTransfer.Import.ps1, the Import mode
     of the entry script). The target tenant is FakeGraph wrapped in ImportRealismTransport (tests\support\ImportTestTransports.cs), which makes the
-    fake behave like the real service where Phase0-Results.md says they differ (409 on a duplicate date, reopening a completed thread, eventual
+    fake behave like the real service where they differ (409 on a duplicate date, reopening a completed thread, eventual
     consistency of migrationMode, lost responses, a "kill" between a POST and its journal entry). The maps are in memory
     (tests\support\ImportTestMaps.cs). The source is a real TmtStore on a temporary disk folder (journal, lots, items, messages).
 #>
@@ -292,7 +292,7 @@ Describe 'Full flow per conversation type' {
         $r.ChannelsCreated | Should -Be 2
         @($e.Tenant.Teams).Count | Should -Be 1
         $team = $e.Tenant.Teams[0]
-        @($team.Members).Count | Should -Be 3                          # created with ONE member (phase 0), the planned members are added to the TEAM before the private channels
+        @($team.Members).Count | Should -Be 3                          # created with ONE member, the planned members are added to the TEAM before the private channels
         $privates = @($team.Channels | Where-Object { $_.TypeName -eq 'private' })
         $privates.Count | Should -Be 2
         foreach ($c in $privates) { @($c.Members).Count | Should -Be 3; @($c.Messages).Count | Should -Be 3; $c.MigrationMode | Should -Be 'completed' }
@@ -614,7 +614,7 @@ Describe 'Idempotency and resume' {
     }
 }
 
-Describe 'Lab regressions: chats, teams, members' {
+Describe 'Chats, teams and members' {
     It 'a new group chat is created WITHOUT visibleHistoryStartDateTime (the service refuses it); members are then removed and re-added with it, paced at 4 requests/min' {
         $e = New-Env; Set-Ident $e
         Add-Source $e 'chat:G1' 'Group' (1..3 | ForEach-Object { New-Msg -At (At $_) -From 'src-carol' }) -Topic 'Project'
@@ -731,7 +731,7 @@ Describe 'Lab regressions: chats, teams, members' {
     }
 }
 
-Describe 'Files copied inline (lot J FileCopier) before the messages' {
+Describe 'Files copied inline (FileCopier) before the messages' {
     BeforeAll {
         function Add-FileMessage($e, [string]$Key, [string]$MsgId, [datetimeoffset]$At, [string]$Name, [byte[]]$Bytes, [string]$AttId, [switch]$NoContent) {
             $body = "<p>file</p><attachment id=`"$AttId`"></attachment>"

@@ -1,8 +1,8 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 2: adaptive rate limiter
+//  TeamsTransfer - engine: adaptive rate limiter
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  Why this file exists:
 //    Microsoft Graph throttles per application and per tenant, with different budgets per endpoint family, and

@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer - engine, lot J part 2: file copy to the target (design 3.3, "Import")
+//  TeamsTransfer - engine: file copy to the target
 // -----------------------------------------------------------------------------
 //  The download counterpart is FilesStage (Engine.Export.cs). Files are copied BEFORE the messages, in their own resumable step, so that the
 //  importer can rewrite each reference attachment to the new item (IFileCopyMap: TargetDriveId / TargetItemId / TargetWebUrl).

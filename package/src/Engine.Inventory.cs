@@ -1,8 +1,8 @@
 // =============================================================================
-//  TeamsTransfer - engine, lot E part 1: shared work helpers + tenant inventory
+//  TeamsTransfer - engine: shared work helpers + tenant inventory
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  WHAT THIS FILE HOLDS
 //    - small shared helpers of the export engine (Engine.Export.cs uses them too): StopControl (stop file / hook),

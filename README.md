@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-banner-dark.svg">
-    <img alt="Teams Transfer 1.0.1: move Microsoft Teams chats and channels between tenants. Export to a verified local store, read it offline, import in lots and waves, ghost accounts keep the original authors, every write is previewed first. PowerShell 7.4+, MIT license. 13 modes in one tool, 5 messages per second per conversation, 0 messages sent twice." src="package/docs/images/readme-banner-light.svg">
+    <img alt="Teams Transfer 1.0.2: move Microsoft Teams chats and channels between tenants. Export to a verified local store, read it offline, import in lots and waves, ghost accounts keep the original authors, every write is previewed first. PowerShell 7.4+, MIT license. 13 modes in one tool, 5 messages per second per conversation, 0 messages sent twice." src="package/docs/images/readme-banner-light.svg">
   </picture>
 </p>
 
@@ -21,16 +21,16 @@
 </p>
 
 **Author: Nicolas Fabert (Nico77600)**<br>
-**Version 1.0.1** ([changelog](package/CHANGELOG.md)) &middot; MIT license
+**Version 1.0.2** ([changelog](package/CHANGELOG.md)) &middot; MIT license
 
 > [!TIP]
-> **Download the latest release.** Open the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) and download **`TeamsTransfer-1.0.1-win-x64.zip`** under *Assets* (its SHA-256 is in the release notes). That ZIP is the signed tool, with the HTML guides. Do not use the **Source code** archives or the green **Code** button: they are a copy of the repository, not the release package.
+> **Download the latest release.** Open the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) and download **`TeamsTransfer-1.0.2-win-x64.zip`** under *Assets* (its SHA-256 is in the release notes). That ZIP is the signed tool, with the HTML guides. Do not use the **Source code** archives or the green **Code** button: they are a copy of the repository, not the release package.
 
 > [!IMPORTANT]
 > Windows marks files downloaded from the Internet. After you extract the ZIP, check the publisher first (right-click `Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures: `Nicolas Fabert`), then unblock the extracted folder once:
 >
 > ```powershell
-> Get-ChildItem "D:\Tools\TeamsTransfer-1.0.1" -Recurse -File -Force | Unblock-File
+> Get-ChildItem "D:\Tools\TeamsTransfer-1.0.2" -Recurse -File -Force | Unblock-File
 > ```
 >
 > Replace the example path with the folder the ZIP created. A release package is verified before anything runs; a source checkout starts only with `-DevelopmentMode`.
@@ -65,7 +65,7 @@ Moving Teams conversations between tenants is not a copy: the service has no exp
   <img alt="The guided path. Set up once: 1 get your rights, 2 put the tool on the PC, 3 fill in the settings file, 4 open the console. Then branch A, export and read offline: 5 estimate and inventory, 6 export, 7 open the archive. Or branch B, import into a tenant: 5 plan a lot, 6 ghosts, files, messages with a preview then Apply, 7 verify" src="package/docs/images/readme-path-light.png">
 </picture>
 
-One path for everyone. Set the tool up once (**1 to 4**), then take task **A** to export and read offline, **B** to import into a tenant, or both. The commands use one example: the ZIP extracted in `D:\Tools` (it creates `D:\Tools\TeamsTransfer-1.0.1`) and the store in `D:\ttstore`. Change only these folders to yours. The [user guide](package/docs/TeamsTransfer-UserGuide.md) explains each step with a picture, what you should see and what to do if not, in plain words.
+One path for everyone. Set the tool up once (**1 to 4**), then take task **A** to export and read offline, **B** to import into a tenant, or both. The commands use one example: the ZIP extracted in `D:\Tools` (it creates `D:\Tools\TeamsTransfer-1.0.2`) and the store in `D:\ttstore`. Change only these folders to yours. The [user guide](package/docs/TeamsTransfer-UserGuide.md) explains each step with a picture, what you should see and what to do if not, in plain words.
 
 ### Set up once &middot; 1 to 4
 
@@ -73,16 +73,16 @@ One path for everyone. Set the tool up once (**1 to 4**), then take task **A** t
 # 1 · Get your rights. Give your administrator the section "Requirements" below and chapter 2 of the user guide:
 #     one app registration per side, with a certificate (a read-only source app, a target app that writes).
 
-# 2 · On the PC, in PowerShell 7.4+: download TeamsTransfer-1.0.1-win-x64.zip from the latest release
+# 2 · On the PC, in PowerShell 7.4+: download TeamsTransfer-1.0.2-win-x64.zip from the latest release
 #     (under Assets, not Source code), extract it to D:\Tools, then unblock the folder it created.
-Get-ChildItem D:\Tools\TeamsTransfer-1.0.1 -Recurse -File -Force | Unblock-File
+Get-ChildItem D:\Tools\TeamsTransfer-1.0.2 -Recurse -File -Force | Unblock-File
 
 # 3 · Write your tenant ids, application ids and certificate thumbprints in the file you create
 #     (the user guide, chapter 3, shows how; the console also shows what is missing).
-notepad D:\Tools\TeamsTransfer-1.0.1\config\TeamsTransfer.config.local.psd1
+notepad D:\Tools\TeamsTransfer-1.0.2\config\TeamsTransfer.config.local.psd1
 
 # 4 · Open the console: double-click Start-TeamsTransferConsole.cmd, or
-cd D:\Tools\TeamsTransfer-1.0.1
+cd D:\Tools\TeamsTransfer-1.0.2
 .\Start-TeamsTransferConsole.cmd           # or: pwsh -STA -File .\Invoke-TeamsTransfer.ps1 -Gui
 .\Start-TeamsTransferConsole.cmd -Demo     # try it on synthetic tenants first: nothing leaves the machine
 ```
@@ -221,7 +221,7 @@ The [reference guide](package/docs/TeamsTransfer-Guide.md) lists every file of e
 
 ## Quick start
 
-1. Download `TeamsTransfer-1.0.1-win-x64.zip` from the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) (under Assets, not Source code) and extract it into a writable, access-restricted local folder, for example `D:\Tools`.
+1. Download `TeamsTransfer-1.0.2-win-x64.zip` from the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) (under Assets, not Source code) and extract it into a writable, access-restricted local folder, for example `D:\Tools`.
 2. Check the publisher (right-click `Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures), then unblock the folder once:
 
    ```powershell

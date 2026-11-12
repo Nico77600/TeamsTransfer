@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 0: shared contracts
+//  TeamsTransfer - engine: shared contracts
 // -----------------------------------------------------------------------------
 //  The single seam between the engine and Microsoft Graph. Everything that talks to Graph goes through
 //  IGraphTransport: the real HttpGraphTransport (Engine.Graph.cs) in production, FakeGraphTransport
@@ -122,7 +122,7 @@ namespace TeamsTransfer
         Task<string> GetTokenAsync(CancellationToken cancellationToken);
     }
 
-    /// <summary>Stable endpoint family names. Shared by the rate limiter, the logs, the fake and the phase 0 report.</summary>
+    /// <summary>Stable endpoint family names. Shared by the rate limiter, the logs, the fake and the reports.</summary>
     public static class EndpointClass
     {
         public const string Token = "token";
