@@ -1,15 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="490" viewBox="0 0 1600 490" role="img" aria-labelledby="title desc">
   <title id="title">Teams Transfer</title>
-  <desc id="desc">Nicolas Fabert. Export Teams chats and channels to a local store, browse them offline, import them into a tenant and verify. Version 1.0.0, Windows x64, PowerShell 7.4 or later.</desc>
-  <rect width="1200" height="300" rx="24" fill="#292929"/>
-  <rect x="1" y="1" width="1198" height="298" rx="23" fill="none" stroke="#474747" stroke-width="2"/>
-  <path d="M54 58h44a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H78l-10 9v-9H54a6 6 0 0 1-6-6V64a6 6 0 0 1 6-6z" fill="none" stroke="#fd8ea1" stroke-width="3" stroke-linejoin="round"/>
-  <text x="124" y="81" font-family="Segoe UI,Arial,sans-serif" font-size="21" fill="#b0b0b0">NICOLAS FABERT</text>
-  <text x="54" y="145" font-family="Segoe UI,Arial,sans-serif" font-size="48" font-weight="700" fill="#dedede">Teams Transfer</text>
-  <text x="56" y="188" font-family="Segoe UI,Arial,sans-serif" font-size="24" fill="#b0b0b0">Export / browse offline / plan / import / verify</text>
-  <rect x="54" y="222" width="150" height="37" rx="10" fill="#fd8ea1"/>
-  <text x="72" y="246" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="600" fill="#1a1a1a">VERSION 1.0.0</text>
-  <text x="230" y="246" font-family="Segoe UI,Arial,sans-serif" font-size="18" fill="#b0b0b0">Windows x64 / PowerShell 7.4 or later / MIT license</text>
-  <rect x="1027" y="60" width="112" height="112" rx="22" fill="#343231" stroke="#474747"/>
-  <path d="M1050 88h46a6 6 0 0 1 6 6v18a6 6 0 0 1-6 6h-22l-10 9v-9h-14a6 6 0 0 1-6-6V94a6 6 0 0 1 6-6z M1076 124h30a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-8v8l-9-8h-13a6 6 0 0 1-6-6v-14" fill="none" stroke="#fd8ea1" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <desc id="desc">Teams Transfer 1.0.1: export Teams chats and channels to a verified local store, read them offline, import them into a tenant in lots and waves, with a ghost account for every deleted author, and verify the result.</desc>
+  <defs>
+    <linearGradient id="surface" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#262626"/><stop offset="1" stop-color="#46353b"/>
+    </linearGradient>
+    <clipPath id="card"><rect x="10" y="10" width="1580" height="470" rx="26"/></clipPath>
+  </defs>
+  <rect x="10" y="10" width="1580" height="470" rx="26" fill="url(#surface)" stroke="#535353" stroke-width="2"/>
+  <g clip-path="url(#card)"><circle cx="1430" cy="40" r="235" fill="none" stroke="#fd8ea1" stroke-opacity=".1" stroke-width="70"/></g>
+  <path d="M37 13H1563" stroke="#fd8ea1" stroke-width="5" stroke-linecap="round"/>
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <rect x="55" y="55" width="88" height="88" rx="24" fill="#fd8ea1"/>
+    <g fill="none" stroke="#242424" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"><path d="M72 68h34a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H88l-9 8v-8h-7a5 5 0 0 1-5-5V73a5 5 0 0 1 5-5z"/><path d="M99 106h26a5 5 0 0 1 5 5v12a5 5 0 0 1-5 5h-3v7l-8-7H99a5 5 0 0 1-5-5v-12a5 5 0 0 1 5-5z"/></g>
+    <text x="170" y="77" fill="#fd8ea1" font-size="16" font-weight="700" letter-spacing="2">TEAMS CHATS AND CHANNELS · EXPORT, ARCHIVE, IMPORT</text>
+    <text x="170" y="126" fill="#f5f5f5" font-size="43" font-weight="700">Teams Transfer</text>
+    <text x="55" y="205" fill="#f5f5f5" font-size="27">Move Teams chats and channels between tenants.</text>
+    <text x="55" y="252" fill="#d1d1d1" font-size="23">Export to a verified local store, read it offline, import in lots and waves.</text>
+    <text x="55" y="286" fill="#d1d1d1" font-size="23">Ghost accounts keep the original authors; every write is previewed first.</text>
+    <rect x="55" y="335" width="212" height="48" rx="24" fill="#fd8ea1"/>
+    <text x="161" y="365" text-anchor="middle" fill="#242424" font-size="19" font-weight="600">Version 1.0.1</text>
+    <rect x="280" y="335" width="195" height="48" rx="24" fill="#262626" stroke="#535353"/>
+    <text x="378" y="365" text-anchor="middle" fill="#d1d1d1" font-size="19">PowerShell 7.4+</text>
+    <rect x="488" y="335" width="281" height="48" rx="24" fill="#262626" stroke="#535353"/>
+    <text x="628" y="365" text-anchor="middle" fill="#d1d1d1" font-size="19">Preview before every write</text>
+    <rect x="782" y="335" width="154" height="48" rx="24" fill="#262626" stroke="#535353"/>
+    <text x="859" y="365" text-anchor="middle" fill="#d1d1d1" font-size="19">MIT license</text>
+    <text x="55" y="435" fill="#d1d1d1" font-size="17">Nicolas Fabert / Windows x64</text>
+    <g fill="#262626" stroke="#535353" stroke-width="2">
+      <rect x="1080" y="75" width="455" height="100" rx="22"/>
+      <rect x="1080" y="195" width="455" height="100" rx="22"/>
+      <rect x="1080" y="315" width="455" height="100" rx="22"/>
+    </g>
+    <g fill="#fd8ea1" font-weight="700" font-size="32"><text x="1110" y="136">13</text><text x="1110" y="256">5</text><text x="1110" y="376">0</text></g>
+    <g fill="#f5f5f5" font-size="21" font-weight="600"><text x="1200" y="119">Modes in one tool</text><text x="1200" y="239">Messages per second</text><text x="1200" y="359">Messages sent twice</text></g>
+    <g fill="#d1d1d1" font-size="19"><text x="1200" y="150">From estimate to verify</text><text x="1200" y="270">Limit of the service per chat</text><text x="1200" y="390">A journal makes runs resumable</text></g>
+  </g>
 </svg>

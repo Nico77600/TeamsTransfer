@@ -109,7 +109,7 @@
           <RadioButton x:Name="ThemeLight" Content="Light" GroupName="Theme" Padding="12,4" Style="{StaticResource TtSeg}" Margin="0,0,4,0" AutomationProperties.Name="Theme: light" />
           <RadioButton x:Name="ThemeDark" Content="Dark" GroupName="Theme" Padding="12,4" Style="{StaticResource TtSeg}" AutomationProperties.Name="Theme: dark" />
         </StackPanel>
-        <TextBlock x:Name="VersionText" Text="v1.0.0 · Nicolas Fabert" FontSize="12" HorizontalAlignment="Right" Margin="0,4,0,0" Style="{StaticResource TtSecondaryText}" />
+        <TextBlock x:Name="VersionText" Text="v1.0.1 · Nicolas Fabert" FontSize="12" HorizontalAlignment="Right" Margin="0,4,0,0" Style="{StaticResource TtSecondaryText}" />
       </StackPanel>
     </Grid>
 

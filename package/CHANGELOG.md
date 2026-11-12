@@ -4,6 +4,19 @@ All notable changes of Teams Transfer. Author: Nicolas Fabert (Nico77600). Versi
 a MAJOR version changes the command line or the configuration file, a MINOR version adds a feature,
 a PATCH version fixes a defect. The archive data format has its own version (`preview-v1`, see the reference guide, chapter 16).
 
+## 1.0.1 — 2026-11-12
+
+Documentation release: no change to the engine, the command line or the configuration.
+
+### Changed
+- **README and guides in the house layout.** A new README banner (title, lead, pills and key figures) and explanatory drawings,
+  light and dark: what the tool does, the guided path, how it works and its modes, the principles, lots and waves, and the
+  application permissions per mode (drawn from `config\Permissions.psd1`). The repository README follows the layout of the
+  other projects of the author (download badge, release tip, Get started, Console).
+- **HTML guides.** Icons on every note, tip, important, warning and caution box; the Teams Transfer icon in the header and the
+  side bar; the guided path drawn as in the other guides; a picture dictionary in the user guide; the drawings switch with the
+  light or dark theme.
+
 ## 1.0.0 — 2026-11-12
 
 First public release. Validated end to end on a real lab (two tenants, 1:1 chats, group chats, standard and private channels,

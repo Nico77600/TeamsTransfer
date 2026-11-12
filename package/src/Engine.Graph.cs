@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 3: Microsoft Graph transport and client
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.0
+//  Version : 1.0.1
 //
 //  Two layers, on purpose:
 //    HttpGraphTransport  - "dumb": one request in, one response out. One shared HttpClient (pooled connections,

@@ -477,7 +477,7 @@ Describe 'Reports and persistence' {
         $r.ResultsFile | Should -Exist
         $folder = Join-Path $script:TempRoot 'vreport'
         [TeamsTransfer.VerifyReport]::WriteCsv((Join-Path $folder 'verify.csv'), $r.Items)
-        [TeamsTransfer.VerifyReport]::WriteHtml((Join-Path $folder 'verify.html'), 'L1', $r.Items, $script:Now, '1.0.0')
+        [TeamsTransfer.VerifyReport]::WriteHtml((Join-Path $folder 'verify.html'), 'L1', $r.Items, $script:Now, '1.0.1')
         $csv = Import-Csv -LiteralPath (Join-Path $folder 'verify.csv')
         @($csv).Count | Should -Be 1
         $csv[0].Outcome | Should -Be 'Mismatch'

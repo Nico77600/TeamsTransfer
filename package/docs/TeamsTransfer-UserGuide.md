@@ -1,7 +1,7 @@
 ---
 title: Teams Transfer
 subtitle: User guide
-version: 1.0.0
+version: 1.0.1
 author: Nicolas Fabert
 updated: 2026-11-10
 badges: Windows x64, Guided console
@@ -46,6 +46,8 @@ arrow | check |
 check | Verify | source against target
 ```
 
+![Three ideas: the source tenant holds the chats and channels and is only read; the local store keeps them checked and readable offline in an archive; the target tenant receives ghost accounts, then the messages with their original authors and dates, written only with -Apply](images/readme-why-light.png)
+
 ### When to use it
 
 | Your situation | Use it to |
@@ -75,16 +77,23 @@ Read this once. It saves you a bad surprise.
 
 You do part A once, then part B for each lot.
 
-```steps
-Get your rights | an administrator creates two app registrations and a certificate (chapter 2)
-Put the tool on a computer | extract the folder, unblock, fill in the settings (chapter 3)
-Open the console | all the lights are green (chapter 4, Setup)
-Estimate | how many messages, how long, how many waves
-Export | copy the conversations into the store
-Browse | read them offline and check them
-Import a lot | plan, ghosts, files, messages; with a preview before every write
-Verify | compare the target with the source
+```path
+Set up once | settings | Get ready, once
+Set up once | 1 | Get your rights | ask your administrator (chapter 2)
+Set up once | 2 | Put the tool on the PC | unzip, then unblock (chapter 3)
+Set up once | 3 | Fill in the settings file | ids and thumbprints
+Set up once | 4 | Open the console | all the lights are green (chapter 4)
+A | download | Export and read offline
+A | 5 | Estimate and inventory | reads only, nothing is changed
+A | 6 | Export | 24 months, channels and files
+A | 7 | Open the archive | offline, by double-click
+B | upload | Import into a tenant
+B | 5 | Plan a lot | a dry run: read plan.html
+B | 6 | Ghosts, files, messages | a preview first, then -Apply
+B | 7 | Verify | read verify.html
 ```
+
+![The guided path. Set up once: 1 get your rights, 2 put the tool on the PC, 3 fill in the settings file, 4 open the console. Branch A, export and read offline: 5 estimate and inventory, 6 export, 7 open the archive. Branch B, import into a tenant: 5 plan a lot, 6 ghosts, files, messages with a preview then Apply, 7 verify](images/readme-path-light.png)
 
 <!-- icon: checklist -->
 ## 2. Before you start
@@ -691,6 +700,8 @@ A lot is created by the **Plan** over the conversations already in the store. In
 | **3** | months 37 to 48 | later |
 | **4** | months 49 to 60 | later |
 
+![Lots and waves: wave 1 is the last 24 months, then extension waves for months 25 to 36, 37 to 48 and 49 to 60; about 5 messages per second per conversation and 60 to 90 per second per application; years of history take weeks or months](images/readme-waves-light.png)
+
 Ask for more at the start with **Window**: a number of months from `1m` to `600m` (for example `36m`, `48m` or `60m`; waves of 12 months follow the first 24). A new lot accepts a number of months only, not a date range. Then import **wave 1** (the default), and, days or weeks later, **wave 2** on the same lot (`-Slices 2` on Plan, CopyFiles and Import), and so on. Microsoft allows a finished conversation to be reopened with an **earlier** start date and filled with older messages: that is what each extension wave does.
 
 > [!NOTE]
@@ -956,7 +967,7 @@ Find what you **see** in the left column. The middle column says what it **means
 | *Archive takes one user at a time in this version* | Archive takes one user or one team. | Run it once per user, or use `-Conversation` with several keys. |
 
 > [!NOTE]
-> This list follows the messages of version 1.0.0. A message that is not here still ends with an exit code and the path of the log: copy the final card and send it to your administrator.
+> This list follows the messages of version 1.0.1. A message that is not here still ends with an exit code and the path of the log: copy the final card and send it to your administrator.
 
 <!-- icon: refresh -->
 ## 8. Clean up and undo
@@ -1011,6 +1022,8 @@ Each account is read back first and refused unless its `employeeType` is `TeamsT
 
 <!-- icon: book -->
 ## Annex A — Glossary
+
+![A picture dictionary of eight words of this guide: store, archive, lot, wave, plan, ghost account, journal and throttling, each with a one-line meaning](images/guide-dictionary-light.png)
 
 | Word | What it means |
 |---|---|
