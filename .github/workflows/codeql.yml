@@ -1,0 +1,107 @@
+{
+  "name": "CodeQL (advisory)",
+  "on": {
+    "pull_request": {
+      "branches": ["main"]
+    },
+    "push": {
+      "branches": ["main"]
+    },
+    "schedule": [
+      {
+        "cron": "41 5 * * 3"
+      }
+    ],
+    "workflow_dispatch": {}
+  },
+  "permissions": {},
+  "concurrency": {
+    "group": "codeql-${{ github.workflow }}-${{ github.ref }}",
+    "cancel-in-progress": true
+  },
+  "jobs": {
+    "analyze": {
+      "name": "CodeQL ${{ matrix.language }} (advisory)",
+      "if": "${{ contains(fromJSON('[\"Nico77600/ExchangeLogReport\",\"Nico77600/MailboxMessageReport\",\"Nico77600/MailboxTransfer\",\"Nico77600/MeetingCleanup\",\"Nico77600/MeetingCleanupOnPrem\",\"Nico77600/MessageTraceReport\",\"Nico77600/PurviewDlpReport\",\"Nico77600/PurviewDlpReport-Fabric\",\"Nico77600/RecipientLimitReport\",\"Nico77600/TeamsTransfer\"]'), github.repository) && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}",
+      "runs-on": "${{ matrix.runner }}",
+      "timeout-minutes": 25,
+      "permissions": {
+        "contents": "read",
+        "security-events": "write"
+      },
+      "strategy": {
+        "fail-fast": false,
+        "max-parallel": 2,
+        "matrix": {
+          "include": [
+            {
+              "language": "actions",
+              "build-mode": "none",
+              "runner": "ubuntu-latest",
+              "config": {
+                "name": "GitHub Actions workflows",
+                "paths": [".github/workflows"]
+              }
+            },
+            {
+              "language": "csharp",
+              "build-mode": "manual",
+              "runner": "windows-2022",
+              "config": {
+                "name": "Production C# with exact runtime references"
+              }
+            }
+          ]
+        }
+      },
+      "steps": [
+        {
+          "name": "Check out event revision",
+          "uses": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+          "with": {
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Initialize language-specific analysis",
+          "uses": "github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d",
+          "with": {
+            "languages": "${{ matrix.language }}",
+            "build-mode": "${{ matrix.build-mode }}",
+            "threads": 2,
+            "dependency-caching": "false",
+            "config": "${{ toJson(matrix.config) }}"
+          }
+        },
+        {
+          "name": "Compile all production C# without runtime execution",
+          "if": "${{ matrix.language == 'csharp' }}",
+          "shell": "pwsh",
+          "run": "& .\\.github\\scripts\\Build-CodeQLProduction.ps1"
+        },
+        {
+          "name": "Analyze and upload advisory results",
+          "uses": "github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d",
+          "with": {
+            "category": "/language:${{ matrix.language }}",
+            "upload": "always",
+            "upload-database": "false",
+            "wait-for-processing": "true"
+          }
+        },
+        {
+          "name": "Preserve C# compilation inventory",
+          "if": "${{ always() && matrix.language == 'csharp' }}",
+          "uses": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+          "with": {
+            "name": "codeql-production-build",
+            "path": ".github/codeql/out/build-manifest.json\n.github/codeql/out/compiled-sources.txt\n.github/codeql/out/compiler-references.txt",
+            "if-no-files-found": "warn",
+            "include-hidden-files": true,
+            "retention-days": 14
+          }
+        }
+      ]
+    }
+  }
+}

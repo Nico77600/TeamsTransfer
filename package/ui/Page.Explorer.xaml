@@ -1,0 +1,68 @@
+<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Margin="20,6,28,16">
+  <Grid.RowDefinitions>
+    <RowDefinition Height="Auto" />
+    <RowDefinition Height="*" />
+  </Grid.RowDefinitions>
+  <StackPanel Grid.Row="0">
+    <TextBlock Text="Explorer" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+    <TextBlock Text="Read the exported conversations as in Teams. The preview is the offline HTML archive generated from the store." Margin="0,4,0,12"
+               TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+  </StackPanel>
+  <Grid Grid.Row="1">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="340" />
+      <ColumnDefinition Width="12" />
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+
+    <Border Grid.Column="0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="10" Padding="12">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ui:TextBox x:Name="ExplorerSearch" Grid.Row="0" PlaceholderText="Search users and conversations" AutomationProperties.Name="Search" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,8">
+          <RadioButton x:Name="ModeUsers" Content="Users" IsChecked="True" GroupName="ExplorerMode" Margin="0,0,8,0" Padding="14,5" Style="{DynamicResource TtSeg}" />
+          <RadioButton x:Name="ModeChats" Content="Conversations" GroupName="ExplorerMode" Padding="14,5" Style="{DynamicResource TtSeg}" />
+        </StackPanel>
+        <ListBox x:Name="ExplorerList" Grid.Row="2" BorderThickness="0" Background="Transparent" AutomationProperties.Name="Users and conversations" />
+        <TextBlock x:Name="ExplorerCount" Grid.Row="3" Margin="2,8,0,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+      </Grid>
+    </Border>
+
+    <Border Grid.Column="2" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="10" Padding="1">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="14,10,10,8">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <TextBlock x:Name="ExplorerTitle" Grid.Column="0" Text="Select a user or a conversation" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+          <ui:Button x:Name="ExplorerOpenFolder" Grid.Column="1" Content="Open archive folder" Margin="8,0,0,0" IsEnabled="False" AutomationProperties.Name="Open the archive folder" />
+          <ui:Button x:Name="ExplorerOpenBrowser" Grid.Column="2" Content="Open in browser" Margin="8,0,0,0" IsEnabled="False" AutomationProperties.Name="Open the archive in the default browser" />
+        </Grid>
+        <Grid Grid.Row="1">
+          <Border x:Name="WebHost" />
+          <StackPanel x:Name="ExplorerMessage" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
+            <ui:SymbolIcon x:Name="ExplorerMessageIcon" Symbol="Chat24" FontSize="40" Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center" />
+            <TextBlock x:Name="ExplorerMessageText" Text="Select a user or a conversation on the left." TextAlignment="Center" TextWrapping="Wrap" Margin="0,10,0,0"
+                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+          </StackPanel>
+        </Grid>
+      </Grid>
+    </Border>
+  </Grid>
+</Grid>

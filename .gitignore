@@ -1,0 +1,29 @@
+# Generated and private folders (anywhere in the tree)
+bin/
+data/
+out/
+logs/
+reports/
+store/
+.local-test-data/
+tools/phase0-output/
+
+# Store databases and their side files (SQLite catalog, journal, WAL), files only
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.lock
+*.part
+
+# Keys and certificates
+*.pfx
+*.cer
+*.key
+
+# Private configuration
+package/config/*.local.psd1
+
+# A directory is never a database: the licence folder of Microsoft.Data.Sqlite must stay tracked
+# (the *.sqlite rule above matches its name, a rule cannot tell a file from a directory).
+!*.sqlite/

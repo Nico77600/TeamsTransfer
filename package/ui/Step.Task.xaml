@@ -1,0 +1,37 @@
+<ScrollViewer xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+              VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel Margin="0,0,10,12">
+    <TextBlock Text="What do you want to do?" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+    <UniformGrid x:Name="TaskCards" Columns="5" Margin="0,10,0,0" />
+
+    <Border x:Name="ScopeCard" Margin="0,14,0,0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="10" Padding="18,14">
+      <StackPanel>
+        <TextBlock x:Name="ScopeTitle" Text="On what?" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+        <StackPanel x:Name="ScopeChoices" Orientation="Horizontal" Margin="0,8,0,10" />
+        <WrapPanel x:Name="ScopeFields" Orientation="Horizontal" />
+        <Expander x:Name="MoreExpander" Header="More options" Margin="0,6,0,0">
+          <WrapPanel x:Name="MoreFields" Orientation="Horizontal" Margin="0,8,0,0" />
+        </Expander>
+      </StackPanel>
+    </Border>
+
+    <Border x:Name="WillHappen" Margin="0,12,0,0" Padding="18,12" CornerRadius="10" BorderThickness="1" Background="{DynamicResource TmtInfoBg}" BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Border Width="24" Height="24" CornerRadius="12" Background="{DynamicResource TmtAccentSoft}" VerticalAlignment="Top">
+          <TextBlock Text="i" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource TmtBrandText}" />
+        </Border>
+        <StackPanel Grid.Column="1" Margin="12,0,0,0">
+          <TextBlock Text="What will happen" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+          <TextBlock x:Name="WillHappenText" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+        </StackPanel>
+      </Grid>
+    </Border>
+  </StackPanel>
+</ScrollViewer>

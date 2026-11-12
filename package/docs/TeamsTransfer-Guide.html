@@ -1,0 +1,2112 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Teams Transfer - Reference guide</title>
+<script>
+  (() => {
+    const param = new URLSearchParams(window.location.search).get("theme");
+    const theme = param === "dark" || param === "light" ? param : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --cp-bg: #f7f4ef; --cp-bg-elevated: #fcfbf8; --cp-surface: #ffffff; --cp-surface-soft: #f5f5f5;
+  --cp-border: #dedede; --cp-border-strong: #919191; --cp-text: #242424; --cp-text-muted: #5c5c5c; --cp-text-soft: #6f6f6f;
+  --cp-accent: #b11f4b; --cp-accent-hover: #9a1a41; --cp-accent-soft: rgba(177, 31, 75, 0.08); --cp-accent-fg: #ffffff;
+  --cp-success: #16a34a; --cp-danger: #dc2626; --cp-warning: #b45309; --cp-link: #0067b8;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12); --cp-highlight: rgba(177, 31, 75, 0.12);
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --cp-bg: #3d3b3a; --cp-bg-elevated: #343231; --cp-surface: #292929; --cp-surface-soft: #2e2e2e;
+  --cp-border: #474747; --cp-border-strong: #5f5f5f; --cp-text: #dedede; --cp-text-muted: #b0b0b0; --cp-text-soft: #b0b0b0;
+  --cp-accent: #fd8ea1; --cp-accent-hover: #fb7b91; --cp-accent-soft: rgba(253, 142, 161, 0.14); --cp-accent-fg: #1a1a1a;
+  --cp-success: #4ade80; --cp-danger: #f87171; --cp-warning: #fbbf24; --cp-link: #4da6ff;
+  --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32); --cp-highlight: rgba(253, 142, 161, 0.12);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 15.5px/1.7 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; display: grid; grid-template-columns: 300px minmax(0, 1fr); }
+a { color: var(--cp-link); text-decoration: none; } a:hover { text-decoration: underline; }
+.icon { width: 22px; height: 22px; } .icon-sm { width: 16px; height: 16px; flex-shrink: 0; } .icon-xs { width: 12px; height: 12px; }
+button { font: inherit; color: var(--cp-text); background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 0.625rem; cursor: pointer; }
+button:hover { border-color: var(--cp-accent); color: var(--cp-accent); }
+:focus-visible { outline: 2px solid var(--cp-accent); outline-offset: 2px; }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--cp-surface); padding: 8px 12px; border-radius: 8px; z-index: 5; } .skip:focus { left: 8px; }
+aside { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: var(--cp-bg-elevated); border-right: 1px solid var(--cp-border); padding: 24px 16px 32px; }
+.brand { display: flex; gap: 12px; align-items: center; padding: 4px 8px 20px; border-bottom: 1px solid var(--cp-border); margin-bottom: 12px; }
+.brand-logo { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--cp-accent); color: var(--cp-accent-fg); }
+.brand-name { font-weight: 700; font-size: 15px; line-height: 1.2; } .brand-sub { font-size: 12px; color: var(--cp-text-muted); }
+.nav-part { margin: 20px 8px 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cp-accent); }
+.nav-part span { color: var(--cp-text-muted); font-weight: 600; letter-spacing: 0.04em; }
+aside a { display: flex; align-items: center; gap: 10px; padding: 6px 8px; margin: 1px 0; border-radius: 0.625rem; color: var(--cp-text); font-size: 13.5px; line-height: 1.35; border-left: 3px solid transparent; }
+aside a:hover { background: var(--cp-accent-soft); text-decoration: none; }
+aside a.active { background: var(--cp-accent-soft); border-left-color: var(--cp-accent); font-weight: 600; }
+.nav-badge { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11.5px; font-weight: 700; background: var(--cp-surface-soft); color: var(--cp-text-muted); border: 1px solid var(--cp-border); }
+aside a.active .nav-badge { background: var(--cp-accent); color: var(--cp-accent-fg); border-color: var(--cp-accent); }
+main { padding: 40px 56px 80px; max-width: 1080px; width: 100%; }
+.hero { position: relative; overflow: hidden; border: 1px solid var(--cp-border); border-top: 4px solid var(--cp-accent); border-radius: 16px; padding: 36px 40px 32px; margin-bottom: 40px; background: linear-gradient(125deg, var(--cp-surface) 40%, var(--cp-accent-soft)); }
+.hero::before { content: ""; position: absolute; width: 320px; height: 320px; right: -110px; top: -170px; border: 44px solid var(--cp-highlight); border-radius: 50%; pointer-events: none; }
+.hero-top { position: relative; display: flex; align-items: center; gap: 18px; }
+.hero-logo { width: 60px; height: 60px; border-radius: 16px; display: grid; place-items: center; background: var(--cp-accent); color: var(--cp-accent-fg); flex-shrink: 0; }
+.hero-logo .icon { width: 32px; height: 32px; }
+.eyebrow, .section-eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cp-accent); }
+.hero h1 { font-size: 38px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; margin: 4px 0 0; }
+#theme { margin-left: auto; padding: 8px 10px; display: grid; place-items: center; }
+.badges { position: relative; display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 18px; }
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: 12.5px; background: var(--cp-surface); border: 1px solid var(--cp-border); color: var(--cp-text-muted); }
+.badge-accent { background: var(--cp-accent); color: var(--cp-accent-fg); border-color: var(--cp-accent); font-weight: 600; }
+.lead { position: relative; font-size: 17.5px; line-height: 1.6; max-width: 760px; margin: 0 0 24px; }
+.part { display: flex; align-items: baseline; gap: 14px; margin: 56px 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--cp-accent); }
+.part-label { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cp-accent); }
+.part-name { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+.section, .disclaimer { background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 16px; padding: 32px 40px 28px; margin: 0 0 28px; box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14); }
+.disclaimer h2 { font-size: 20px; margin: 0 0 8px; }
+.section-head { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; margin-bottom: 8px; border-bottom: 1px solid var(--cp-border); }
+.section-icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--cp-accent-soft); color: var(--cp-accent); flex-shrink: 0; }
+.section-icon .icon { width: 26px; height: 26px; }
+.section h2 { font-size: 25px; font-weight: 700; letter-spacing: -0.02em; margin: 2px 0 0; line-height: 1.2; }
+.section-body > :first-child { margin-top: 16px; }
+h3 { font-size: 17.5px; font-weight: 650; margin: 36px 0 12px; padding-left: 12px; border-left: 3px solid var(--cp-accent); line-height: 1.3; }
+p { margin: 12px 0; } ul, ol { padding-left: 22px; } li { margin: 6px 0; } li::marker { color: var(--cp-accent); }
+strong { font-weight: 650; }
+code { font-family: Consolas, "Courier New", Courier, monospace; font-size: 0.88em; background: var(--cp-surface-soft); border: 1px solid var(--cp-border); padding: 1px 6px; border-radius: 6px; }
+kbd { font-family: Consolas, monospace; font-size: 0.85em; padding: 1px 7px; border: 1px solid var(--cp-border-strong); border-bottom-width: 2px; border-radius: 6px; background: var(--cp-surface-soft); }
+hr { border: 0; border-top: 1px solid var(--cp-border); margin: 28px 0; }
+.img-missing { color: var(--cp-text-muted); font-style: italic; }
+.table-wrap { overflow-x: auto; margin: 16px 0 20px; border: 1px solid var(--cp-border); border-radius: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.55; }
+th { text-align: left; font-weight: 650; font-size: 12.5px; letter-spacing: 0.02em; color: var(--cp-text-muted); background: var(--cp-surface-soft); padding: 11px 16px; border-bottom: 1px solid var(--cp-border); }
+td { padding: 11px 16px; border-bottom: 1px solid var(--cp-border); vertical-align: top; }
+td:first-child { font-weight: 600; } tr:last-child td { border-bottom: 0; } tbody tr:hover td { background: var(--cp-accent-soft); } td code { white-space: nowrap; }
+.code { margin: 16px 0 20px; border: 1px solid var(--cp-border); border-radius: 12px; overflow: hidden; background: var(--cp-surface-soft); }
+.code-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px 6px 16px; border-bottom: 1px solid var(--cp-border); font-size: 12px; font-weight: 600; color: var(--cp-text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.copy { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; font-size: 12px; text-transform: none; letter-spacing: 0; }
+.copy.done { color: var(--cp-success); border-color: var(--cp-success); }
+.code pre { margin: 0; padding: 16px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+.code pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.markdown-alert { --tone: var(--cp-link); margin: 18px 0; padding: 14px 18px; border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--cp-border)); border-left: 4px solid var(--tone); border-radius: 12px; background: color-mix(in srgb, var(--tone) 7%, var(--cp-surface)); }
+.markdown-alert p { margin: 6px 0; }
+.markdown-alert-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tone); margin: 0 0 4px !important; }
+.markdown-alert-title svg { width: 16px; height: 16px; fill: currentColor; }
+.markdown-alert-tip { --tone: var(--cp-success); } .markdown-alert-important { --tone: var(--cp-accent); }
+.markdown-alert-warning { --tone: var(--cp-warning); } .markdown-alert-caution { --tone: var(--cp-danger); }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 18px 0 22px; position: relative; }
+.card-item { display: flex; gap: 14px; padding: 16px 18px; border: 1px solid var(--cp-border); border-radius: 14px; background: var(--cp-surface); }
+.card-item:hover { border-color: var(--cp-accent); }
+.card-icon { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--cp-accent-soft); color: var(--cp-accent); flex-shrink: 0; }
+.card-title { font-weight: 700; font-size: 14.5px; line-height: 1.3; margin: 2px 0 4px; }
+.card-text { font-size: 13.5px; line-height: 1.5; color: var(--cp-text-muted); }
+.steps { list-style: none; padding: 0; margin: 18px 0 22px; position: relative; }
+.steps li { position: relative; display: flex; gap: 16px; margin: 0; padding: 0 0 18px; }
+.steps li:not(:last-child)::before { content: ""; position: absolute; left: 16px; top: 36px; bottom: 2px; width: 2px; background: var(--cp-border); }
+.step-num { flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 14px; background: var(--cp-accent); color: var(--cp-accent-fg); box-shadow: 0 0 0 4px var(--cp-accent-soft); }
+.step-body { padding-top: 5px; } .step-title { font-weight: 700; font-size: 15px; line-height: 1.35; }
+.step-text { color: var(--cp-text-muted); font-size: 14.5px; margin-top: 2px; }
+.flow { display: flex; align-items: stretch; flex-wrap: wrap; gap: 6px; margin: 20px 0 24px; padding: 20px; border-radius: 14px; background: var(--cp-surface-soft); border: 1px dashed var(--cp-border-strong); }
+.flow-node { flex: 1 1 130px; min-width: 120px; text-align: center; padding: 16px 12px; border-radius: 12px; background: var(--cp-surface); border: 1px solid var(--cp-border); }
+.flow-icon { width: 42px; height: 42px; margin: 0 auto 8px; border-radius: 12px; display: grid; place-items: center; background: var(--cp-accent-soft); color: var(--cp-accent); }
+.flow-title { font-weight: 700; font-size: 14px; line-height: 1.3; } .flow-text { font-size: 12.5px; color: var(--cp-text-muted); line-height: 1.4; margin-top: 4px; }
+.flow-arrow { flex: 0 0 auto; min-width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--cp-border-strong); padding: 0 2px; }
+.flow-arrow svg { width: 44px; height: 14px; color: var(--cp-accent); }
+.flow-label { font-size: 12px; font-weight: 700; color: var(--cp-accent); } .flow-sub { font-size: 11px; color: var(--cp-text-muted); text-align: center; max-width: 110px; line-height: 1.3; }
+figure { margin: 18px 0 24px; }
+figure img { display: block; max-width: 100%; border: 1px solid var(--cp-border); border-radius: 12px; cursor: zoom-in; }
+figcaption { font-size: 13px; color: var(--cp-text-muted); margin-top: 8px; text-align: center; }
+dialog#zoom { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 96vh; }
+dialog#zoom::backdrop { background: rgba(0, 0, 0, 0.7); }
+dialog#zoom img { max-width: 96vw; max-height: 94vh; border-radius: 12px; cursor: zoom-out; display: block; }
+#to-top { position: fixed; right: 24px; bottom: 24px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--cp-accent); color: var(--cp-accent-fg); border: 0; box-shadow: var(--cp-shadow); opacity: 0; pointer-events: none; transition: opacity 200ms; }
+#to-top.visible { opacity: 1; pointer-events: auto; } #to-top:hover { background: var(--cp-accent-hover); color: var(--cp-accent-fg); }
+footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--cp-border); font-size: 12.5px; color: var(--cp-text-muted); text-align: center; }
+@media (max-width: 1000px) {
+  body { display: block; }
+  aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--cp-border); }
+  main { padding: 24px 16px 60px; } .section, .disclaimer { padding: 24px 20px; } .hero { padding: 28px 22px; }
+}
+@media (forced-colors: active) {
+  .hero, .section, .disclaimer, .code, .markdown-alert, .card-item, .flow-node { border: 1px solid CanvasText; }
+  .badge-accent, .nav-badge, .step-num { border: 1px solid ButtonText; forced-color-adjust: none; background: ButtonFace; color: ButtonText; }
+  aside a.active { outline: 2px solid Highlight; }
+}
+@media print {
+  body { display: block; background: #fff; } aside, #to-top, #theme, .copy { display: none !important; }
+  main { padding: 0; max-width: none; } .section { break-inside: avoid-page; box-shadow: none; } .part { break-before: page; }
+}
+</style></head><body>
+<a class="skip" href="#content">Skip to the content</a>
+<aside><div class="brand"><div class="brand-logo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><div><div class="brand-name">Teams Transfer</div><div class="brand-sub">Reference guide · v0.1.0</div></div></div>
+<nav aria-label="Contents"><div class="nav-part">Part I <span>Understand</span></div><a href="#scope-and-principles" data-target="scope-and-principles"><span class="nav-badge">1</span><span class="nav-text">Scope and principles</span></a><a href="#architecture" data-target="architecture"><span class="nav-badge">2</span><span class="nav-text">Architecture</span></a><div class="nav-part">Part II <span>Set up</span></div><a href="#installation-and-package-integrity" data-target="installation-and-package-integrity"><span class="nav-badge">3</span><span class="nav-text">Installation and package integrity</span></a><a href="#configuration" data-target="configuration"><span class="nav-badge">4</span><span class="nav-text">Configuration</span></a><a href="#minimum-permissions-per-mode" data-target="minimum-permissions-per-mode"><span class="nav-badge">5</span><span class="nav-text">Minimum permissions per mode</span></a><a href="#graph-endpoints-limits-and-throttling" data-target="graph-endpoints-limits-and-throttling"><span class="nav-badge">6</span><span class="nav-text">Graph endpoints, limits and throttling</span></a><div class="nav-part">Part III <span>Use</span></div><a href="#modes-and-parameters" data-target="modes-and-parameters"><span class="nav-badge">7</span><span class="nav-text">Modes and parameters</span></a><a href="#exit-codes-log-reports-and-the-console-output" data-target="exit-codes-log-reports-and-the-console-output"><span class="nav-badge">8</span><span class="nav-text">Exit codes, log, reports and the console output</span></a><a href="#the-store-layout-and-safety" data-target="the-store-layout-and-safety"><span class="nav-badge">9</span><span class="nav-text">The store: layout and safety</span></a><a href="#lots-waves-and-the-life-cycle" data-target="lots-waves-and-the-life-cycle"><span class="nav-badge">10</span><span class="nav-text">Lots, waves and the life cycle</span></a><a href="#the-import-journal-and-idempotency" data-target="the-import-journal-and-idempotency"><span class="nav-badge">11</span><span class="nav-text">The import journal and idempotency</span></a><a href="#identity-mapping-and-ghost-accounts" data-target="identity-mapping-and-ghost-accounts"><span class="nav-badge">12</span><span class="nav-text">Identity mapping and ghost accounts</span></a><a href="#file-copy" data-target="file-copy"><span class="nav-badge">13</span><span class="nav-text">File copy</span></a><a href="#the-import" data-target="the-import"><span class="nav-badge">14</span><span class="nav-text">The import</span></a><a href="#verification" data-target="verification"><span class="nav-badge">15</span><span class="nav-text">Verification</span></a><a href="#the-archive" data-target="the-archive"><span class="nav-badge">16</span><span class="nav-text">The archive</span></a><a href="#the-console" data-target="the-console"><span class="nav-badge">17</span><span class="nav-text">The console</span></a><div class="nav-part">Part IV <span>Maintain</span></div><a href="#troubleshooting" data-target="troubleshooting"><span class="nav-badge">18</span><span class="nav-text">Troubleshooting</span></a><a href="#known-limits" data-target="known-limits"><span class="nav-badge">19</span><span class="nav-text">Known limits</span></a><a href="#change-log" data-target="change-log"><span class="nav-badge">20</span><span class="nav-text">Change log</span></a><a href="#annex-a-certificates-and-app-registrations-for-engineers" data-target="annex-a-certificates-and-app-registrations-for-engineers"><span class="nav-badge">A</span><span class="nav-text">Certificates and app registrations for engineers</span></a><a href="#annex-b-csv-formats" data-target="annex-b-csv-formats"><span class="nav-badge">B</span><span class="nav-text">CSV formats</span></a><a href="#annex-c-third-party-components" data-target="annex-c-third-party-components"><span class="nav-badge">C</span><span class="nav-text">Third-party components</span></a><a href="#annex-d-release-procedure" data-target="annex-d-release-procedure"><span class="nav-badge">D</span><span class="nav-text">Release procedure</span></a></nav></aside>
+<main id="content"><header class="hero" id="top"><div class="hero-top"><div class="hero-logo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><div><div class="eyebrow">Reference guide</div><h1>Teams Transfer</h1></div><button type="button" id="theme" class="ghost" title="Light / dark" aria-label="Switch between light and dark theme"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg></button></div><div class="badges"><span class="badge badge-accent">Version 0.1.0</span><span class="badge"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Updated 2026-11-10</span><span class="badge"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Nicolas Fabert</span><span class="badge"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></svg>PowerShell 7.4+</span><span class="badge">Windows x64</span><span class="badge">Microsoft Graph</span></div><p class="lead">For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the <a href="TeamsTransfer-UserGuide.html">user guide</a> (file <code>TeamsTransfer-UserGuide.html</code>, same <code>docs</code> folder). Everything here is derived from the code of version 0.1.0 and from the measurements of the lab (<code>docs\design\Phase0-Results.md</code>); a statement that comes from the lab and not from the code is marked <em>(lab)</em>.</p>
+<div class="markdown-alert markdown-alert-important">
+<p class="markdown-alert-title">Important</p>
+<p>Files downloaded from the Internet may be blocked by Windows and fail to run. Check the publisher first (<code>Invoke-TeamsTransfer.ps1</code>, Properties, Digital Signatures: <code>Nicolas Fabert</code>), then unblock the extracted folder:</p>
+<div class="code"><div class="code-head"><span>PowerShell</span><button type="button" class="copy"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy</span></button></div><pre><code>Get-ChildItem &quot;D:\Tools\TeamsTransfer&quot; -Recurse -File -Force | Unblock-File
+</code></pre></div>
+</div>
+</header><div class="part" id="part-i-understand"><span class="part-label">Part I</span><span class="part-name">Understand</span></div>
+<section class="section" id="scope-and-principles"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div><div><div class="section-eyebrow">Chapter 1</div><h2>Scope and principles</h2></div></div><div class="section-body">
+<p>Teams Transfer exports Microsoft Teams chats and channels (messages, replies, reactions, mentions, inline images, attached files, members) from a tenant into a local store, shows them offline in a Teams-like HTML archive, and imports them into a tenant with the Microsoft Graph Teams migration API.</p>
+<p><strong>Three scenarios</strong> (the <code>-Scenario</code> of <code>Plan</code>):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>A · <code>TenantToTenant</code> (default)</th>
+<th>B · <code>SameTenantRestore</code></th>
+<th>C · <code>DepartedArchive</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Applications</td>
+<td>a source app (read) and a target app (write)</td>
+<td>one tenant, a read app and a write app</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Identities</td>
+<td>source person to target person by CSV, domain rule or same UPN; unknown people block the plan</td>
+<td>the same person; a recreated account is found by UPN or mail</td>
+<td>the departed author is replaced by a ghost or the service account</td>
+</tr>
+<tr>
+<td>Target conversation</td>
+<td>chat recreated with the mapped members; team and channel created or mapped</td>
+<td>the existing chat or channel (appended to) when it still exists, otherwise as A</td>
+<td><strong>archive teams</strong>: one private channel per departed user, teams <code>&lt;prefix&gt; NN</code> with at most <code>-ChannelsPerArchiveTeam</code> channels each</td>
+</tr>
+<tr>
+<td>Duplicates</td>
+<td>none: the target is empty</td>
+<td>messages already there are recognised by fingerprint (date, author, body hash) and skipped</td>
+<td>the import journal</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Principles</strong> the code follows everywhere:</p>
+<ul>
+<li><strong>The source is read, never written.</strong> The read modes use the source application; the modes that write use the target application, and only with <code>-Apply</code>.</li>
+<li><strong>Preview first.</strong> <code>Ghosts</code>, <code>CopyFiles</code> and <code>Import</code> preview unless <code>-Apply</code> is given. <code>-WhatIf</code> always wins over <code>-Apply</code>. The plan is a dry run that blocks on anything unresolved.</li>
+<li><strong>Resumable and idempotent.</strong> Every stage records its progress (watermarks, <code>@odata.nextLink</code>, the import journal). Running the same command again continues; a message is never sent twice.</li>
+<li><strong>Throttling is obeyed, not worked around.</strong> <code>Retry-After</code> is honoured exactly and the rate is lowered on <code>429</code> and <code>503</code>.</li>
+<li><strong>No secret anywhere.</strong> Certificate sign-in; the configuration holds ids and thumbprints only; logs and reports hold no token, header or body.</li>
+<li><strong>Offline tests.</strong> The whole engine is tested against a fake Graph and a synthetic tenant; the console's Demo mode uses the same fakes.</li>
+<li><strong>English only</strong>: console, log, reports, archive page, documentation. Numbers and dates are always shown the <code>en-US</code> way.</li>
+</ul>
+</div></section><section class="section" id="architecture"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div><div><div class="section-eyebrow">Chapter 2</div><h2>Architecture</h2></div></div><div class="section-body">
+<div class="flow"><div class="flow-node"><div class="flow-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></svg></div><div class="flow-title">Invoke-TeamsTransfer.ps1</div><div class="flow-text">modes, console</div></div><div class="flow-arrow"><span class="flow-label">calls</span><svg viewBox="0 0 40 12" aria-hidden="true"><path d="M0 6h36M31 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="flow-sub"></span></div><div class="flow-node"><div class="flow-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></div><div class="flow-title">TeamsTransfer module</div><div class="flow-text">Tmt functions</div></div><div class="flow-arrow"><span class="flow-label">compiles</span><svg viewBox="0 0 40 12" aria-hidden="true"><path d="M0 6h36M31 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="flow-sub"></span></div><div class="flow-node"><div class="flow-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div><div class="flow-title">C# engine</div><div class="flow-text">src\Engine.*.cs, in memory</div></div><div class="flow-arrow"><span class="flow-label">reads / writes</span><svg viewBox="0 0 40 12" aria-hidden="true"><path d="M0 6h36M31 1l6 5-6 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span class="flow-sub"></span></div><div class="flow-node"><div class="flow-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><div class="flow-title">Store</div><div class="flow-text">catalog, partitions, content</div></div></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Entry script</strong> <code>Invoke-TeamsTransfer.ps1</code></td>
+<td>Package check, parameter rules (which parameter belongs to which mode), configuration, log, banner, one block per mode, final card, exit code. <code>-Gui</code> hands over to the console.</td>
+</tr>
+<tr>
+<td><strong>Module</strong> <code>TeamsTransfer.psm1</code> and its parts</td>
+<td><code>TeamsTransfer.Console.ps1</code> (colours, icons, banner, steps, log, end card), <code>.Export.ps1</code> (configuration, Graph client, inventory, assess, export, files, archive helpers), <code>.Archive.ps1</code>, <code>.Plan.ps1</code>, <code>.Import.ps1</code> (ghosts, file copy, import), <code>.Verify.ps1</code> (verify, lot reports). Each function has its comment-based help.</td>
+</tr>
+<tr>
+<td><strong>Engine</strong> <code>src\Engine.*.cs</code></td>
+<td>C# compiled in memory at each start (no compiled copy is ever loaded from disk, <code>bin\</code> is never trusted). The module refuses an engine already loaded in the session if it was compiled from other sources.</td>
+</tr>
+<tr>
+<td><strong>Libraries</strong> <code>lib\</code></td>
+<td><code>Microsoft.Data.Sqlite</code> and SQLitePCLRaw with the native <code>e_sqlite3</code> for <code>win-x64</code> and <code>win-arm64</code>; for the console, WPF-UI and the WebView2 SDK. Pinned in <code>dependency-lock.json</code>.</td>
+</tr>
+<tr>
+<td><strong>Console</strong> <code>TeamsTransfer.Gui*.ps1</code>, <code>ui\*.xaml</code></td>
+<td>WPF-UI Fluent window over the same module functions. Jobs run in background runspaces.</td>
+</tr>
+<tr>
+<td><strong>Archive template</strong> <code>templates\Archive.template.*</code></td>
+<td>The viewer page (HTML and JavaScript, no library, no network).</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-engine-part-by-part">The engine, part by part</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Engine.Auth.cs</code></td>
+<td>OAuth2 client credentials with a <strong>certificate</strong> (JWT assertion signed with the RSA key from <code>CurrentUser\My</code> or <code>LocalMachine\My</code>). A client secret provider exists in the code for tests only.</td>
+</tr>
+<tr>
+<td><code>Engine.Graph.cs</code></td>
+<td>HTTP transport (one shared <code>HttpClient</code>, streamed responses) and <code>GraphClient</code>: retry with <code>Retry-After</code>, jittered backoff, <code>@odata.nextLink</code> paging with page-level resume, streamed downloads, JSON <code>$batch</code> (20 per call).</td>
+</tr>
+<tr>
+<td><code>Engine.Throttle.cs</code></td>
+<td>The adaptive rate limiter (chapter 6).</td>
+</tr>
+<tr>
+<td><code>Engine.Inventory.cs</code></td>
+<td>Enumerates users (deleted and guests included), chats (deduplicated across users), teams, channels and members into the store. Also hosts the shared work helpers (stop control, progress, bounded parallelism).</td>
+</tr>
+<tr>
+<td><code>Engine.Export.cs</code></td>
+<td>Message export with strategy U (per user) or C (per chat), channel export, hosted contents (images), file references and the <code>Files</code> stage.</td>
+</tr>
+<tr>
+<td><code>Engine.Store.cs</code>, <code>Engine.StoreContracts.cs</code></td>
+<td>The partitioned message store and the content store.</td>
+</tr>
+<tr>
+<td><code>Engine.Catalog.cs</code>, <code>Engine.CatalogImport.cs</code></td>
+<td>The SQLite catalog: users, conversations, links, checkpoints, files, lots, work units, import journal, ghosts, identity and target maps, file-copy map.</td>
+</tr>
+<tr>
+<td><code>Engine.Mapping.cs</code>, <code>Engine.Plan.cs</code></td>
+<td>Identity and target mapping, and the dry-run plan with its reports.</td>
+</tr>
+<tr>
+<td><code>Engine.Ghosts.cs</code></td>
+<td>Ghost accounts of deleted authors.</td>
+</tr>
+<tr>
+<td><code>Engine.FileCopy.cs</code></td>
+<td>Copy of the exported files into the target tenant.</td>
+</tr>
+<tr>
+<td><code>Engine.Import.cs</code>, <code>Engine.ImportContracts.cs</code></td>
+<td>The importer: migration sessions, messages, journal, completion.</td>
+</tr>
+<tr>
+<td><code>Engine.Verify.cs</code></td>
+<td>Verification and the lot report.</td>
+</tr>
+<tr>
+<td><code>Engine.Preview.cs</code></td>
+<td>The offline archive generator.</td>
+</tr>
+<tr>
+<td><code>Engine.Contracts.cs</code></td>
+<td>Shared contracts: <code>EndpointClass</code>, <code>GraphException</code>, options.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="stages-and-where-they-write">Stages and where they write</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Reads</th>
+<th>Writes locally</th>
+<th>Writes to a tenant</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Assess</td>
+<td>source tenant</td>
+<td>report folder</td>
+<td>nothing</td>
+</tr>
+<tr>
+<td>Inventory</td>
+<td>source tenant</td>
+<td>store (catalog)</td>
+<td>nothing</td>
+</tr>
+<tr>
+<td>Export, Files</td>
+<td>source tenant</td>
+<td>store (messages, content, files)</td>
+<td>nothing</td>
+</tr>
+<tr>
+<td>Archive</td>
+<td>store</td>
+<td>archive folder or file</td>
+<td>nothing</td>
+</tr>
+<tr>
+<td>Plan</td>
+<td>store, target tenant</td>
+<td>identity and target maps, journal (seeded), ghost table, lot state, plan folder</td>
+<td><strong>nothing</strong></td>
+</tr>
+<tr>
+<td>Ghosts</td>
+<td>store, target tenant</td>
+<td>ghost table</td>
+<td>ghost users and tracking group, only with <code>-Apply</code></td>
+</tr>
+<tr>
+<td>CopyFiles</td>
+<td>store, target tenant</td>
+<td>file-copy map</td>
+<td>OneDrive and channel library files and their sharing, only with <code>-Apply</code></td>
+</tr>
+<tr>
+<td>Import</td>
+<td>store, target tenant</td>
+<td>journal, sessions, maps, lot state</td>
+<td>teams, channels, chats, members, messages, only with <code>-Apply</code></td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>store, target tenant</td>
+<td>verification files, lot state</td>
+<td>nothing</td>
+</tr>
+<tr>
+<td>Report</td>
+<td>store</td>
+<td>reports</td>
+<td>nothing</td>
+</tr>
+<tr>
+<td>Merge</td>
+<td>the other store (read only)</td>
+<td>this store</td>
+<td>nothing</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><div class="part" id="part-ii-set-up"><span class="part-label">Part II</span><span class="part-name">Set up</span></div>
+<section class="section" id="installation-and-package-integrity"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg></div><div><div class="section-eyebrow">Chapter 3</div><h2>Installation and package integrity</h2></div></div><div class="section-body">
+<h3 id="requirements">Requirements</h3>
+<ul>
+<li>Windows x64 (the native SQLite and WebView2 loaders for <code>win-arm64</code> are in <code>lib\</code>, but only x64 is tested), PowerShell 7.4 or later. <code>#Requires -Version 7.4</code>; Windows PowerShell 5.1 is refused.</li>
+<li>For the console: the Microsoft Edge WebView2 <strong>runtime</strong> (not redistributed). Without it the Explorer shows a message and everything else works.</li>
+<li>A <strong>local disk</strong> for the store, outside the package folder.</li>
+<li>Per side an app registration with a certificate (chapter 5; the plain steps are in the user guide, chapter 2).</li>
+</ul>
+<p><code>Start-TeamsTransferConsole.cmd</code> uses <code>powershell\pwsh.exe</code> next to it when that folder exists and <code>pwsh.exe</code> from the PATH otherwise; it checks the package files, passes <code>-DevelopmentMode</code> itself when there is no <code>PackageIntegrity.psd1</code>, and forwards extra arguments (for example <code>-Demo</code>).</p>
+<h3 id="package-integrity">Package integrity</h3>
+<p><code>Invoke-TeamsTransfer.ps1</code> verifies the package <strong>before any of its code runs</strong>: <code>src\Test-PackageIntegrity.ps1</code> checks <code>PackageIntegrity.psd1</code>, the SHA256 of every file of the package. A missing, changed, unlisted, duplicated or reparse-point file fails closed. There are three states, always announced:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Starts without <code>-DevelopmentMode</code>?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Valid</code></td>
+<td>The verifier, the manifest and every PowerShell file carry the trusted, timestamped owner signature (thumbprint <code>0F28E442889F17B5F4D251E8F96E7CC6E2C9C6D6</code>) and every hash matches.</td>
+<td>Yes: the only state of a release</td>
+</tr>
+<tr>
+<td><code>UnsignedDevelopmentPackage</code></td>
+<td>A manifest exists, the owner signature does not; hashes are still enforced.</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>UnverifiedDevelopmentTree</code></td>
+<td>No manifest: a source checkout. Nothing is verified.</td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<p>There is no silent bypass and no environment variable that disables the check. <code>-DevelopmentMode</code> is the only way to start a tree without a signed manifest, and the state is printed as a yellow warning and written to the log. <code>-Distribution</code> of the verifier makes the owner signature mandatory.</p>
+<p><strong>Not protected by design:</strong> <code>config\TeamsTransfer.config.psd1</code>, <code>config\TeamsTransfer.config.local.psd1</code> (data, never executed) and the generated folders <code>bin\</code>, <code>data\</code>, <code>logs\</code>, <code>out\</code> at the package root. Keep the store and the reports outside the package folder anyway: the store refuses to open inside it.</p>
+<p><strong>Building and signing</strong> (the owner signs; the script never signs): see the release procedure in annex D. In short: sign the PowerShell files, <code>tools\Build-Package.ps1 -Stage Prepare</code>, sign the manifest, <code>tools\Build-Package.ps1 -Stage Package -RequireSignature</code>. <code>tools\Build-PackageManifest.ps1</code> alone writes <code>package\PackageIntegrity.psd1</code> (every file, documentation and images included) and checks it in development mode.</p>
+<p>Write the manifest again after <strong>any</strong> change in <code>package\</code>, documentation included. <code>tools\Get-TeamsTransferDependencies.ps1</code> installs and verifies the pinned GUI libraries (<code>-Verify</code> checks offline; <code>-UpdateLock</code> is for an intended dependency change).</p>
+<h3 id="folder-layout">Folder layout</h3>
+<div class="code"><div class="code-head"><span>Text</span><button type="button" class="copy"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy</span></button></div><pre><code>TeamsTransfer\
+  Start-TeamsTransferConsole.cmd  Invoke-TeamsTransfer.ps1  TeamsTransfer.psd1 / .psm1 / .*.ps1
+  src\        Engine.*.cs, Test-PackageIntegrity.ps1
+  ui\         MainWindow.xaml, Step.*.xaml, Page.Explorer.xaml
+  templates\  Archive.template.html, Archive.template.js
+  schemas\    preview-v1.schema.json
+  config\     TeamsTransfer.config.psd1, TeamsTransfer.config.local.psd1 (yours)
+  lib\        sqlite\, gui\, licenses\
+  docs\       guides (.md and .html), images\
+  PackageIntegrity.psd1  dependency-lock.json  README.md  CHANGELOG.md  SECURITY.md  LICENSE  THIRD-PARTY-NOTICES.md
+</code></pre></div>
+</div></section><section class="section" id="configuration"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></svg></div><div><div class="section-eyebrow">Chapter 4</div><h2>Configuration</h2></div></div><div class="section-body">
+<p>The configuration is <strong>data</strong>, parsed with <code>Import-PowerShellDataFile</code> and never executed. Layers, the last one wins, section by section:</p>
+<ol>
+<li>built-in defaults;</li>
+<li><code>config\TeamsTransfer.config.psd1</code> (or the file given with <code>-ConfigPath</code>);</li>
+<li><code>config\TeamsTransfer.config.local.psd1</code> next to it, or the file named by the environment variable <code>TEAMSTRANSFER_LOCAL_CONFIG</code> (private values of the machine: tenant ids, application ids, thumbprints);</li>
+<li>the command line, for one run. It never modifies a file.</li>
+</ol>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Source.Cloud</code>, <code>Target.Cloud</code></td>
+<td><code>Global</code></td>
+<td><code>Global</code>, <code>USGov</code>, <code>USGovDoD</code> or <code>China</code>: the Graph and login hosts. Credentials are never sent to a host other than the Graph endpoint.</td>
+</tr>
+<tr>
+<td><code>Source.TenantId</code>, <code>Target.TenantId</code></td>
+<td>empty</td>
+<td>Tenant id (GUID) or <code>contoso.onmicrosoft.com</code>.</td>
+</tr>
+<tr>
+<td><code>Source.ClientId</code>, <code>Target.ClientId</code></td>
+<td>empty</td>
+<td>Application (client) id of the read app / the write app.</td>
+</tr>
+<tr>
+<td><code>Source.CertificateThumbprint</code>, <code>Target.CertificateThumbprint</code></td>
+<td>empty</td>
+<td>Thumbprint of a certificate with its private key in <code>Cert:\CurrentUser\My</code> or <code>Cert:\LocalMachine\My</code>. The key must be RSA.</td>
+</tr>
+<tr>
+<td><code>Target.ServiceAccountUserId</code></td>
+<td>empty</td>
+<td>UPN or object id of the service account in the <strong>target</strong> tenant: owner of the teams the import creates, fallback author. Second in the resolution order (after <code>-ServiceAccount</code>) used by <code>Plan</code>, <code>Ghosts</code>, <code>CopyFiles</code>, <code>Import</code> and <code>Verify</code>.</td>
+</tr>
+<tr>
+<td><code>Graph.MaxAttempts</code></td>
+<td><code>8</code></td>
+<td>Attempts per request (429, 5xx and network errors included).</td>
+</tr>
+<tr>
+<td><code>Graph.BaseBackoffSeconds</code></td>
+<td><code>2</code></td>
+<td>Lower bound of the jittered backoff.</td>
+</tr>
+<tr>
+<td><code>Graph.MaxBackoffSeconds</code></td>
+<td><code>120</code></td>
+<td>Upper bound of the backoff.</td>
+</tr>
+<tr>
+<td><code>Graph.RequestTimeoutSeconds</code></td>
+<td><code>300</code></td>
+<td>Timeout of one request.</td>
+</tr>
+<tr>
+<td><code>Graph.ExportModel</code></td>
+<td><code>B</code></td>
+<td><code>model</code> parameter of the export APIs (<code>getAllMessages</code>). Required: without it the API falls back to an evaluation mode with a limited quota.</td>
+</tr>
+<tr>
+<td><code>Graph.InitialRatePerSecond</code></td>
+<td><code>20</code></td>
+<td>Starting rate of the adaptive limiter, per endpoint class.</td>
+</tr>
+<tr>
+<td><code>Graph.MaxConcurrency</code></td>
+<td><code>32</code></td>
+<td>Simultaneous requests for the whole process.</td>
+</tr>
+<tr>
+<td><code>Ghosts.DomainName</code></td>
+<td>empty</td>
+<td>Domain of the ghost UPNs <code>tt-ghost-&lt;hash&gt;@&lt;domain&gt;</code>: a verified domain, or <code>contoso.onmicrosoft.com</code>, of the <strong>target</strong> tenant. <code>-GhostDomain</code> overrides it.</td>
+</tr>
+<tr>
+<td><code>Ghosts.DisplayNameFormat</code></td>
+<td>empty = <code>{0} (former)</code></td>
+<td><code>{0}</code> is the source display name.</td>
+</tr>
+<tr>
+<td><code>Ghosts.TrackingGroupName</code></td>
+<td><code>TeamsTransfer - Ghost accounts</code></td>
+<td>Group of which every ghost is a member.</td>
+</tr>
+<tr>
+<td><code>Ghosts.CreateTrackingGroup</code></td>
+<td><code>$false</code></td>
+<td>Allow the tool to create the group when it does not exist (<code>-CreateTrackingGroup</code>).</td>
+</tr>
+<tr>
+<td><code>Ghosts.UsageLocation</code></td>
+<td>empty</td>
+<td>Two-letter <code>usageLocation</code> set on the ghosts (<code>-UsageLocation</code>).</td>
+</tr>
+<tr>
+<td><code>Ghosts.ConfirmThreshold</code></td>
+<td><code>5000</code></td>
+<td>Above this many ghosts to create, the stage is blocked unless <code>-ConfirmGhostCount</code>.</td>
+</tr>
+<tr>
+<td><code>Store.Path</code></td>
+<td>empty = <code>&lt;Output.Root&gt;\store</code></td>
+<td>Root of the local store, by default <code>&lt;parent of the package&gt;\out\store</code>. Refused inside the package folder and on a network share.</td>
+</tr>
+<tr>
+<td><code>Store.Partitions</code></td>
+<td><code>256</code></td>
+<td>Message partitions, <strong>fixed when the store is created</strong>.</td>
+</tr>
+<tr>
+<td><code>Output.Root</code></td>
+<td><code>.\out</code></td>
+<td>Parent of <code>logs\</code>, <code>reports\</code> and the default <code>store\</code>. A relative path is resolved against the <strong>parent folder of the package</strong> (<code>&lt;parent&gt;\out</code> next to <code>package\</code>), never the current folder and never inside the package. The banner shows it on its <code>OutFolder</code> line.</td>
+</tr>
+<tr>
+<td><code>Logging.RetentionDays</code></td>
+<td><code>14</code></td>
+<td><code>TeamsTransfer_*.log</code> files older than this are deleted when a run starts.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Environment variables:</strong> <code>TEAMSTRANSFER_LOG_FOLDER</code> (default log folder), <code>TEAMSTRANSFER_LOCAL_CONFIG</code> (the local layer), <code>TMT_ICONS</code> (<code>Emoji</code>, <code>Symbols</code> or <code>Ascii</code>), <code>NO_COLOR</code> (no colour). The console stores its own settings (theme, store, recent stores) in <code>%LOCALAPPDATA%\TeamsTransfer\console-settings.json</code>.</p>
+<div class="markdown-alert markdown-alert-note">
+<p class="markdown-alert-title">Note</p>
+<p><strong>Set <code>Store.Path</code> and <code>Output.Root</code> explicitly for a real project</strong> (an absolute path on a local disk). The defaults are safe (next to the package folder, never inside it) but are meant for a first try.</p>
+</div>
+</div></section><section class="section" id="minimum-permissions-per-mode"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M16 7l3 3"/></svg></div><div><div class="section-eyebrow">Chapter 5</div><h2>Minimum permissions per mode</h2></div></div><div class="section-body">
+<p>All permissions are Microsoft Graph <strong>application</strong> permissions with administrator consent. They come from <strong>one table</strong>, <code>package\config\Permissions.psd1</code> (per mode and side, required or optional, with the reason), which the console uses for its permission lights; the tables of this chapter are generated from it and <code>tests\Docs.Tests.ps1</code> compares them with the file. A broader permission covers a narrower one (<code>X.ReadWrite.All</code> covers <code>X.Read.All</code>, which covers <code>X.ReadBasic.All</code>); the console's check applies the same rule.</p>
+<p><strong>Administrator roles</strong> to create the apps and consent (lab script): <em>Application Administrator</em> or <em>Cloud Application Administrator</em> for the apps, <em>Privileged Role Administrator</em> or <em>Global Administrator</em> for the consent of application permissions.</p>
+<h3 id="source-app-read-only">Source app (read only)</h3>
+<p>R = required by the mode, o = optional (only for the option named in the last column). Generated from <code>package\config\Permissions.psd1</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Assess</th>
+<th>Inventory</th>
+<th>Export</th>
+<th>Files</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>User.Read.All</code></td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td></td>
+<td>Counts and samples the users.</td>
+</tr>
+<tr>
+<td><code>Chat.Read.All</code></td>
+<td>R</td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Samples the chats and their messages (protected API).</td>
+</tr>
+<tr>
+<td><code>Team.ReadBasic.All</code></td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td></td>
+<td>Samples the teams (with -SampleTeams).</td>
+</tr>
+<tr>
+<td><code>Channel.ReadBasic.All</code></td>
+<td>R</td>
+<td>R</td>
+<td>R</td>
+<td></td>
+<td>Samples the channels (with -SampleTeams).</td>
+</tr>
+<tr>
+<td><code>ChannelMessage.Read.All</code></td>
+<td>o</td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Counts channel messages (with -SampleTeams).</td>
+</tr>
+<tr>
+<td><code>Chat.ReadBasic.All</code></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td>Lists the chats of every user (Chat.Read.All also satisfies it).</td>
+</tr>
+<tr>
+<td><code>ChatMember.Read.All</code></td>
+<td></td>
+<td>R</td>
+<td>R</td>
+<td></td>
+<td>Reads the members of the chats.</td>
+</tr>
+<tr>
+<td><code>TeamMember.Read.All</code></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td>Reads the members of the teams.</td>
+</tr>
+<tr>
+<td><code>ChannelMember.Read.All</code></td>
+<td></td>
+<td>R</td>
+<td>R</td>
+<td></td>
+<td>Reads the members of the private and shared channels.</td>
+</tr>
+<tr>
+<td><code>Files.Read.All</code></td>
+<td></td>
+<td></td>
+<td>o</td>
+<td>R</td>
+<td>Downloads the files (with -IncludeFiles).</td>
+</tr>
+<tr>
+<td><code>Sites.Read.All</code></td>
+<td></td>
+<td></td>
+<td>o</td>
+<td>R</td>
+<td>Reads the channel file libraries (with -IncludeFiles).</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>Archive</code>, <code>Status</code>, <code>Report</code>, <code>Merge</code> and <code>Plan -SkipTargetLookup</code> need <strong>no</strong> tenant permission. <code>Plan</code> reads the <strong>target</strong> tenant (below).</p>
+<h3 id="target-app-read-and-write">Target app (read and write)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Plan</th>
+<th>Ghosts</th>
+<th>CopyFiles</th>
+<th>Import</th>
+<th>Verify</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>User.Read.All</code></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td>Looks the authors up in the target tenant (mapping).</td>
+</tr>
+<tr>
+<td><code>Team.ReadBasic.All</code></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td>R</td>
+<td>R</td>
+<td>Looks the teams up.</td>
+</tr>
+<tr>
+<td><code>Channel.ReadBasic.All</code></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td>R</td>
+<td>R</td>
+<td>Looks the channels up.</td>
+</tr>
+<tr>
+<td><code>Chat.Read.All</code></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td>Looks the existing chats up (scenario B).</td>
+</tr>
+<tr>
+<td><code>User.ReadWrite.All</code></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Creates and reads the ghost accounts.</td>
+</tr>
+<tr>
+<td><code>Group.Read.All</code></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Finds the ghost tracking group.</td>
+</tr>
+<tr>
+<td><code>GroupMember.ReadWrite.All</code></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Adds the ghost accounts to the tracking group.</td>
+</tr>
+<tr>
+<td><code>Group.ReadWrite.All</code></td>
+<td></td>
+<td>o</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Creates the tracking group (with -CreateTrackingGroup).</td>
+</tr>
+<tr>
+<td><code>User.DeleteRestore.All</code></td>
+<td></td>
+<td>o</td>
+<td></td>
+<td></td>
+<td></td>
+<td>Purges removed ghosts (with -Remove -Purge).</td>
+</tr>
+<tr>
+<td><code>Files.ReadWrite.All</code></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td>Uploads the files into OneDrive and the channel libraries, and shares them.</td>
+</tr>
+<tr>
+<td><code>Sites.ReadWrite.All</code></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td></td>
+<td>Writes into the SharePoint libraries of the channels.</td>
+</tr>
+<tr>
+<td><code>Teamwork.Migrate.All</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Starts, fills and completes the migration of chats and channels.</td>
+</tr>
+<tr>
+<td><code>Team.Create</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Creates the teams.</td>
+</tr>
+<tr>
+<td><code>Channel.Create</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Creates the channels.</td>
+</tr>
+<tr>
+<td><code>Chat.Create</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Creates the chats.</td>
+</tr>
+<tr>
+<td><code>Chat.ReadWrite.All</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Reads back the chats and their migration state.</td>
+</tr>
+<tr>
+<td><code>ChatMember.ReadWrite.All</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Adds the members of the chats.</td>
+</tr>
+<tr>
+<td><code>ChannelMember.ReadWrite.All</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Adds the members of the channels.</td>
+</tr>
+<tr>
+<td><code>TeamMember.ReadWrite.All</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td></td>
+<td>Adds the members of the teams.</td>
+</tr>
+<tr>
+<td><code>ChannelMessage.Read.All</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>R</td>
+<td>Reads the imported channel messages.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The lab helper <code>tools\Grant-LabConsent.ps1</code> carries its own list; the tables above are the authoritative ones. Note that the Reader also needs <code>Chat.ReadBasic.All</code>, the Writer needs <code>Chat.Read.All</code>, and <code>Group.ReadWrite.All</code> is optional (only for <code>-CreateTrackingGroup</code>).</p>
+<p><strong>Only one application may start, import and complete a migration:</strong> another application cannot import into (400) nor complete (401) a migration that it did not open <em>(lab, W4)</em>. The journal records the owner <code>appId</code> of each session; never change the target application in the middle of a lot.</p>
+<p><strong>Teams protected APIs.</strong> <code>Chat.Read.All</code> and <code>ChannelMessage.Read.All</code> as application permissions give access to every chat and channel message. Microsoft has documented a request form for this access and has changed the rule over time. In the lab the consent alone was enough <em>(lab)</em>. If an export answers <code>403</code> while the token shows the roles, ask the tenant administrator to check the current rule early: an approval can take days.</p>
+</div></section><section class="section" id="graph-endpoints-limits-and-throttling"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></div><div><div class="section-eyebrow">Chapter 6</div><h2>Graph endpoints, limits and throttling</h2></div></div><div class="section-body">
+<h3 id="endpoints-used">Endpoints used</h3>
+<p>All calls use <code>v1.0</code> of the cloud selected by <code>Cloud</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inventory</td>
+<td><code>GET /users?$select=...</code>, <code>GET /directory/deletedItems/microsoft.graph.user</code>, <code>GET /users/{id}/chats?$expand=members&amp;$top=50</code>, <code>GET /teams?$select=id</code> (fallback <code>GET /groups?$filter=resourceProvisioningOptions/Any(x:x eq 'Team')</code>), <code>GET /teams/{id}/channels</code>, <code>.../members</code>, <code>.../channels/{id}/members?$top=999</code></td>
+</tr>
+<tr>
+<td>Export, strategy U</td>
+<td><code>GET /users/{id}/chats/getAllMessages?$top=50&amp;model=B&amp;$filter=lastModifiedDateTime gt .. and lt ..</code></td>
+</tr>
+<tr>
+<td>Export, strategy C</td>
+<td><code>GET /chats/{id}/messages?$top=50</code></td>
+</tr>
+<tr>
+<td>Export, channels</td>
+<td><code>GET /teams/{id}/channels/getAllMessages</code> (replies included), or per channel <code>GET /teams/{t}/channels/{c}/messages</code> and <code>.../replies</code></td>
+</tr>
+<tr>
+<td>Hosted contents</td>
+<td><code>GET .../messages/{id}/hostedContents/{id}/$value</code></td>
+</tr>
+<tr>
+<td>Files (download)</td>
+<td><code>GET /shares/{u!...}/driveItem</code>, <code>.../content</code>, <code>GET /drives/{d}/items/{i}/content</code></td>
+</tr>
+<tr>
+<td>Plan</td>
+<td><code>$batch</code> (20 per call) of <code>GET /users/{id}</code>, <code>GET /users?$filter=userPrincipalName eq ...</code>, <code>GET /teams?$filter=displayName eq ...</code>, <code>GET /teams/{t}/channels</code>, <code>GET /chats/{id}</code></td>
+</tr>
+<tr>
+<td>Ghosts</td>
+<td><code>POST /users</code>, <code>GET /users/{id}</code>, <code>DELETE /users/{id}</code>, <code>GET</code>/<code>POST /groups</code>, <code>POST /groups/{id}/members/$ref</code>, <code>/directory/deletedItems</code> (purge)</td>
+</tr>
+<tr>
+<td>CopyFiles</td>
+<td><code>GET /teams/{t}/channels/{c}/filesFolder</code>, <code>GET /users/{id}/drive</code>, <code>PUT .../root:/{folder}/{name}:/content?@microsoft.graph.conflictBehavior=rename</code>, <code>.../createUploadSession</code>, <code>POST /drives/{d}/items/{i}/invite</code></td>
+</tr>
+<tr>
+<td>Import</td>
+<td><code>POST /chats</code>, <code>POST /teams</code> (one member), <code>POST /teams/{t}/channels</code>, <code>POST .../members</code>, <code>POST /chats/{id}/startMigration</code>, <code>POST .../messages</code>, <code>POST .../messages/{id}/replies</code>, <code>POST .../completeMigration</code>, <code>GET</code> of the chat or channel for <code>migrationMode</code>, members <code>DELETE</code> and <code>POST</code> for the history of a group chat</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td><code>GET /chats/{id}/messages?$top=50</code>, <code>GET /teams/{t}/channels/{c}/messages?$top=50&amp;$expand=replies</code> (and <code>.../replies</code>), <code>GET</code> of the chat or channel for <code>migrationMode</code></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="limits-of-the-service">Limits of the service</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Limit</th>
+<th>Value</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Import, per conversation</td>
+<td><strong>5 requests per second</strong></td>
+<td>Microsoft; confirmed <em>(lab)</em>; one POST in flight reaches only about 1.2 messages/s (latency about 0.8 s), so the importer sends <strong>3 in flight per conversation</strong>; 8 in flight degrades (429)</td>
+</tr>
+<tr>
+<td>Import, per application and tenant</td>
+<td>about <strong>60 to 90 messages per second</strong> (13 threads: 58.6/s; 21 threads: 91.1/s; 43 threads: 62.5/s with 72 <code>429</code>)</td>
+<td>lab. The gain of a second application was <strong>not</strong> demonstrated: to be measured with two simultaneous runs and validated with Microsoft</td>
+</tr>
+<tr>
+<td>Export, one user</td>
+<td>about 20 requests/s without throttling; <code>429</code> from 16 simultaneous requests (<code>Retry-After</code> 2 to 10 s)</td>
+<td>lab; the limit looks per user, so export is not the bottleneck at scale</td>
+</tr>
+<tr>
+<td>Chat history restore (group chat)</td>
+<td>POST and DELETE on chat members: <strong>4 per minute per chat</strong>, about <strong>15 s per member</strong></td>
+<td>lab</td>
+</tr>
+<tr>
+<td>Reactions</td>
+<td>250 per message at most</td>
+<td>import API</td>
+</tr>
+<tr>
+<td>Teams per archive team</td>
+<td>1,000 channels (deleted included)</td>
+<td>Microsoft; <code>-ChannelsPerArchiveTeam</code> is capped at 1000</td>
+</tr>
+<tr>
+<td><code>$batch</code></td>
+<td>20 requests per call</td>
+<td>Graph</td>
+</tr>
+<tr>
+<td>Duplicate <code>createdDateTime</code></td>
+<td><strong>409 Conflict</strong></td>
+<td>lab</td>
+</tr>
+<tr>
+<td>Future date</td>
+<td>400; before the thread creation date: 403</td>
+<td>lab</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="throttling-behaviour">Throttling behaviour</h3>
+<ul>
+<li><strong><code>GraphClient</code></strong> retries <code>429</code>, <code>500</code>, <code>502</code>, <code>503</code>, <code>504</code> and network errors up to <code>Graph.MaxAttempts</code>. It honours <code>Retry-After</code> (seconds or date). Without one it waits a jittered delay uniform in <code>[BaseBackoff, min(MaxBackoff, BaseBackoff x 2^(attempt-1))]</code>. A body that cannot be replayed is never replayed. In <code>$batch</code>, items answered <code>429</code>/<code>503</code> are resent in a later batch after their <code>Retry-After</code>.</li>
+<li><strong>The adaptive limiter</strong> sits in front of every attempt, one pacing &quot;bucket&quot; per endpoint class (<code>users</code>, <code>users.chats.getAllMessages</code>, <code>chats.messages</code>, <code>teams.channels.messages.replies</code>, <code>drive.upload</code>, <code>migration.importMessage</code>, ...): it starts at <code>Graph.InitialRatePerSecond</code>; a <code>429</code>/<code>503</code> <strong>halves</strong> the rate (floor 0.5 per second) and <strong>pauses the class</strong> for the <code>Retry-After</code> delay (1 s when absent); every 50 consecutive successes add 1 request per second up to a ceiling of 200.</li>
+<li><strong>Per-conversation pacing</strong>: the classes <code>migration.importMessage</code> and <code>teams.channels.messages.replies</code> are also paced at <strong>5 requests per second per target conversation</strong> (a bucket per conversation, evicted after 2 minutes idle, so memory stays bounded over 100,000 conversations).</li>
+<li><strong>A concurrency gate</strong> of <code>Graph.MaxConcurrency</code> simultaneous requests for the process.</li>
+<li><strong>A systematic failure</strong> (the same error on the first units with no success) stops the export with <em>systematic failure: ... nothing exported; fix the cause and run again</em>.</li>
+<li><strong>Nothing sensitive is logged</strong>: URLs without their query string (upload-session URLs carry a token there), no header, no body, no token.</li>
+<li>A <code>POST</code> retried after a timeout or <code>5xx</code> may already have been executed by Graph: the importer's journal and the <code>409</code> are the guard (chapter 11).</li>
+</ul>
+</div></section><div class="part" id="part-iii-use"><span class="part-label">Part III</span><span class="part-name">Use</span></div>
+<section class="section" id="modes-and-parameters"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3M13 15h4"/></svg></div><div><div class="section-eyebrow">Chapter 7</div><h2>Modes and parameters</h2></div></div><div class="section-body">
+<div class="code"><div class="code-head"><span>PowerShell</span><button type="button" class="copy"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy</span></button></div><pre><code>.\Invoke-TeamsTransfer.ps1 [-Mode &lt;mode&gt;] [mode parameters] [-StoreRoot &lt;folder&gt;] [-ConfigPath &lt;file&gt;] [-WhatIf] [-PassThru] [-DevelopmentMode]
+pwsh -STA -File .\Invoke-TeamsTransfer.ps1 -Gui [-Demo]
+</code></pre></div>
+<p><code>-Mode</code> defaults to <code>Status</code>. A parameter that does not belong to the chosen mode is refused <strong>before anything is read or written</strong>: <em>-X does not apply to -Mode Y (it applies to: ...)</em>. <code>-Apply</code> and <code>-Force</code> on a mode that never writes to the target say so. <code>-WhatIf</code> shows what a run would do and starts no engine (the log, the store and the report folder of the run are written like in any run).</p>
+<h3 id="the-thirteen-modes">The thirteen modes</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Does</th>
+<th>Reads</th>
+<th>Writes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Status</code> (default)</td>
+<td>The state of the store: conversations inventoried and with messages, inventory pass, pending files, every lot with its state, its items per state and its journal summary. Without a store: version, configuration, engine. <code>-CancelLot</code> abandons a lot.</td>
+<td>store</td>
+<td>nothing (with <code>-CancelLot</code>: the local store, after a confirmation)</td>
+</tr>
+<tr>
+<td><code>Assess</code></td>
+<td>Samples <code>-SampleUsers</code> users (and <code>-SampleTeams</code> teams), measures, extrapolates volume, duration, waves and disk to <code>-HistoryMonths</code>.</td>
+<td>source</td>
+<td>a report folder (no store)</td>
+</tr>
+<tr>
+<td><code>Inventory</code></td>
+<td>Lists users, chats, teams, channels and members into the store. Resumable.</td>
+<td>source</td>
+<td>store</td>
+</tr>
+<tr>
+<td><code>Export</code></td>
+<td>Exports the messages of the chats (and with <code>-IncludeChannels</code> of the channels). Incremental. <code>-IncludeFiles</code> also downloads files. With <code>-Lot</code>, exports the members of the lot and moves it to <code>Exported</code>.</td>
+<td>source</td>
+<td>store</td>
+</tr>
+<tr>
+<td><code>Files</code></td>
+<td>Downloads the file references recorded as <code>Pending</code>.</td>
+<td>source</td>
+<td>store</td>
+</tr>
+<tr>
+<td><code>Archive</code></td>
+<td>Writes the offline Teams-like HTML archive (folder, or one file with <code>-SingleFile</code>).</td>
+<td>store</td>
+<td>archive</td>
+</tr>
+<tr>
+<td><code>Plan</code></td>
+<td>The dry-run import plan of a lot (<code>-Lot</code>, or <code>-Users</code>/<code>-Teams</code> for a lot created on the fly), wave by wave (<code>-Slices</code>).</td>
+<td>store, target</td>
+<td>maps, journal seed, ghost table, lot state, plan folder</td>
+</tr>
+<tr>
+<td><code>Ghosts</code></td>
+<td>Creates the ghost accounts of deleted authors; <code>-Remove</code> deletes them.</td>
+<td>store, target</td>
+<td><strong>target</strong> only with <code>-Apply</code></td>
+</tr>
+<tr>
+<td><code>CopyFiles</code></td>
+<td>Copies the exported files into the target tenant and shares them.</td>
+<td>store, target</td>
+<td><strong>target</strong> only with <code>-Apply</code></td>
+</tr>
+<tr>
+<td><code>Import</code></td>
+<td>Imports the messages of a planned lot.</td>
+<td>store, target</td>
+<td><strong>target</strong> only with <code>-Apply</code></td>
+</tr>
+<tr>
+<td><code>Verify</code></td>
+<td>Compares the target with the journal and the source.</td>
+<td>store, target</td>
+<td>verification files, lot state</td>
+</tr>
+<tr>
+<td><code>Report</code></td>
+<td>Rebuilds the HTML reports of a lot (or every lot) from the catalog.</td>
+<td>store</td>
+<td>reports</td>
+</tr>
+<tr>
+<td><code>Merge</code></td>
+<td>Folds another store (<code>-FromStore</code>, the store of another workstation) into this one: users, conversations, messages, files and content. The other store is opened read-only and never modified; idempotent. Lots, leases and import sessions are <strong>not</strong> merged (the coordinator's store is authoritative).</td>
+<td>the other store</td>
+<td>this store (created when missing)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="parameters">Parameters</h3>
+<p><strong>Common to all modes</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Mode</code></td>
+<td>One of <code>Assess</code>, <code>Inventory</code>, <code>Export</code>, <code>Files</code>, <code>Archive</code>, <code>Status</code>, <code>Plan</code>, <code>Ghosts</code>, <code>CopyFiles</code>, <code>Import</code>, <code>Verify</code>, <code>Report</code>, <code>Merge</code>. Default <code>Status</code>.</td>
+</tr>
+<tr>
+<td><code>-ConfigPath</code></td>
+<td>Configuration file. Default <code>config\TeamsTransfer.config.psd1</code> (and the local file on top).</td>
+</tr>
+<tr>
+<td><code>-StoreRoot</code></td>
+<td>Folder of the local store. Default <code>Store.Path</code>, otherwise <code>&lt;Output.Root&gt;\store</code>. Created by <code>Inventory</code> and <code>Export</code>. One process at a time may write to it.</td>
+</tr>
+<tr>
+<td><code>-LogFolder</code></td>
+<td>Folder of the log <code>TeamsTransfer_yyyyMMdd.log</code>. Default <code>TEAMSTRANSFER_LOG_FOLDER</code>, otherwise <code>&lt;Output.Root&gt;\logs</code>.</td>
+</tr>
+<tr>
+<td><code>-IntervalSeconds</code></td>
+<td>Seconds between two progress lines of a long mode (1 to 3600, default 5).</td>
+</tr>
+<tr>
+<td><code>-StopFile</code></td>
+<td>When this file exists the job stops like Ctrl+C: the requests in flight finish, the state is saved, exit code 2.</td>
+</tr>
+<tr>
+<td><code>-PassThru</code></td>
+<td>Also returns the result as an object (<code>Mode</code>, <code>Status</code>, <code>ExitCode</code>, <code>Counts</code>, <code>Duration</code>, <code>LogFile</code>, <code>Report</code>, <code>Next</code>). Without it nothing is written to the pipeline.</td>
+</tr>
+<tr>
+<td><code>-DevelopmentMode</code></td>
+<td>Allows a source checkout or an unsigned development package (chapter 3).</td>
+</tr>
+<tr>
+<td><code>-WhatIf</code>, <code>-Confirm</code></td>
+<td>Standard. <code>-Confirm:$false</code> skips the confirmation like <code>-Force</code>.</td>
+</tr>
+<tr>
+<td><code>-Gui</code>, <code>-Demo</code></td>
+<td>Open the console (<code>-Demo</code>: synthetic tenants, temporary store). <code>-Gui</code> ignores every other parameter except <code>-Demo</code> and <code>-DevelopmentMode</code>; without an STA thread the script restarts itself in <code>pwsh -STA</code>. <code>-Demo</code> without <code>-Gui</code> is an error.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Selection (which conversations)</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Modes</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Users</code></td>
+<td><code>Inventory</code>, <code>Export</code>, <code>Archive</code>, <code>Plan</code>, <code>Ghosts</code></td>
+<td>Ids or UPNs (comma separated), or the path of a CSV with an <code>Id</code>, <code>Identity</code> or <code>UserPrincipalName</code> (or <code>Mail</code>) column. Default for <code>Export</code>: the users linked to a conversation in the store. <code>Archive</code> takes <strong>one</strong> user. <code>Plan</code>: creates a lot on the fly.</td>
+</tr>
+<tr>
+<td><code>-Teams</code></td>
+<td><code>Inventory</code>, <code>Export</code>, <code>Archive</code>, <code>Plan</code></td>
+<td>Ids or <strong>exact</strong> display names, or a CSV with <code>Id</code>, <code>TeamId</code> or <code>DisplayName</code>. <code>Archive</code> takes one team. A name must exist in the inventory.</td>
+</tr>
+<tr>
+<td><code>-Conversation</code></td>
+<td><code>Archive</code></td>
+<td>One or more keys: <code>chat:&lt;id&gt;</code> or <code>channel:&lt;team&gt;/&lt;channel&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>-Lot</code></td>
+<td><code>Export</code>, <code>Status</code>, <code>Plan</code>, <code>Import</code>, <code>Ghosts</code>, <code>CopyFiles</code>, <code>Verify</code>, <code>Report</code></td>
+<td>The name of a lot. With <code>Plan</code> and <code>-Users</code>/<code>-Teams</code>/<code>-LotFile</code>, and with <code>Export -LotFile</code>, the lot is <strong>created with this name</strong> when it does not exist, used as it is when it exists with the same members, and refused when it exists with different members. Without <code>-Lot</code>, <code>Plan</code> gives a new lot an automatic name <code>plan-yyyyMMdd-HHmmss</code>.</td>
+</tr>
+<tr>
+<td><code>-LotFile</code></td>
+<td><code>Plan</code>, <code>Export</code></td>
+<td>A CSV that defines the members of a lot: <code>Type</code> (<code>User</code>, <code>Team</code>, <code>Chat</code> or <code>Channel</code>), <code>Identity</code> (user id or UPN; team id or exact name; chat id or <code>chat:&lt;id&gt;</code>; channel <code>teamId/channelId</code> or <code>channel:&lt;key&gt;</code>) and optional <code>Priority</code> (a whole number, lower runs first, default 100). <code>Plan</code>: with or without <code>-Lot</code>, combinable with <code>-Users</code>/<code>-Teams</code>. <code>Export</code>: needs <code>-Lot &lt;name&gt;</code>; creates the lot, then exports it.</td>
+</tr>
+<tr>
+<td><code>-FromStore</code></td>
+<td><code>Merge</code></td>
+<td>The root folder of the other store to fold into this one (opened read-only). It must hold a store (<code>catalog.db</code>), not be this store or overlap it, and have the same number of partitions (a missing destination is created with that number).</td>
+</tr>
+<tr>
+<td><code>-Window</code></td>
+<td><code>Export</code>, <code>Archive</code>, <code>Plan</code></td>
+<td><code>Nm</code> with N from 1 to 600 (the last N months, for example <code>24m</code> or <code>60m</code>) or <code>&lt;from&gt;..&lt;to&gt;</code> (ISO dates). Default for <code>Export</code>: the whole history. A lot that is <strong>created</strong> by <code>Plan</code> accepts <code>Nm</code> only (waves of 24 months, then 12 months each; default <code>24m</code>); <code>Export -LotFile</code> follows <code>Nm</code> for the waves of the new lot. Alternative to <code>-From</code>/<code>-To</code>.</td>
+</tr>
+<tr>
+<td><code>-From</code>, <code>-To</code></td>
+<td><code>Export</code>, <code>Archive</code></td>
+<td>Start and end of the period (a date or date and time).</td>
+</tr>
+<tr>
+<td><code>-AllStoreUsers</code></td>
+<td><code>Export</code></td>
+<td>Without <code>-Users</code>, every non-deleted user of the store.</td>
+</tr>
+<tr>
+<td><code>-SkipChats</code></td>
+<td><code>Inventory</code>, <code>Export</code></td>
+<td>Do not read the chats.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Export and files</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Modes</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Strategy</code></td>
+<td><code>Export</code></td>
+<td><code>U</code> (per user), <code>C</code> (per chat) or <code>Auto</code> (default: U, then C for conversations that contain imported messages).</td>
+</tr>
+<tr>
+<td><code>-IncludeChannels</code></td>
+<td><code>Export</code></td>
+<td>Also export the channels of the teams in the store.</td>
+</tr>
+<tr>
+<td><code>-IncludeFiles</code></td>
+<td><code>Export</code></td>
+<td>Record file references, then run the <code>Files</code> stage unless <code>-SkipFileDownload</code>.</td>
+</tr>
+<tr>
+<td><code>-SkipFileDownload</code></td>
+<td><code>Export</code></td>
+<td>Record the references only; download later with <code>-Mode Files</code>.</td>
+</tr>
+<tr>
+<td><code>-NoHostedContents</code></td>
+<td><code>Export</code></td>
+<td>Do not download the images pasted in messages.</td>
+</tr>
+<tr>
+<td><code>-Full</code></td>
+<td><code>Export</code></td>
+<td>Read everything again instead of only what changed.</td>
+</tr>
+<tr>
+<td><code>-MaxFileSizeMB</code></td>
+<td><code>Export</code>, <code>Files</code>, <code>CopyFiles</code></td>
+<td>Files above this size are not downloaded or copied (0 = no limit).</td>
+</tr>
+<tr>
+<td><code>-ExcludeExtensions</code></td>
+<td><code>Export</code>, <code>Files</code>, <code>CopyFiles</code></td>
+<td>Extensions to skip, for example <code>.iso,.zip</code>.</td>
+</tr>
+<tr>
+<td><code>-UserParallelism</code></td>
+<td><code>Inventory</code>, <code>Export</code>, <code>Ghosts</code></td>
+<td>Users in parallel (1 to 64; <code>Ghosts</code>: 1 to 32). Default 8 in each of these modes.</td>
+</tr>
+<tr>
+<td><code>-ConversationParallelism</code></td>
+<td><code>Export</code>, <code>Import</code>, <code>Verify</code></td>
+<td>Conversations in parallel (1 to 64). One default per mode: <code>Export</code> 8, <code>Import</code> 32, <code>Verify</code> 8. In <code>Import</code> each conversation stays at 5 requests per second.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Assess</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-SampleUsers</code></td>
+<td>Users to sample (1 to 10000, default 20).</td>
+</tr>
+<tr>
+<td><code>-SampleTeams</code></td>
+<td>Teams to sample (0 to 10000, default 0: channel messages are then not counted).</td>
+</tr>
+<tr>
+<td><code>-HistoryMonths</code></td>
+<td>Depth of the extrapolation (1 to 600, default 60).</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Archive</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-OutputPath</code></td>
+<td>Folder of the archive, or the <code>.html</code> file with <code>-SingleFile</code>. Default: a folder in the report folder of the run.</td>
+</tr>
+<tr>
+<td><code>-SingleFile</code></td>
+<td>One self-contained <code>.html</code> file (<code>-OutputPath</code> must end with <code>.html</code>).</td>
+</tr>
+<tr>
+<td><code>-Viewer</code></td>
+<td>The person whose messages are drawn on the right (id, UPN or mail). Default: the user of <code>-Users</code>.</td>
+</tr>
+<tr>
+<td><code>-Title</code></td>
+<td>Title of the page.</td>
+</tr>
+<tr>
+<td><code>-Language</code></td>
+<td><code>en</code> only.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Plan</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Meaning</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Scenario</code></td>
+<td><code>TenantToTenant</code> (default), <code>SameTenantRestore</code> or <code>DepartedArchive</code>. Also on <code>Verify</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-Slices</code></td>
+<td>Waves to plan, 1 to 4 (1 = last 24 months, 2 = months 25-36, 3 = 37-48, 4 = 49-60). Default <code>1</code>. Also on <code>Import</code>, <code>CopyFiles</code>, <code>Verify</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-IdentityMap</code></td>
+<td>CSV with <code>SourceUpn</code> and/or <code>SourceId</code>, <code>TargetUpn</code> and/or <code>TargetId</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-TeamMap</code></td>
+<td>CSV with <code>SourceTeamId</code> and/or <code>SourceTeam</code> (name), <code>TargetTeamId</code> and/or <code>TargetTeam</code>. Without a row a team is the target team of the same display name, or is created.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-DomainMap</code></td>
+<td><code>source.com=target.com</code> (several, comma separated): <code>a@source.com</code> is looked up as <code>a@target.com</code> (UPN, then mail).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-ServiceAccount</code></td>
+<td><code>Plan</code>, <code>Import</code>, <code>Ghosts</code>, <code>CopyFiles</code>, <code>Verify</code></td>
+<td>UPN or object id of the service account: fallback author of federated and deleted authors, owner of created teams. <strong>One resolution order everywhere:</strong> this parameter, then <code>Target.ServiceAccountUserId</code> of the configuration, then the service account recorded by the plan of the lot, then the <code>ServiceAccount</code> identity of the identity map. A UPN is resolved with <code>GET /users</code> in the target tenant.</td>
+</tr>
+<tr>
+<td><code>-GhostDomain</code></td>
+<td>Domain of the ghost accounts. Without it, deleted authors fall back to the service account. Also on <code>Ghosts</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-DeletedAuthors</code></td>
+<td><code>Auto</code> (default: ghost when <code>-GhostDomain</code> is given, else service account), <code>Ghost</code> or <code>ServiceAccount</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-ConfirmGhostCount</code></td>
+<td>Accept more ghosts than <code>-GhostThreshold</code>. Also on <code>Ghosts</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-GhostThreshold</code></td>
+<td>The count above which the plan is blocked (1 to 1,000,000, default 5000). Also on <code>Ghosts</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-ArchiveOwners</code></td>
+<td>Scenario C: owners of the archive channels (UPNs or ids). The service account is added.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-ArchiveTeamPrefix</code></td>
+<td>Scenario C: archive teams are named <code>&lt;prefix&gt; NN</code> (default <code>Teams Archive</code>).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-ChannelsPerArchiveTeam</code></td>
+<td>Scenario C: channels per archive team, 1 to 1000 (default 200).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>-SkipTargetLookup</code></td>
+<td>Plan without reading the target tenant. CSV targets given as object ids are trusted; other users stay unresolved in scenario A; the service account must then be an object id.</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Ghosts, CopyFiles, Import (write modes)</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Modes</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-Apply</code></td>
+<td><code>Ghosts</code>, <code>CopyFiles</code>, <code>Import</code></td>
+<td>Perform the changes in the target tenant. Without it the mode previews. One confirmation unless <code>-Force</code>.</td>
+</tr>
+<tr>
+<td><code>-Force</code></td>
+<td><code>Ghosts</code>, <code>CopyFiles</code>, <code>Import</code>, <code>Status</code> (with <code>-CancelLot</code>)</td>
+<td>No confirmation question (unattended runs). Never skips a safety check.</td>
+</tr>
+<tr>
+<td><code>-Remove</code></td>
+<td><code>Ghosts</code></td>
+<td>Delete the ghosts recorded in the catalog. Each account is read back and refused unless its <code>employeeType</code> is <code>TeamsTransferGhost</code> and its UPN starts with <code>tt-ghost-</code>. <code>-Users</code> limits it.</td>
+</tr>
+<tr>
+<td><code>-Purge</code></td>
+<td><code>Ghosts</code></td>
+<td>With <code>-Remove</code>: also purge the removed ghosts from the recycle bin.</td>
+</tr>
+<tr>
+<td><code>-CreateTrackingGroup</code></td>
+<td><code>Ghosts</code></td>
+<td>Allow the tool to create the tracking group.</td>
+</tr>
+<tr>
+<td><code>-UsageLocation</code></td>
+<td><code>Ghosts</code></td>
+<td>Two-letter <code>usageLocation</code> for the ghosts.</td>
+</tr>
+<tr>
+<td><code>-FileParallelism</code></td>
+<td><code>CopyFiles</code></td>
+<td>Files copied in parallel (1 to 64, default 4).</td>
+</tr>
+<tr>
+<td><code>-ChunkSizeMB</code></td>
+<td><code>CopyFiles</code></td>
+<td>Fragment size of an upload session (rounded to a multiple of 320 KiB, 1 to 60, default 10).</td>
+</tr>
+<tr>
+<td><code>-NoShare</code></td>
+<td><code>CopyFiles</code></td>
+<td>Do not share the chat files with the chat members.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Verify and Status</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Modes</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-SampleSize</code></td>
+<td><code>Verify</code></td>
+<td>Messages compared one by one per conversation and slice (0 to 1000, default 10).</td>
+</tr>
+<tr>
+<td><code>-StrictCounts</code></td>
+<td><code>Verify</code></td>
+<td>A different number of reactions or file attachments becomes a <code>Mismatch</code>.</td>
+</tr>
+<tr>
+<td><code>-AllowExtra</code></td>
+<td><code>Verify</code></td>
+<td>Messages already on the target are not a mismatch (the default for <code>-Scenario SameTenantRestore</code>).</td>
+</tr>
+<tr>
+<td><code>-NoLotUpdate</code></td>
+<td><code>Verify</code></td>
+<td>Do not change the state of the items and of the lot.</td>
+</tr>
+<tr>
+<td><code>-CancelLot</code></td>
+<td><code>Status</code></td>
+<td>With <code>-Lot</code>: abandon a lot that has not started importing.</td>
+</tr>
+<tr>
+<td><code>-Reason</code></td>
+<td><code>Status</code></td>
+<td>The reason written in the history of the lot (with <code>-CancelLot</code>).</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="examples">Examples</h3>
+<div class="code"><div class="code-head"><span>PowerShell</span><button type="button" class="copy"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy</span></button></div><pre><code>.\Invoke-TeamsTransfer.ps1 -Mode Assess -SampleUsers 30
+.\Invoke-TeamsTransfer.ps1 -Mode Inventory -StoreRoot D:\ttstore
+.\Invoke-TeamsTransfer.ps1 -Mode Export -StoreRoot D:\ttstore -Window 24m -IncludeChannels -IncludeFiles
+.\Invoke-TeamsTransfer.ps1 -Mode Files -StoreRoot D:\ttstore -MaxFileSizeMB 200
+.\Invoke-TeamsTransfer.ps1 -Mode Archive -StoreRoot D:\ttstore -Users camille.martin@contoso.com -OutputPath D:\archives\camille
+.\Invoke-TeamsTransfer.ps1 -Mode Plan -StoreRoot D:\ttstore -Lot wave1 -DomainMap contoso.com=fabrikam.com -ServiceAccount svc-migration@fabrikam.com -GhostDomain fabrikam.com
+.\Invoke-TeamsTransfer.ps1 -Mode Ghosts -StoreRoot D:\ttstore -Lot wave1 -GhostDomain fabrikam.com -CreateTrackingGroup -Apply -Force
+.\Invoke-TeamsTransfer.ps1 -Mode CopyFiles -StoreRoot D:\ttstore -Lot wave1
+.\Invoke-TeamsTransfer.ps1 -Mode Import -StoreRoot D:\ttstore -Lot wave1 -Apply
+.\Invoke-TeamsTransfer.ps1 -Mode Verify -StoreRoot D:\ttstore -Lot wave1
+.\Invoke-TeamsTransfer.ps1 -Mode Report -StoreRoot D:\ttstore
+.\Invoke-TeamsTransfer.ps1 -Mode Export -StoreRoot D:\ws1\store -Lot ws1 -LotFile .\lots\ws1.csv -IncludeChannels -IncludeFiles
+.\Invoke-TeamsTransfer.ps1 -Mode Merge -StoreRoot D:\coordinator\store -FromStore \\ws1\share\store
+.\Invoke-TeamsTransfer.ps1 -Mode Plan -StoreRoot D:\coordinator\store -Lot ws1 -LotFile .\lots\ws1.csv -ServiceAccount svc-migration@fabrikam.com
+.\Invoke-TeamsTransfer.ps1 -Mode Status -StoreRoot D:\ttstore -Lot wave1 -CancelLot -Reason 'wrong scope'
+</code></pre></div>
+<p>(<code>Get-Help .\Invoke-TeamsTransfer.ps1 -Full</code> prints the same reference with the per-parameter help.)</p>
+</div></section><section class="section" id="exit-codes-log-reports-and-the-console-output"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></div><div><div class="section-eyebrow">Chapter 8</div><h2>Exit codes, log, reports and the console output</h2></div></div><div class="section-body">
+<h3 id="exit-codes">Exit codes</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0</strong></td>
+<td>The run is complete.</td>
+</tr>
+<tr>
+<td><strong>1</strong></td>
+<td>An error stopped it. The message (with a <code>Hint</code> when the cause is known) is in the final card and in the log.</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>Not complete but resumable, nothing lost: stopped (Ctrl+C, <code>-StopFile</code>), or some items failed and the next run retries them. <strong>Run the same command again.</strong></td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Items in an uncertain state: a plan with blockers, an import with rejected messages or conversations whose <code>completeMigration</code> is not confirmed, ghosts found enabled, a verification with mismatches or missing conversations (see <code>-Mode Status</code>).</td>
+</tr>
+</tbody>
+</table></div>
+<p>Priority when several apply: 3, then 2, then 1, then 0. <code>-PassThru</code> returns <code>Status</code> = <code>Success</code> (0), <code>Planned</code> (0 on a preview), <code>Failed</code> (1) or <code>Pending</code> (2 and 3).</p>
+<h3 id="hints-of-known-errors">Hints of known errors</h3>
+<p>The entry script appends a <code>Hint</code> to the error text when it recognises the cause:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>The message matches</th>
+<th>Hint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Configuration.&lt;Side&gt;.&lt;Key&gt; is empty</code></td>
+<td>Fill the Source / Target section of <code>config\TeamsTransfer.config.local.psd1</code>.</td>
+</tr>
+<tr>
+<td>certificate not found, private key, thumbprint</td>
+<td>The certificate must be in <code>Cert:\CurrentUser\My</code> or <code>Cert:\LocalMachine\My</code> with its private key; check <code>CertificateThumbprint</code>.</td>
+</tr>
+<tr>
+<td><code>AADSTS700016</code>, <code>700022</code>, <code>700027</code>, <code>1002..</code></td>
+<td>Check <code>TenantId</code>, <code>ClientId</code> and that the certificate is uploaded to the app registration.</td>
+</tr>
+<tr>
+<td><code>403</code>, <code>Forbidden</code>, <code>Authorization_RequestDenied</code>, <code>protected API</code></td>
+<td>Grant administrator consent, and check the access to the Teams protected APIs.</td>
+</tr>
+<tr>
+<td><code>already open for writing</code></td>
+<td>Another process holds the store: wait, or use another <code>-StoreRoot</code>.</td>
+</tr>
+<tr>
+<td><code>inside the package folder</code>, <code>SQLite over SMB</code></td>
+<td>Choose a <code>-StoreRoot</code> on a local disk, outside the package folder.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="log-and-reports">Log and reports</h3>
+<ul>
+<li><strong>Log:</strong> <code>TeamsTransfer_yyyyMMdd.log</code>, one line per message, no colour, no icon, no secret; the runs of a day append to it; files older than <code>Logging.RetentionDays</code> are deleted at the start of a run.</li>
+<li><strong>Run report:</strong> <code>&lt;Output.Root&gt;\reports\yyyy-MM-dd_HHmmss_&lt;Mode&gt;\</code> (a <code>-1</code>, <code>-2</code> suffix on a collision) with <code>TeamsTransfer_&lt;Mode&gt;.html</code>, <code>.csv</code> (counters) and <code>.json</code> (detail).</li>
+<li><strong>Mode files</strong> in that folder: <code>Plan</code>: <code>plan.html</code>, <code>plan.json</code>, <code>conversations.csv</code>, <code>identities.csv</code>, <code>ghosts.csv</code>, <code>issues.csv</code> (the plan folder is also kept in the store as <code>plans\&lt;lot&gt;</code>); <code>Ghosts</code>: <code>ghosts.csv</code>; <code>CopyFiles</code>: <code>filecopy-errors.csv</code> for failures; <code>Import</code>: <code>summary.html</code>, <code>conversations.csv</code>, <code>rejected.csv</code>; <code>Verify</code>: <code>verify.html</code>, <code>verify.csv</code>, <code>verify-summary.txt</code>; <code>Report</code>: <code>TeamsTransfer_Lot_&lt;name&gt;.html</code> per lot.</li>
+</ul>
+<h3 id="console-output-house-style">Console output (house style)</h3>
+<ul>
+<li>A start <strong>banner</strong> (rounded frame of 76 columns: logo, title, version, author, one sentence about the mode, then <code>Mode</code>, <code>Tenant</code>, <code>Store</code>, <code>OutFolder</code>, <code>Folder</code>, <code>Log</code> lines); <strong>numbered steps</strong> (<code>n/N</code> with an icon); one <strong>progress line</strong> every <code>-IntervalSeconds</code> (items, bytes, throughput, number of <code>429</code>, concurrency); and always a <strong>final card</strong> (green: finished; yellow: to resume; red: failure) with <code>Result</code> (<code>exit code N - meaning</code>), <code>Error</code>, <code>Counts</code> or <code>Store</code>, <code>Report</code>, <code>Log</code>, <code>Duration</code> and <code>Next</code> (the command to run next, on one copyable line).</li>
+<li>Colours are console colours (no ANSI sequence): warnings yellow, errors red, details dark grey. No colour when the output is redirected or when <code>NO_COLOR</code> is set. Icons: <code>TMT_ICONS</code>, otherwise emoji in Windows Terminal and VS Code, characters of the classic console fonts elsewhere; no emoji ever reaches a log, a CSV file or an exception message.</li>
+<li>Numbers use <code>en-US</code> (<code>1,234</code>, <code>0.5</code>), sizes <code>KiB</code>/<code>MiB</code>/<code>GiB</code>/<code>TiB</code>, durations <code>123 ms</code>, <code>12.3 s</code> or <code>hh:mm:ss</code>.</li>
+</ul>
+</div></section><section class="section" id="the-store-layout-and-safety"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><div><div class="section-eyebrow">Chapter 9</div><h2>The store: layout and safety</h2></div></div><div class="section-body">
+<div class="code"><div class="code-head"><span>Text</span><button type="button" class="copy"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg><span>Copy</span></button></div><pre><code>&lt;StoreRoot&gt;\
+  catalog.db                          SQLite (WAL): users, conversations, links, checkpoints, files, lots, work units, journal, ghosts, maps
+  store.lock                          the write lock (one writer process)
+  parts\NNN\part.db                   message index of partition NNN (NNN = 000..255)
+  parts\NNN\seg\&lt;yyyy-MM&gt;-&lt;n&gt;.jsonl.gz  message bodies of that partition and month, append only
+  content\ab\cd\&lt;sha256&gt;              content-addressed blobs: hosted contents and files (written to content\tmp, then moved)
+  plans\&lt;lot&gt;\                        the plan folder of a lot
+</code></pre></div>
+<ul>
+<li><strong>Partitions.</strong> <code>partition = FNV-1a(ConversationKey) mod Partitions</code> (256 by default, fixed at creation and recorded in <code>catalog.db</code> <strong>and</strong> in every <code>part.db</code>; opening with another number is refused). A conversation key is <code>chat:&lt;id&gt;</code> or <code>channel:&lt;team&gt;/&lt;channel&gt;</code>.</li>
+<li><strong>Segments.</strong> A segment is a sequence of <strong>independent gzip members</strong> (&quot;blocks&quot; of about 64 KB of uncompressed JSON lines, sorted by conversation). <code>gzip -dc segment</code> yields the whole <code>jsonl</code>. Month = the UTC month of <code>createdDateTime</code>; a new file <code>&lt;month&gt;-&lt;n+1&gt;</code> starts when one reaches 256 MB uncompressed. One line per <strong>version</strong> of a message: the raw Graph JSON.</li>
+<li><strong>Index.</strong> <code>part.db</code> has <code>blocks</code> (segment, offset, compressed length, uncompressed length) and <code>messages</code> (block, offset of the line, line length): a read seeks to a block, inflates about 64 KB and slices the line.</li>
+<li><strong>Crash safety.</strong> A flush compresses blocks, appends to the segment, <code>fsync</code>s, then runs <strong>one</strong> SQLite transaction that inserts the blocks, upserts the message rows and moves the committed length of the segment. The index can never point past the end of a segment. Bytes after the last commit are an <strong>orphan tail</strong>: ignored, reported by <code>Store.Verify</code>, and a new segment file is started instead of appending after them. A segment shorter than its committed length (disk damage) is repaired at the first open: the missing blocks and messages are removed from the index (listed in the recovery log) and a re-export refetches them. A checkpoint flushes first, so it never gets ahead of its data.</li>
+<li><strong>Versions.</strong> Same <code>lastModifiedDateTime</code>, <code>etag</code> and sha256: unchanged. Otherwise a greater <code>lastModifiedDateTime</code> is a new version, a smaller one is ignored. <code>0001-01-01</code> is a value (imported messages carry it).</li>
+<li><strong>Content.</strong> Hosted contents and files are streamed, never buffered, and stored <strong>deduplicated by SHA256</strong>: a file posted in 50 chats is stored once.</li>
+<li><strong>Refused locations.</strong> A root inside the package folder (an upgrade would delete it), a UNC path or a mapped network drive (SQLite over SMB corrupts), and a partition count that differs from the recorded one. A second writer gets <em>already open for writing</em>; read-only modes open without the lock.</li>
+<li><strong>Consistency check.</strong> <code>-Mode Export</code> runs the store check at its end; an inconsistent store stops the run with <em>The store check found n problem(s): see the log.</em></li>
+<li><strong>Schema</strong> version 1 (<code>meta.schema_version</code>).</li>
+</ul>
+<p><strong>Scale</strong> (design figures, to confirm with <code>Assess</code>): 1 to 3 billion messages is about 2 to 6 TB of raw JSON (0.5 to 1.5 TB compressed); files can be several tens of TB. Several workstations can share an export (Graph quotas are per application and tenant: more workstations help only up to that ceiling). Procedure: <strong>(1)</strong> write one CSV per workstation (<code>-LotFile</code>), with <strong>disjoint</strong> members; <strong>(2)</strong> on each workstation <code>-Mode Export -Lot wsN -LotFile .\lots\wsN.csv</code> into its <strong>own</strong> store on its own local disk; <strong>(3)</strong> when a workstation is finished (nothing may write its store), on the <strong>coordinator</strong> run <code>-Mode Merge -StoreRoot &lt;coordinator store&gt; -FromStore &lt;store of wsN&gt;</code>, once per workstation (idempotent; the other store is only read; both must have the same <code>Store.Partitions</code>); <strong>(4)</strong> on the coordinator run <code>-Mode Plan -Lot wsN -LotFile .\lots\wsN.csv</code> with the <strong>same</strong> CSV: the lot is created over the merged store, then planned. Lots, leases and import sessions are not merged: the coordinator's store is authoritative for them. The catalog is never opened over a share by a worker.</p>
+</div></section><section class="section" id="lots-waves-and-the-life-cycle"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div><div><div class="section-eyebrow">Chapter 10</div><h2>Lots, waves and the life cycle</h2></div></div><div class="section-body">
+<p>The unit of import is the <strong>conversation</strong>, never the user alone. A <strong>lot</strong> freezes a list of members (<code>User</code>, <code>Team</code>, <code>Chat</code>, <code>Channel</code>, with a priority, default 100, lower first) and the <strong>time slices</strong>, computed once from an <em>as-of</em> date.</p>
+<p><strong>Slices (waves).</strong> Wave 1 is the <strong>last 24 months</strong>, open ended (it also takes what arrives later). Extension waves cover months 25 to 36, 37 to 48 and 49 to 60 (the boundaries come from <code>-Window</code> of a lot created on the fly: <code>60m</code> gives <code>24, 36, 48, 60</code>). The unit of work is a <strong>lot item</strong> = (conversation, slice, fragment). A conversation reached through several members keeps the smallest priority.</p>
+<p><strong>Coverage.</strong> Every planned item writes a coverage interval for its conversation. A later lot (or the same lot again) never plans an interval already covered by <strong>another</strong> lot; partial overlaps are cut into fragments. A conversation created after a slice ends, or silent since before it starts, is not planned for that slice.</p>
+<p><strong>Creating a lot.</strong> A lot is created by <code>-Mode Plan</code> over the store as it is, from <code>-Users</code>, <code>-Teams</code> and/or a <code>-LotFile</code>, with the name given by <code>-Lot</code> (or an automatic <code>plan-yyyyMMdd-HHmmss</code>); <code>-Mode Export -Lot &lt;name&gt; -LotFile &lt;csv&gt;</code> creates it, then exports it. Creating is idempotent by members: the same name with the same members is used as it is, other members are refused. A new lot is moved <code>Planned</code> to <code>Exporting</code> to <code>Exported</code> (Plan over an exported store), then planned. The run that created it <strong>cancels</strong> it if the plan throws before <code>ImportPlanned</code> (the conversations are released, an audit row stays); a lot that already existed is never cancelled automatically. <code>-Window</code> applies only to a lot that is created; the waves of an existing lot are chosen with <code>-Slices</code>.</p>
+<h3 id="states">States</h3>
+<p><code>Planned</code> → <code>Exporting</code> → <code>Exported</code> → <code>ImportPlanned</code> → <code>Ghosts</code> → <code>Files</code> → <code>Importing</code> → <code>Completing</code> → <code>Verified</code> → <code>Closed</code>, with <code>Paused</code> and <code>Failed</code> from any non-final state, and <code>Cancelled</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>State</th>
+<th>Entered by</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Planned</code></td>
+<td>creation</td>
+<td></td>
+</tr>
+<tr>
+<td><code>Exporting</code>, <code>Exported</code></td>
+<td><code>-Mode Export -Lot</code>, or a lot created by <code>Plan</code></td>
+<td><code>Exported</code> → <code>Exporting</code> is allowed (a delta pass)</td>
+</tr>
+<tr>
+<td><code>ImportPlanned</code></td>
+<td>a <code>Plan</code> <strong>without blockers</strong></td>
+<td>the importer refuses a lot whose last plan is missing or blocked</td>
+</tr>
+<tr>
+<td><code>Ghosts</code></td>
+<td><code>-Mode Ghosts -Lot -Apply</code></td>
+<td>may be skipped when there is nothing to do</td>
+</tr>
+<tr>
+<td><code>Files</code></td>
+<td><code>-Mode CopyFiles -Lot -Apply</code></td>
+<td>may be skipped</td>
+</tr>
+<tr>
+<td><code>Importing</code>, <code>Completing</code></td>
+<td><code>-Mode Import -Apply</code></td>
+<td><code>Completing</code>/<code>Verified</code> → <code>Importing</code> re-runs after a fix</td>
+</tr>
+<tr>
+<td><code>Verified</code></td>
+<td><code>-Mode Verify</code> when <strong>every</strong> item is <code>OK</code></td>
+<td><code>Importing</code> → <code>Completing</code> → <code>Verified</code> through legal transitions only</td>
+</tr>
+<tr>
+<td><code>Closed</code></td>
+<td>final</td>
+<td></td>
+</tr>
+<tr>
+<td><code>Paused</code>, <code>Failed</code></td>
+<td>from any non-closed state</td>
+<td>resume only to where it was; <code>Failed</code> can also go back to <code>Planned</code></td>
+</tr>
+<tr>
+<td><code>Cancelled</code></td>
+<td><code>-Mode Status -Lot -CancelLot</code> only</td>
+<td>final</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Cancelling.</strong> A lot with no import session for its items (states <code>Planned</code>, <code>Exporting</code>, <code>Exported</code>, <code>ImportPlanned</code>, <code>Paused</code>, <code>Failed</code>) can be cancelled: its items and its coverage are released, the row, its members, slices and history stay as an audit trail, and its name becomes <code>&lt;name&gt;~cancelled-&lt;id&gt;</code> (the name is free again). A lot that has started importing is refused: <em>it cannot be cancelled; finish or verify it</em>. Nothing is touched in any tenant. Each transition is written to <code>lot_history</code> with a time. One deliberate exception: resolving a <strong>new</strong> slice on a <code>Verified</code> or <code>Closed</code> lot (an extension wave) reopens it.</p>
+<p><strong>Extension waves in practice.</strong> <code>Export</code> with a wide enough window (the default is the whole history), then <code>Plan -Lot &lt;name&gt; -Slices 2</code>, <code>CopyFiles -Lot &lt;name&gt; -Slices 2</code>, <code>Import -Lot &lt;name&gt; -Slices 2 -Apply</code>, <code>Verify -Lot &lt;name&gt; -Slices 2</code>. A wave only imports what the store holds. A later wave is older: the conversation is reopened with <code>startMigration</code> at an even earlier date, and an older wave waits while a newer one is <code>Failed</code>, <code>Incomplete</code> or <code>Uncertain</code>.</p>
+</div></section><section class="section" id="the-import-journal-and-idempotency"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><div><div class="section-eyebrow">Chapter 11</div><h2>The import journal and idempotency</h2></div></div><div class="section-body">
+<p>The journal is what makes the import <strong>resumable and safe to run twice</strong>. It lives in <code>catalog.db</code>:</p>
+<ul>
+<li><code>import_sessions</code>: one <code>startMigration</code> to <code>completeMigration</code> per (conversation, slice), with the <strong>owner <code>appId</code></strong> and the <code>conversationCreationDateTime</code> used. A session left <code>Started</code> by the same app is reused.</li>
+<li><code>import_messages</code>: one row per source message, in order, with a status: <code>Pending</code>, <code>Imported</code>, <code>Conflict409TreatedAsImported</code>, <code>Rejected</code> (400/403 with the error code) or <code>Skipped</code> (system events, deleted messages), the target id and an error code. <strong>An imported status cannot be downgraded.</strong></li>
+</ul>
+<p>The journal is <strong>seeded at plan time</strong> (idempotent <code>INSERT OR IGNORE</code>, even for a blocked plan: <code>Pending</code> rows are inert), so <code>Import</code> only reads it.</p>
+<p><strong>Idempotency rests on two guards.</strong></p>
+<ol>
+<li><strong>The journal.</strong> A message already <code>Imported</code> is not sent again.</li>
+<li><strong>The service's <code>409</code>.</strong> The <code>createdDateTime</code> of a message is a pure function of its position in the slice (a deterministic <code>DateScope</code>, including the +1 ms shifts when two messages share a millisecond), so a resumed run recomputes the same values. A message sent just before a crash (not journaled) is sent again with the <strong>same</strong> date, and the service answers <strong>409 Conflict</strong>, recorded as <code>Conflict409TreatedAsImported</code>. In the lab a second full pass over 13 threads produced 780 <code>409</code> and no duplicate <em>(lab)</em>.</li>
+</ol>
+<p>The same <code>409</code> covers a <code>POST</code> that <code>GraphClient</code> retried after a timeout. Scenario B adds a fingerprint (<code>createdDateTime</code>, author, body hash) to skip messages already in the target.</p>
+</div></section><section class="section" id="identity-mapping-and-ghost-accounts"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.5a5 5 0 0 1 5.5 5"/></svg></div><div><div class="section-eyebrow">Chapter 12</div><h2>Identity mapping and ghost accounts</h2></div></div><div class="section-body">
+<h3 id="identity-rules-first-match-wins">Identity rules (first match wins)</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>#</th>
+<th>Rule</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>An existing mapping is kept (rule <code>manual</code>, or a ghost that already has its target id)</td>
+<td>as is</td>
+</tr>
+<tr>
+<td>1</td>
+<td>A CSV row (<code>SourceUpn</code>/<code>SourceId</code> to <code>TargetUpn</code>/<code>TargetId</code>)</td>
+<td><code>Mapped</code>, rule <code>csv</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>A federated, external or non-Entra author</td>
+<td><code>ServiceAccount</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Scenario A, user still active in the source: domain rule (looked up by UPN then mail), then the same UPN or mail in the target</td>
+<td><code>Mapped</code> (<code>domain-rule</code>, <code>upn-match</code>); nothing found: <code>Unresolved</code> (<strong>blocks the plan</strong>)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Scenarios B and C: <code>GET /users/{id}</code>; found: <code>Same</code> (a disabled user or a guest is a valid author); gone: the same UPN or mail (account recreated)</td>
+<td><code>Same</code> or <code>Mapped</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Deleted or absent: <code>-DeletedAuthors</code></td>
+<td><code>Auto</code>: <code>Ghost</code> when a ghost domain is set, else <code>ServiceAccount</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>A <code>ServiceAccount</code> author needs <code>-ServiceAccount</code>, otherwise the identity is unresolved. A message with <strong>no user author</strong> (an application or a bot) is imported under the service account.</p>
+<p>When the author falls back to the service account, the message body starts with <code>&lt;p&gt;&lt;em&gt;Original message from {name} ({upn}), {yyyy-MM-dd HH:mm} UTC&lt;/em&gt;&lt;/p&gt;</code>.</p>
+<h3 id="ghost-accounts">Ghost accounts</h3>
+<p>Phase 0 showed that Graph accepts a <strong>disabled</strong> account and a <strong>guest</strong> as the <code>from</code> of an imported message, but refuses a <strong>deleted</strong> account (even one in the recycle bin) with <em>400 Specified user ... could not be found in the tenant</em> <em>(lab)</em>. So each deleted author gets a ghost:</p>
+<ul>
+<li><code>accountEnabled = false</code>, <strong>no license</strong>, a random password that is never stored;</li>
+<li>display name <code>{0} (former)</code> (<code>Ghosts.DisplayNameFormat</code>), UPN <code>tt-ghost-&lt;short hash&gt;@&lt;domain&gt;</code>;</li>
+<li>the marker <code>employeeType = TeamsTransferGhost</code> and membership of the group <code>TeamsTransfer - Ghost accounts</code>;</li>
+<li>the link (deleted source id to ghost id) in the catalog: <strong>the same person keeps the same ghost for the whole project</strong> (a second ghost for the same source id is refused). The list can be exported to CSV (<code>ghosts.csv</code>).</li>
+</ul>
+<p><strong>Stage behaviour.</strong> <code>Ghosts</code> previews by default (it reads the target and lists what it would create); with <code>-Apply</code> it creates the accounts. It is idempotent (a second run creates nothing). Above <code>-GhostThreshold</code> (5000) it refuses unless <code>-ConfirmGhostCount</code>; the plan blocks the same way. If the target refuses the creation (<code>403</code>) the identity falls back to the service account with a warning. A ghost found <strong>enabled</strong> is reported (<em>Reactivated ghost ...</em>, exit code 3). An existing UPN that is not a ghost is never adopted; one that exists but cannot be read yet (directory replication delay) is retried on the next run. With <code>-Lot -Apply</code> the lot moves to <code>Ghosts</code>. <code>-Remove</code> re-checks each account in the tenant before it deletes it (<code>employeeType</code> and prefix); <code>-Purge</code> also empties the recycle bin.</p>
+<div class="markdown-alert markdown-alert-note">
+<p class="markdown-alert-title">Note</p>
+<p>An unlicensed ghost has no OneDrive: files sent by a ghost go to the service account's OneDrive.</p>
+</div>
+<p><strong>Ghosts are never members.</strong> A ghost account is never added as a member of a chat, channel or team (it is an author only). A 1:1 chat with a departed person keeps one live member; it is imported as a <strong>group chat with the service account</strong>, titled <strong><code>Archived chat with &lt;name&gt;</code></strong> when the chat has no topic, with a warning (<em>the other participant has left (...): imported as the group chat '...' with the service account</em>). This needs a service account (otherwise <em>A new chat needs at least two target members ... give -ServiceAccount</em>).</p>
+</div></section><section class="section" id="file-copy"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h6"/></svg></div><div><div class="section-eyebrow">Chapter 13</div><h2>File copy</h2></div></div><div class="section-body">
+<p>Files are copied <strong>before</strong> the messages, in their own resumable stage, so that the importer can rewrite each reference attachment to the new item.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Destination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>File of a <strong>chat</strong></td>
+<td>the OneDrive of the <strong>mapped sender</strong>, folder <code>Microsoft Teams Chat Files</code>. A sender that is a ghost (no OneDrive), the service account, unresolved or unknown: the OneDrive of the service account.</td>
+</tr>
+<tr>
+<td>File of a <strong>channel</strong></td>
+<td>the files folder of the target channel (<code>GET .../filesFolder</code> gives the drive and the folder). A channel that does not exist yet leaves the record <code>Pending</code> (<em>waiting for the target</em>); run <code>CopyFiles</code> again after the import creates it.</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Small files</strong> (under 4 MiB): one <code>PUT .../root:/folder/name:/content</code>. <strong>Larger files:</strong> <code>createUploadSession</code> and fragments of <code>-ChunkSizeMB</code> (a multiple of 320 KiB, 10 MiB by default), read from the store <strong>one fragment at a time</strong>. Fragment requests are anonymous (the upload URL is pre-authenticated). <code>conflictBehavior</code> is <code>rename</code>.</li>
+<li><strong>Resume.</strong> Before the first fragment the session is saved in a checkpoint; after a crash or a stop the next run asks the session for <code>nextExpectedRanges</code> and continues; an expired session (404/410) starts a new one; a failed fragment resyncs from the session status, up to 5 attempts.</li>
+<li><strong>De-duplication.</strong> The same SHA256 to the same destination folder is uploaded <strong>once</strong> (checked with one <code>GET</code> before reuse); it is still shared with each chat's members.</li>
+<li><strong>Sharing.</strong> Chats only: <code>POST /drives/{d}/items/{i}/invite</code>, role <code>read</code>, <code>requireSignIn</code>, <strong>no e-mail</strong>, to the members of the target chat (ghosts, the service account and the owner excluded), 50 per call. Channels inherit the folder permissions. A refused recipient (4xx) is counted, not fatal. <code>-NoShare</code> skips sharing.</li>
+<li><strong>States.</strong> <code>Pending</code> → <code>Uploaded</code> → <code>Shared</code>, or <code>Failed</code> / <code>Skipped</code> (size or extension). A re-run leaves <code>Shared</code> and <code>Skipped</code> alone, only shares <code>Uploaded</code>, and retries <code>Failed</code> and <code>Pending</code>. Failures are per file and never stop the run (<code>filecopy-errors.csv</code>).</li>
+<li><strong>Preview</strong> sends <strong>no request at all</strong>: files and bytes per destination from the maps and the store. With <code>-Lot -Apply</code> the lot moves to <code>Files</code>.</li>
+<li><strong>Download side.</strong> The <code>Files</code> stage resolves each <code>reference</code> attachment to a <code>driveItem</code> through <code>GET /shares/{u!...}/driveItem</code> and streams the content to the store. Files that cannot be found, are forbidden, too large or excluded are counted, not fatal. A departed user's file is an open point (<em>lab: not yet measured</em>).</li>
+</ul>
+</div></section><section class="section" id="the-import"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M4 4h16"/></svg></div><div><div class="section-eyebrow">Chapter 14</div><h2>The import</h2></div></div><div class="section-body">
+<p>For each (conversation, slice) item:</p>
+<ol>
+<li><strong>Seed</strong> the journal (local, idempotent).</li>
+<li><strong>Ensure the target</strong>: an existing chat or channel, or <code>POST /chats</code> with the mapped members (for a 1:1 the API returns the existing chat), or <code>POST /teams</code> with <strong>one</strong> member when the team is missing, then <code>POST /teams/{t}/channels</code>, then the members. A private channel can only be given members who are already members of the team (404 otherwise): the importer adds a created team's members to the team first <em>(lab)</em>.</li>
+<li><strong>Open the session</strong> (<code>BeginImportSession</code> with the owner <code>appId</code>) <strong>before</strong> <code>startMigration</code>, so a crash in between leaves a trace. <code>conversationCreationDateTime</code> = the earlier of the oldest message of the slice and the thread's current <code>createdDateTime</code>, minus 1 second (<code>startMigration</code> moves <code>createdDateTime</code> permanently into the past) <em>(lab)</em>.</li>
+<li><strong><code>startMigration</code></strong>, skipped when the thread already reads <code>inProgress</code>.</li>
+<li><strong>Poll</strong> <code>migrationMode</code> until <code>inProgress</code> (eventually consistent: a read can stay on the old state for minutes; bounded polling with an increasing delay).</li>
+<li><strong>Import</strong>: one <code>POST</code> per message (replies of a channel post go through <code>.../replies</code> after their root), with the original <code>createdDateTime</code> and author, body, hosted contents, mentions, reactions (250 at most) and the rewritten attachments. Each outcome is journaled at once.</li>
+<li><strong><code>completeMigration</code></strong>, retried with an increasing delay on <em>400 not in migration mode</em>, then polled until <code>completed</code>. An item that cannot be confirmed is <code>Uncertain</code> (exit code 3): run the same command again.</li>
+<li>For <strong>group chats</strong>: remove and add the members again with <code>visibleHistoryStartDateTime = 0001-01-01</code> after <code>completeMigration</code>, otherwise they cannot see the imported history. <code>POST /chats</code> rejects that property, so it cannot be set at creation; the restore costs about 15 s per member <em>(lab)</em>.</li>
+</ol>
+<p><strong>Attachments.</strong> The <code>id</code> of an attachment posted to the migration API <strong>must be a GUID</strong> (<em>400 Invalid GUID 'a1' for file attachment</em>). The importer posts the source id when it is a GUID, otherwise a deterministic GUID derived from it, and keeps the <code>&lt;attachment id=&quot;...&quot;&gt;</code> tag of the body consistent.</p>
+<p><strong>What is not imported</strong> (counted in the plan, with the reason): system events (<code>systemEventMessage</code>, <code>chatEvent</code>, ...) and messages deleted at the source. Videos, cross-posts, links generated by SharePoint and federated content are outside the API; federated authors become the service account. Meeting chats become group chats with the meeting title.</p>
+<p><strong>Dry run.</strong> Without <code>-Apply</code> <strong>no request is sent and nothing is written</strong> (not even the journal): the same builders produce the exact requests, counted per endpoint, with the first payloads redacted, and the estimated duration. With <code>-Apply</code> and no <code>-Force</code>, one confirmation names the target tenant and says that an imported conversation cannot be rolled back.</p>
+<p><strong>Reports.</strong> <code>summary.html</code>, <code>conversations.csv</code> and <code>rejected.csv</code> in the report folder. Exit code 3: messages rejected or a conversation uncertain; 2: stopped or incomplete.</p>
+</div></section><section class="section" id="verification"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></div><div><div class="section-eyebrow">Chapter 15</div><h2>Verification</h2></div></div><div class="section-body">
+<p>Imported messages are <strong>invisible to <code>getAllMessages</code></strong> (they come back with <code>lastModifiedDateTime = 0001-01-01</code> and did not appear 90 minutes later, with or without a filter) <em>(lab)</em>. So the target is read <strong>per chat and per channel</strong>: chats <code>GET /chats/{id}/messages?$top=50</code> (every page), channels <code>GET .../messages?$top=50&amp;$expand=replies</code> (no <code>$orderby</code>, no <code>$filter</code>). One pass serves all slices of a conversation; messages are bucketed client-side into the slice windows.</p>
+<p>Per (conversation, slice) the tool compares:</p>
+<ul>
+<li>the <strong>journal</strong> (<code>Imported</code> + <code>Conflict409TreatedAsImported</code>) with the source count and with the number of messages found on the target;</li>
+<li>a deterministic <strong>sample</strong> (<code>-SampleSize</code>, seeded by the conversation key): <code>createdDateTime</code>, author (through the identity map), SHA256 of the normalised body (banner removed, markers dropped, <code>&lt;at&gt;</code> keeps the name, entities decoded, whitespace collapsed, lower-cased);</li>
+<li>reactions and file attachments: totals over the window, <strong>advisory</strong> unless <code>-StrictCounts</code> (the importer legitimately drops what it cannot rewrite);</li>
+<li><code>migrationMode</code>, which must read <code>completed</code>.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Outcome</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OK</code></td>
+<td>everything agrees</td>
+</tr>
+<tr>
+<td><code>Mismatch</code></td>
+<td>fewer messages on the target than imported, journal rows missing or <code>Rejected</code>, an extra message (unless scenario B), a failed sample, an unreadable target</td>
+</tr>
+<tr>
+<td><code>Missing</code></td>
+<td>the target conversation is not mapped, not created, answers 404, or holds none of the imported messages</td>
+</tr>
+<tr>
+<td><code>NotCompleted</code></td>
+<td><code>migrationMode</code> is not <code>completed</code>, messages are still <code>Pending</code>, or nothing was imported for a non-empty slice</td>
+</tr>
+<tr>
+<td><code>Unverified</code></td>
+<td>the read was refused (401/403): the permission is named in the detail; resumable once granted, not a mismatch</td>
+</tr>
+</tbody>
+</table></div>
+<p>Priority: <code>Missing</code> &gt; <code>NotCompleted</code> &gt; <code>Mismatch</code> &gt; <code>OK</code>. When <strong>every</strong> item is <code>OK</code> the items and the lot become <code>Verified</code> (unless <code>-NoLotUpdate</code>). Exit code 0 all <code>OK</code>; 3 mismatches or missing; 2 not completed or unverified. Output: <code>verify.html</code>, <code>verify.csv</code>, <code>verify-summary.txt</code>.</p>
+</div></section><section class="section" id="the-archive"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></div><div><div class="section-eyebrow">Chapter 16</div><h2>The archive</h2></div></div><div class="section-body">
+<p><code>-Mode Archive</code> (and the console's Explorer) turns the store into an offline, Teams-like page: a chat and teams rail, a conversation list with avatars, bubbles (own messages on the right), day separators, reactions, mentions, inline images, file cards, <em>Edited</em> and <em>deleted</em> markers, reply threads, a <strong>former account</strong> badge, a light or dark theme, and full-text search (this conversation or all). The look is home-made CSS: <strong>no Microsoft logo or asset</strong>. The accent is the house raspberry (<code>House</code>, default) or Teams indigo (<code>Teams</code>).</p>
+<p><strong>Formats.</strong></p>
+<ul>
+<li><strong>Folder:</strong> <code>index.html</code> + <code>data\&lt;conv&gt;\&lt;yyyy-MM&gt;.js</code> + <code>search\&lt;conv&gt;.js</code> + <code>content\&lt;sha256&gt;.&lt;ext&gt;</code>. Data files are JSONP scripts (<code>TT.chunk(path, [...])</code>) so that the archive opens by double-click from <code>file://</code>, where <code>fetch()</code> is blocked.</li>
+<li><strong>Single file</strong> (<code>-SingleFile</code>): one self-contained <code>.html</code> (gzip + base64 blocks for chunks, search and images) within a size budget: 128 MiB of embedded images and files in total, 16 MiB at most per item; the rest is shown as <em>not embedded</em>.</li>
+<li>One chunk per conversation and month (split at 2,000 top-level items, never inside a channel thread). Large volumes load <strong>on demand</strong>; nothing loads everything into memory.</li>
+<li>The data contract is <code>schemas\preview-v1.schema.json</code> (manifest + chunk + search file).</li>
+</ul>
+<p><strong>Scopes.</strong> A user (all their conversations), conversation keys, or a team; <code>-Window</code> / <code>-From</code> / <code>-To</code> cut the period; <code>-Viewer</code> chooses whose messages are on the right.</p>
+<p><strong>Security: the page is the boundary.</strong></p>
+<ul>
+<li>Message HTML is <strong>untrusted</strong>. The generator does not sanitise it; the page does, at render time: <code>DOMParser</code> (an inert document) then a <strong>new</strong> DOM built from an allow-list. Tags: <code>p br div span b strong i em u s strike sub sup blockquote pre code ul ol li a img table thead tbody tr th td h1-h6 hr</code>, plus <code>at</code> (a mention), <code>emoji</code> (its alt text) and <code>codeblock</code>. Attributes: <code>a[href]</code> (http, https, mailto only, <code>rel=noopener noreferrer</code>), <code>img[src]</code> (<strong>only</strong> <code>tt:&lt;sha256&gt;.&lt;ext&gt;</code> references written by the generator, resolved to a local file or an embedded blob, never a URL), <code>alt</code>, <code>title</code>, <code>width</code>, <code>height</code>, <code>colspan</code>, <code>rowspan</code>, <code>dir</code>. No style, class, id, event handler or <code>data-*</code>. <code>script</code>, <code>style</code>, <code>iframe</code>, <code>object</code>, <code>embed</code>, <code>form</code>, <code>svg</code>, <code>math</code> are dropped <strong>with their content</strong>. Names, subjects and file names go through <code>textContent</code>.</li>
+<li>The generator only rewrites <code>&lt;img&gt;</code> sources: an exported hosted content becomes <code>tt:&lt;sha256&gt;.&lt;ext&gt;</code>, anything else <code>tt:missing</code> or <code>tt:remote</code>.</li>
+<li><strong>Content Security Policy:</strong> <code>default-src 'none'; script-src 'sha256-&lt;hash of the script&gt;' 'self'; style-src 'sha256-&lt;hash of the style&gt;'; img-src 'self' data: blob:; connect-src 'none'; font-src 'none'; media-src 'none'; frame-src 'none'; object-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'</code>. No remote resource, no network access of any kind.</li>
+<li>Inside the console, a link that leaves the archive asks for a confirmation before it opens in the default browser.</li>
+</ul>
+</div></section><section class="section" id="the-console"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></div><div><div class="section-eyebrow">Chapter 17</div><h2>The console</h2></div></div><div class="section-body">
+<p><code>Start-TeamsTransferConsole.cmd</code> or <code>pwsh -STA -File .\Invoke-TeamsTransfer.ps1 -Gui</code> (WPF needs an STA thread; the script restarts itself if needed). It needs <code>lib\gui</code> (WPF-UI and the WebView2 SDK) and the WebView2 runtime for the Explorer; without the runtime everything else works and <strong>Open in browser</strong> replaces the embedded viewer. Windows only.</p>
+<p><strong>The guided flow</strong>, always the same five steps: <strong>1 Setup</strong> (store, configuration, a traffic light per tenant with the permission check), <strong>2 Task</strong> (five cards: Estimate, Export conversations, Browse the archive, Import a lot, Verify a lot; <em>On what?</em>; a <em>What will happen</em> sentence that says whether anything is written), <strong>3 Verify</strong> (the checks, the exact command lines; for an import, the plan, the preview and the <strong>Apply</strong> tick), <strong>4 Run</strong> (steps known before the start, live progress, result chips, journey, report links, a technical-message fold and the activity log), <strong>5 Next steps</strong> (result, advice with the next task, <strong>the same from the command line</strong>, reports).</p>
+<ul>
+<li>Every task calls the <strong>same module functions</strong> as the command line, in a <strong>background runspace</strong> with a stop file; it adds nothing to what is read or written. Differences from the command line: no confirmation question in the job (the console asks before it starts an Apply job and shows what it will write and where) and the progress lines go to the house log, shown in the log pane.</li>
+<li><strong>Export</strong> runs <code>Inventory</code>, <code>Export</code> and <code>Files</code>; <strong>Import a lot</strong> runs <code>Plan</code>, <code>Ghosts</code>, <code>CopyFiles</code>, <code>Import</code> and <code>CopyFiles</code> again for the files of conversations that did not exist before; <strong>Verify</strong> runs <code>Verify</code> then <code>Report</code>.</li>
+<li><strong>Permission lights.</strong> Per side the console compares the roles of the token with the permissions each mode needs (<code>Get-TtgRoleNeeds</code>) and applies the broader-covers-narrower rule. Grey: not configured; amber: not checked yet; green: all present; red: missing or the check failed.</li>
+<li><strong>Demo mode</strong> (<code>-Gui -Demo</code>): a synthetic source tenant (Contoso), a synthetic target tenant (Northwind), a temporary store and fake Graph clients; nothing leaves the machine and a <strong>DEMO</strong> badge is always shown. The demo engine ships in the package (<code>package\demo\*.cs</code>) and is compiled with the engine in Demo mode <strong>only</strong>; the command-line modes never load it, so <code>-Demo</code> works from a release package. It is used for the documentation screenshots, the tests and demonstrations.</li>
+<li><strong>Screenshots:</strong> <code>tools\New-ConsoleScreens.ps1</code> (the five steps per task, light and dark) and <code>tools\New-PreviewScreens.ps1</code> (the archive), both offline.</li>
+</ul>
+</div></section><div class="part" id="part-iv-maintain"><span class="part-label">Part IV</span><span class="part-name">Maintain</span></div>
+<section class="section" id="troubleshooting"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="m5.6 5.6 3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"/></svg></div><div><div class="section-eyebrow">Chapter 18</div><h2>Troubleshooting</h2></div></div><div class="section-body">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Exit code 1, <em>Configuration.X.Y is empty</em></td>
+<td>A side of the configuration is not filled</td>
+<td>Fill <code>config\TeamsTransfer.config.local.psd1</code>.</td>
+</tr>
+<tr>
+<td><code>AADSTS...</code> or <code>401</code> at the first call</td>
+<td>Wrong <code>TenantId</code>/<code>ClientId</code>, or the certificate is not uploaded to that app</td>
+<td>Check the three values; compare the thumbprint shown in Entra with <code>CertificateThumbprint</code>.</td>
+</tr>
+<tr>
+<td><code>403</code> on every call</td>
+<td>Permission not consented, consent not yet effective, or protected API access missing</td>
+<td>Check the roles in the token (console: <strong>Permissions</strong>); wait 2 to 5 minutes after consent; check chapter 5.</td>
+</tr>
+<tr>
+<td>Certificate <em>not found</em></td>
+<td>The certificate is in another store or user</td>
+<td><code>Cert:\CurrentUser\My</code> of the account that runs the task, or <code>Cert:\LocalMachine\My</code>.</td>
+</tr>
+<tr>
+<td><em>no accessible private key</em></td>
+<td>Key ACL</td>
+<td>Grant that account read access to the key.</td>
+</tr>
+<tr>
+<td><em>systematic failure: ... nothing exported</em></td>
+<td>The same error on the first units</td>
+<td>Fix the cause named in the message, run again.</td>
+</tr>
+<tr>
+<td>Export is slow, many <code>429</code></td>
+<td>Throttling</td>
+<td>Normal; the limiter adapts. Do not raise <code>-UserParallelism</code>/<code>-ConversationParallelism</code> beyond what the log shows is sustained.</td>
+</tr>
+<tr>
+<td><em>already open for writing</em></td>
+<td>Another run owns the store</td>
+<td>Wait, or stop it with the stop file. A crashed process leaves no stale lock: the lock is a file opened with <code>FileShare.None</code>.</td>
+</tr>
+<tr>
+<td>The store is refused</td>
+<td>Inside the package folder, or on a network share</td>
+<td>Use a local disk outside the package.</td>
+</tr>
+<tr>
+<td><code>Plan</code> exit code 3</td>
+<td>Blockers</td>
+<td>Read <code>plan.html</code> and <code>issues.csv</code>; fix identities, ghosts or the service account; plan again.</td>
+</tr>
+<tr>
+<td><em>Lot ... is X: the import needs a planned lot</em></td>
+<td>No successful plan</td>
+<td>Run <code>Plan</code>; a plan with blockers never reaches <code>ImportPlanned</code>.</td>
+</tr>
+<tr>
+<td>Import exit code 3</td>
+<td>Rejected messages, or uncertain conversations</td>
+<td><code>rejected.csv</code>; run the same command again for the uncertain ones.</td>
+</tr>
+<tr>
+<td><code>409</code> in the journal</td>
+<td>The service already holds that message</td>
+<td>Expected; counted as imported.</td>
+</tr>
+<tr>
+<td>Files <code>Pending</code> after the import</td>
+<td>Channel did not exist when <code>CopyFiles</code> ran</td>
+<td>Run <code>CopyFiles</code> again (the console does).</td>
+</tr>
+<tr>
+<td><em>OneDrive ... does not exist</em></td>
+<td>The sender never signed in</td>
+<td>Provision the OneDrive; run <code>CopyFiles</code> again.</td>
+</tr>
+<tr>
+<td><code>Verify</code> shows <code>Unverified</code></td>
+<td>Missing read permission on the target</td>
+<td>Grant what the detail names.</td>
+</tr>
+<tr>
+<td><code>Verify</code> shows <code>Mismatch</code> on counts of reactions or files</td>
+<td>The importer drops what it cannot rewrite</td>
+<td>Advisory by default; <code>-StrictCounts</code> makes it a mismatch.</td>
+</tr>
+<tr>
+<td>Console: <em>needs an STA thread</em></td>
+<td>Started with the wrong host</td>
+<td><code>Start-TeamsTransferConsole.cmd</code>, or <code>pwsh -STA</code>.</td>
+</tr>
+<tr>
+<td>Console: Demo mode needs the synthetic tenant sources</td>
+<td><code>package\demo</code> was removed</td>
+<td>Restore <code>package\demo</code> from the release ZIP.</td>
+</tr>
+<tr>
+<td><em>Package integrity ...</em></td>
+<td>A file changed, is missing or unsigned</td>
+<td>Extract the release ZIP again and unblock it; a source tree needs <code>-DevelopmentMode</code>.</td>
+</tr>
+<tr>
+<td><em>The TeamsTransfer engine loaded in this PowerShell session was compiled from other sources</em></td>
+<td>An older engine is still loaded in this session</td>
+<td>Close the PowerShell window and start a new one.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Where to look.</strong> The final card names the log and the report. The log has every message in clear text with a level. <code>-Mode Status</code> shows the lots, their items per state and the journal summary. <code>-Verbose</code> adds detail. For an import, <code>rejected.csv</code> gives the error code of each refused message.</p>
+</div></section><section class="section" id="known-limits"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/></svg></div><div><div class="section-eyebrow">Chapter 19</div><h2>Known limits</h2></div></div><div class="section-body">
+<p>These come from the service (Phase 0 and the Microsoft documentation) and from the design; they are not bugs.</p>
+<ol>
+<li><strong>Import throughput.</strong> 5 messages per second per conversation, about 60 to 90 per second per application and tenant. At about 75 messages per second, 1 to 3 billion messages would take <strong>150 to 460 days</strong> with one application. Re-injecting the whole history of a very large tenant is <strong>not workable</strong>: scope it (window of months, priority users or teams, extension waves) and leave the rest in the archive. The gain of several applications is not demonstrated.</li>
+<li><strong>No rollback.</strong> An imported conversation cannot be undone; the only fix is to delete it in Teams and import again.</li>
+<li><strong>Imported messages are invisible to <code>getAllMessages</code>.</strong> Verification and re-export of migrated conversations use strategy C (chat by chat). A tenant that was already migrated (Slack, ...) must be exported with C for those conversations; <code>Assess</code> compares U and C on a sample to detect it.</li>
+<li><strong>Meeting chats are imported as group chats</strong> with the meeting title; the API does not support meeting chats.</li>
+<li><strong>Federated and external authors</strong> are replaced by the service account, with the <em>Original message from ...</em> line. <strong>Deleted authors</strong> need a ghost account (or the same fallback).</li>
+<li><strong>Not imported:</strong> videos, cross-posts, links generated by SharePoint, system events, deleted messages.</li>
+<li><strong>Shared channels:</strong> members from other teams or tenants cannot be recreated; only the messages are imported.</li>
+<li><strong>Group chat history</strong> costs about 15 s per member (4 members-requests per minute per chat).</li>
+<li><strong>A chat whose members are all deleted or federated</strong> is not reachable app-only through a user listing: a known blind spot.</li>
+<li><strong><code>PerChannel</code> channel export in incremental mode</strong> may miss a new reply to an unmodified root until a full pass; the default per-team stream does not have this problem.</li>
+<li><strong>A team is created with a single member</strong>; the others are added afterwards.</li>
+<li><strong>Eventual consistency:</strong> <code>migrationMode</code>, group membership and the directory (a ghost just created) lag by minutes; the engine polls with bounded, increasing delays.</li>
+<li><strong>Only one application can open, import and complete a migration.</strong> Do not change the target application during a lot.</li>
+<li><strong>Archive tab:</strong> one user or one team per run (<code>-Conversation</code> takes several keys).</li>
+<li><strong>Language:</strong> the product is English only (<code>-Language en</code>).</li>
+<li><strong>Platform:</strong> Windows x64 and PowerShell 7.4+ (7.5 reviewed for the console libraries). The store is never on a network share.</li>
+</ol>
+<p><strong>Still to measure</strong> (Phase 0): the real gain of a second application with two simultaneous runs; the file of a departed user; a bulk export of normally posted messages in volume (an application cannot post native messages in the lab).</p>
+</div></section><section class="section" id="change-log"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.5"/></svg></div><div><div class="section-eyebrow">Chapter 20</div><h2>Change log</h2></div></div><div class="section-body">
+<p>See <a href="../CHANGELOG.md">CHANGELOG.md</a>: version 0.1.0 is the first release. The design and the lab findings are in <code>docs\design\TeamsTransfer-Design.md</code> and <code>docs\design\Phase0-Results.md</code> of the repository.</p>
+</div></section><section class="section" id="annex-a-certificates-and-app-registrations-for-engineers"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M8 7h7M8 11h5"/></svg></div><div><div class="section-eyebrow">Annex A</div><h2>Certificates and app registrations for engineers</h2></div></div><div class="section-body">
+<ul>
+<li><strong>Certificate:</strong> RSA 2048 bits or more, SHA256, <code>KeySpec Signature</code>, <code>KeyUsage DigitalSignature</code>; create it with <code>New-SelfSignedCertificate</code> and a <strong>non-exportable</strong> key, export only the public part (<code>Export-Certificate</code>, a <code>.cer</code>), upload it to the app registration (<code>keyCredentials</code>). One year of validity is a good default; <code>tools\New-LabCertificate.ps1</code> does exactly this (a <code>.pfx</code> only with <code>-ExportPfx</code> and a <code>SecureString</code> password).</li>
+<li><strong>Service accounts:</strong> use <code>Cert:\LocalMachine\My</code> and grant the account read access to the private key.</li>
+<li><strong>Sign-in:</strong> OAuth2 client credentials, <code>client_assertion_type = jwt-bearer</code>, a JWT signed with the certificate; scope <code>https://graph.microsoft.com/.default</code> (or the sovereign cloud equivalent). Tokens are held in memory.</li>
+<li><strong>App registrations:</strong> single tenant, no redirect URI, no secret. One for each side. <code>tools\Grant-LabConsent.ps1</code> creates or updates both <strong>idempotently</strong>, resolves each permission name against the <code>appRoles</code> of the Microsoft Graph service principal of the tenant (a name that does not exist stops the script), keeps existing permissions and keys, grants consent, and with <code>-WhatIf</code> shows every change. It is a <strong>lab</strong> tool.</li>
+<li><strong>Cloud:</strong> <code>Source.Cloud</code>/<code>Target.Cloud</code> select the Graph and login hosts (<code>Global</code>, <code>USGov</code>, <code>USGovDoD</code>, <code>China</code>). Some protected APIs and the billing are not available in every cloud; confirm before a national-cloud project.</li>
+</ul>
+</div></section><section class="section" id="annex-b-csv-formats"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg></div><div><div class="section-eyebrow">Annex B</div><h2>CSV formats</h2></div></div><div class="section-body">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Parameter</th>
+<th>Columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Users</td>
+<td><code>-Users</code></td>
+<td>one of <code>Id</code>, <code>Identity</code>, <code>UserPrincipalName</code>, <code>Mail</code></td>
+</tr>
+<tr>
+<td>Teams</td>
+<td><code>-Teams</code></td>
+<td>one of <code>Id</code>, <code>TeamId</code>, <code>DisplayName</code></td>
+</tr>
+<tr>
+<td>Identity map</td>
+<td><code>-IdentityMap</code></td>
+<td><code>SourceUpn</code> and/or <code>SourceId</code>, <code>TargetUpn</code> and/or <code>TargetId</code></td>
+</tr>
+<tr>
+<td>Team map</td>
+<td><code>-TeamMap</code></td>
+<td><code>SourceTeamId</code> and/or <code>SourceTeam</code>, <code>TargetTeamId</code> and/or <code>TargetTeam</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>A CSV is read with its header row; an unknown layout stops the run with <em>CSV ...: expected a column ...</em>.</p>
+</div></section><section class="section" id="annex-c-third-party-components"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg></div><div><div class="section-eyebrow">Annex C</div><h2>Third-party components</h2></div></div><div class="section-body">
+<p>SQLite (<code>Microsoft.Data.Sqlite</code> 10.0.12 with SQLitePCLRaw 2.1.12), WPF-UI 4.1.0 and the Microsoft Edge WebView2 SDK 1.0.4258.31 are bundled with their notices; the exact versions, hashes and files are in <code>dependency-lock.json</code>, the attribution is in <code>THIRD-PARTY-NOTICES.md</code>. The WebView2 <strong>runtime</strong>, Windows, PowerShell and .NET are platform components and are not redistributed.</p>
+</div></section><section class="section" id="annex-d-release-procedure"><div class="section-head"><div class="section-icon"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg></div><div><div class="section-eyebrow">Annex D</div><h2>Release procedure</h2></div></div><div class="section-body">
+<p>Developer side; the repository README repeats it in short. The release ZIP holds exactly the content of <code>package\</code> (no tests, tools, <code>docs\design</code>, store, <code>out</code>, <code>config\*.local.psd1</code>).</p>
+<ol>
+<li><strong>Dependencies.</strong> <code>tools\Get-TeamsTransferDependencies.ps1</code> installs the pinned GUI libraries; <code>-Verify</code> checks the installed files, the SQLite libraries and the licence texts against <code>dependency-lock.json</code> (offline); <code>-UpdateLock</code> rewrites the lock from nuget.org (<code>-Package 'SQLitePCLRaw*'</code> limits it to some pins). The licence texts of SQLite, SQLitePCLRaw and Microsoft.Data.Sqlite are in <code>lib\licenses\</code> and in the lock.</li>
+<li><strong>Sign the PowerShell files.</strong> The owner signs every <code>*.ps1</code>, <code>*.psm1</code> and <code>*.psd1</code> of the package, the verifier <code>src\Test-PackageIntegrity.ps1</code> included (timestamped certificate <code>0F28E442889F17B5F4D251E8F96E7CC6E2C9C6D6</code>), but <strong>not</strong> the manifest yet.</li>
+<li><strong>Prepare.</strong> <code>.\tools\Build-Package.ps1 -Stage Prepare</code>: the test suite (<code>-SkipTests</code> is announced, never silent), the documentation (<code>tools\Build-Documentation.ps1</code>), <code>package\PackageIntegrity.psd1</code> (the hashes of the signed files) and its verification in development mode.</li>
+<li><strong>Sign the manifest.</strong> The owner signs <code>package\PackageIntegrity.psd1</code>.</li>
+<li><strong>Package.</strong> <code>.\tools\Build-Package.ps1 -Stage Package -RequireSignature</code>: the package is verified as a release (the owner signature is mandatory), then <code>out\release\TeamsTransfer-&lt;version&gt;-win-x64.zip</code> is created (top folder <code>TeamsTransfer-&lt;version&gt;/</code>, sorted entries, forward slashes), checked against the manifest, extracted and verified, and <code>SHA256SUMS.txt</code> is written.</li>
+</ol>
+<p><code>-Stage All</code> (the default) does 3 to 5 in one run and gives an <strong>unsigned development ZIP</strong> when nothing was signed; it starts only with <code>-DevelopmentMode</code> and is not to be published. Running <code>Prepare</code> again after the manifest was signed replaces the manifest: sign it again. Publication follows <code>AGENTS.md</code>: a pull request to <code>main</code>, a new immutable <code>v</code> tag, a draft release with the ZIP and <code>SHA256SUMS.txt</code>, attestation.</p>
+</div></section>
+<section class="disclaimer" id="disclaimer" aria-labelledby="disclaimer-title"><h2 id="disclaimer-title">Disclaimer</h2><p>This Script is a Personal project.<br />It&#39;s provided &quot;AS-IS&quot;. It&#39;s not an official Microsoft product so no support can be expected from Microsoft.</p><p>As any scripts you must read carefully the documentation and test it first in a Test environment before any run in Production.</p><p>Import creates conversations in the target tenant and an imported conversation cannot be rolled back: run the preview, review the plan and test in a lab before using it on real data.</p></section>
+<footer>Teams Transfer 0.1.0 · Nicolas Fabert · 2026-11-10 · generated from TeamsTransfer-Guide.md</footer></main>
+<button type="button" id="to-top" title="Back to top" aria-label="Back to top"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg></button>
+<dialog id="zoom"><img alt=""></dialog>
+<script>
+(() => {
+  "use strict";
+  document.getElementById("theme").addEventListener("click", () => {
+    const root = document.documentElement;
+    root.setAttribute("data-theme", root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+  const links = new Map(Array.from(document.querySelectorAll("aside a[data-target]")).map(a => [a.dataset.target, a]));
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        links.forEach(a => a.classList.remove("active"));
+        const link = links.get(e.target.id);
+        if (link) { link.classList.add("active"); link.scrollIntoView({ block: "nearest" }); }
+      }
+    }, { rootMargin: "-20% 0px -70% 0px" });
+    document.querySelectorAll("section.section").forEach(s => observer.observe(s));
+  }
+  document.querySelectorAll(".code .copy").forEach(button => button.addEventListener("click", async () => {
+    const text = button.closest(".code").querySelector("pre").innerText;
+    try { await navigator.clipboard.writeText(text); }
+    catch { const r = document.createRange(); r.selectNodeContents(button.closest(".code").querySelector("pre")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand("copy"); s.removeAllRanges(); }
+    const label = button.querySelector("span"); label.textContent = "Copied"; button.classList.add("done");
+    setTimeout(() => { label.textContent = "Copy"; button.classList.remove("done"); }, 1600);
+  }));
+  const zoom = document.getElementById("zoom");
+  document.querySelectorAll("figure img").forEach(img => img.addEventListener("click", () => { zoom.querySelector("img").src = img.src; zoom.showModal(); }));
+  zoom.addEventListener("click", () => zoom.close());
+  const top = document.getElementById("to-top");
+  addEventListener("scroll", () => top.classList.toggle("visible", scrollY > 600), { passive: true });
+  top.addEventListener("click", () => scrollTo({ top: 0 }));
+})();
+</script>
+</body></html>

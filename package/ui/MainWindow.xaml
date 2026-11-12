@@ -1,0 +1,146 @@
+<ui:FluentWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 x:Name="TtWindow"
+                 Title="Teams Transfer Console"
+                 Width="1320" Height="900" MinWidth="1000" MinHeight="640"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="None"
+                 Background="{DynamicResource ApplicationBackgroundBrush}"
+                 WindowCornerPreference="Round"
+                 AutomationProperties.Name="Teams Transfer Console">
+  <Window.Resources>
+    <Style x:Key="TtSecondaryText" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="TtSeg" TargetType="ToggleButton">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+      <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="12,4" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ToggleButton">
+            <Border x:Name="Bd" CornerRadius="6" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TmtAccentSoft}" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TmtBrand}" />
+                <Setter Property="Foreground" Value="{DynamicResource TmtBrandText}" />
+              </Trigger>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TmtBrand}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>    <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
+      <Setter Property="Foreground" Value="{DynamicResource TmtBrand}" />
+      <Setter Property="Background" Value="{DynamicResource TmtTrack}" />
+    </Style>
+    <Style TargetType="ListBoxItem">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Padding" Value="8,6" />
+      <Setter Property="Margin" Value="0,2" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="ListBoxItem">
+            <Border x:Name="Bd" CornerRadius="8" BorderThickness="1" BorderBrush="Transparent" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TmtInfoBg}" />
+              </Trigger>
+              <Trigger Property="IsSelected" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource TmtAccentSoft}" />
+                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TmtBrand}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <ui:TitleBar x:Name="TtTitleBar" Grid.Row="0" Title="Teams Transfer Console" AutomationProperties.Name="Window title bar" />
+
+    <Grid Grid.Row="1" Margin="24,2,24,10" AutomationProperties.Name="Header">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <Border Grid.Column="0" Width="48" Height="48" CornerRadius="10" Background="{DynamicResource TmtBrand}" VerticalAlignment="Top" Margin="0,4,14,0">
+        <ui:SymbolIcon Symbol="ChatMultiple24" FontSize="26" Foreground="{DynamicResource TmtOnBrand}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+      <StackPanel Grid.Column="1">
+        <TextBlock Text="TEAMS CHATS &amp; CHANNELS · EXPORT → ARCHIVE → IMPORT → VERIFY" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource TmtBrandText}" />
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Teams Transfer" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+          <Border x:Name="DemoBadge" Visibility="Collapsed" Margin="12,6,0,0" Padding="9,1" CornerRadius="10" VerticalAlignment="Center"
+                  Background="{DynamicResource TmtCautionBg}" AutomationProperties.Name="Demo mode badge">
+            <TextBlock Text="DEMO" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource TmtCaution}" />
+          </Border>
+        </StackPanel>
+        <TextBlock Text="Export Teams conversations, browse them offline, import them into a tenant. The console tells you what to do next." Style="{StaticResource TtSecondaryText}" />
+      </StackPanel>
+      <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+          <RadioButton x:Name="ThemeSystem" Content="System" GroupName="Theme" Padding="12,4" Style="{StaticResource TtSeg}" Margin="0,0,4,0" AutomationProperties.Name="Theme: system" />
+          <RadioButton x:Name="ThemeLight" Content="Light" GroupName="Theme" Padding="12,4" Style="{StaticResource TtSeg}" Margin="0,0,4,0" AutomationProperties.Name="Theme: light" />
+          <RadioButton x:Name="ThemeDark" Content="Dark" GroupName="Theme" Padding="12,4" Style="{StaticResource TtSeg}" AutomationProperties.Name="Theme: dark" />
+        </StackPanel>
+        <TextBlock x:Name="VersionText" Text="v0.1.0 · Nicolas Fabert" FontSize="12" HorizontalAlignment="Right" Margin="0,4,0,0" Style="{StaticResource TtSecondaryText}" />
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="2" Margin="24,0,24,12" Padding="10,8" CornerRadius="24" BorderThickness="1" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" AutomationProperties.Name="Steps">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel x:Name="StepperHost" Grid.Column="0" Orientation="Horizontal" />
+        <TextBlock x:Name="ContextText" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="12,0,10,0" FontSize="12"
+                   TextTrimming="CharacterEllipsis" Style="{StaticResource TtSecondaryText}" TextWrapping="NoWrap" />
+      </Grid>
+    </Border>
+
+    <ContentControl x:Name="StepHost" Grid.Row="3" Focusable="False" Margin="24,0,24,0" AutomationProperties.Name="Step" />
+
+    <Border Grid.Row="4" Padding="24,10" BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}" BorderThickness="0,1,0,0" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <ui:Button x:Name="BackButton" Grid.Column="0" Content="Back" MinWidth="90" AutomationProperties.Name="Back" />
+        <TextBlock x:Name="BottomText" Grid.Column="1" Margin="16,0" VerticalAlignment="Center" FontSize="12" TextWrapping="Wrap" Style="{StaticResource TtSecondaryText}" />
+        <ui:Button x:Name="SecondaryButton" Grid.Column="2" Content="Stop" MinWidth="90" Margin="0,0,10,0" Visibility="Collapsed" AutomationProperties.Name="Secondary action" />
+        <ui:Button x:Name="PrimaryButton" Grid.Column="3" Content="Continue" Appearance="Primary" MinWidth="200" Padding="18,9" AutomationProperties.Name="Primary action" />
+      </Grid>
+    </Border>
+  </Grid>
+</ui:FluentWindow>

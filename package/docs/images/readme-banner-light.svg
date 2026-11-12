@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">Teams Transfer</title>
+  <desc id="desc">Nicolas Fabert. Export Teams chats and channels to a local store, browse them offline, import them into a tenant and verify. Version 0.1.0, Windows x64, PowerShell 7.4 or later.</desc>
+  <rect width="1200" height="300" rx="24" fill="#f7f4ef"/>
+  <rect x="1" y="1" width="1198" height="298" rx="23" fill="none" stroke="#dedede" stroke-width="2"/>
+  <path d="M54 58h44a6 6 0 0 1 6 6v20a6 6 0 0 1-6 6H78l-10 9v-9H54a6 6 0 0 1-6-6V64a6 6 0 0 1 6-6z" fill="none" stroke="#b11f4b" stroke-width="3" stroke-linejoin="round"/>
+  <text x="124" y="81" font-family="Segoe UI,Arial,sans-serif" font-size="21" fill="#5c5c5c">NICOLAS FABERT</text>
+  <text x="54" y="145" font-family="Segoe UI,Arial,sans-serif" font-size="48" font-weight="700" fill="#242424">Teams Transfer</text>
+  <text x="56" y="188" font-family="Segoe UI,Arial,sans-serif" font-size="24" fill="#5c5c5c">Export / browse offline / plan / import / verify</text>
+  <rect x="54" y="222" width="150" height="37" rx="10" fill="#b11f4b"/>
+  <text x="72" y="246" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="600" fill="#ffffff">VERSION 0.1.0</text>
+  <text x="230" y="246" font-family="Segoe UI,Arial,sans-serif" font-size="18" fill="#5c5c5c">Windows x64 / PowerShell 7.4 or later / MIT license</text>
+  <rect x="1027" y="60" width="112" height="112" rx="22" fill="#ffffff" stroke="#dedede"/>
+  <path d="M1050 88h46a6 6 0 0 1 6 6v18a6 6 0 0 1-6 6h-22l-10 9v-9h-14a6 6 0 0 1-6-6V94a6 6 0 0 1 6-6z M1076 124h30a6 6 0 0 1 6 6v14a6 6 0 0 1-6 6h-8v8l-9-8h-13a6 6 0 0 1-6-6v-14" fill="none" stroke="#b11f4b" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
