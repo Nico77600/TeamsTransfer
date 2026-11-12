@@ -330,7 +330,11 @@ As any scripts you must read carefully the documentation and test it first in a 
     It 'the repository README has the standard sections, in order, each once, and no link to a folder or to the design record' {
         $text = Read-Text (Join-Path $script:Repo 'README.md')
         $headings = @([regex]::Matches($text, '(?m)^## (.+)$') | ForEach-Object { $_.Groups[1].Value.Trim() })
-        $headings | Should -Be @('Why', 'How it works', 'Reports', 'Requirements', 'Quick start', 'Documentation', 'Tests', 'License', 'Disclaimer')
+        # The standard sections in their order, each once; the house pattern (MailboxTransfer, PraRemoteMailbox) adds Get started and Console.
+        @($headings | Where-Object { $_ -notin 'Get started', 'Console' }) | Should -Be @('Why', 'How it works', 'Reports', 'Requirements', 'Quick start', 'Documentation', 'Tests', 'License', 'Disclaimer')
+        $headings | Should -Be @('Why', 'Get started', 'How it works', 'Console', 'Reports', 'Requirements', 'Quick start', 'Documentation', 'Tests', 'License', 'Disclaimer')
+        $text | Should -Match 'img\.shields\.io/github/v/release/Nico77600/TeamsTransfer'
+        $text | Should -Match '\[!TIP\]'
         $text | Should -Match '(?s)^\s*<p align="center">\s*<picture>'
         ([regex]::Matches($text, '<a\s+href="#')).Count | Should -BeGreaterOrEqual 3
         $text | Should -Match '\]\(package/README\.md\)'
