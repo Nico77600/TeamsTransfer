@@ -1,7 +1,7 @@
 ---
 title: Teams Transfer
 subtitle: User guide
-version: 0.1.0
+version: 1.0.0
 author: Nicolas Fabert
 updated: 2026-11-10
 badges: Windows x64, Guided console
@@ -956,7 +956,7 @@ Find what you **see** in the left column. The middle column says what it **means
 | *Archive takes one user at a time in this version* | Archive takes one user or one team. | Run it once per user, or use `-Conversation` with several keys. |
 
 > [!NOTE]
-> This list follows the messages of version 0.1.0. A message that is not here still ends with an exit code and the path of the log: copy the final card and send it to your administrator.
+> This list follows the messages of version 1.0.0. A message that is not here still ends with an exit code and the path of the log: copy the final card and send it to your administrator.
 
 <!-- icon: refresh -->
 ## 8. Clean up and undo

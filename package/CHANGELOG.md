@@ -4,10 +4,11 @@ All notable changes of Teams Transfer. Author: Nicolas Fabert (Nico77600). Versi
 a MAJOR version changes the command line or the configuration file, a MINOR version adds a feature,
 a PATCH version fixes a defect. The archive data format has its own version (`preview-v1`, see the reference guide, chapter 16).
 
-## 0.1.0 — 2026-11-10
+## 1.0.0 — 2026-11-12
 
-First release. Validated end to end on a real lab (two tenants, 1:1 chats, group chats, standard and private channels,
+First public release. Validated end to end on a real lab (two tenants, 1:1 chats, group chats, standard and private channels,
 a deleted author, files): Inventory, Export, Files, Archive, Plan, Ghosts, CopyFiles, Import and Verify.
+The repository also holds a tag `v0.1.0`: the same feature set as a release candidate, never published as a release.
 
 ### Added
 - **Command line** `Invoke-TeamsTransfer.ps1` with thirteen modes: `Status` (default), `Assess`, `Inventory`, `Export`, `Files`,

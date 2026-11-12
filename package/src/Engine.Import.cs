@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 9: the Importer (lot I)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 0.1.0
+//  Version : 1.0.0
 //
 //  What it does: re-injects the exported Teams messages of a lot into the TARGET tenant with the Microsoft Graph Teams
 //  migration API (startMigration, POST messages with createdDateTime + from, completeMigration), conversation by conversation.

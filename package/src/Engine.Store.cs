@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 4a: local store (messages, content, catalog of users/conversations/files)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 0.1.0
+//  Version : 1.0.0
 //
 //  Why this file exists:
 //    1 to 3 billion messages cannot live in one SQLite file, in one JSON file per message, or in memory. The store

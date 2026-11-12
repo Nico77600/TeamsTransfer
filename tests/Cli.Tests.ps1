@@ -117,7 +117,7 @@ Describe 'Entry script: built-in help' {
     It 'has NOTES with the author, the version, the exit codes and the exact disclaimer' {
         $notes = ($script:Help.alertSet | Out-String)
         $notes | Should -Match 'Author\s*:\s*Nicolas Fabert'
-        $notes | Should -Match 'Version\s*:\s*0\.1\.0'
+        $notes | Should -Match 'Version\s*:\s*1\.0\.0'
         $notes | Should -Match 'Exit codes'
         $script:Source | Should -Match ([regex]::Escape("    This Script is a Personal project.`n    It's provided `"AS-IS`". It's not an official Microsoft product so no support can be expected from Microsoft.`n`n    As any scripts you must read carefully the documentation and test it first in a Test environment before any run in Production.").Replace('\n', '\r?\n'))
     }
@@ -152,8 +152,8 @@ Describe 'Module: manifest, exported functions, parameter names' {
         $script:Manifest = Test-ModuleManifest -Path (Join-Path $script:PackageRoot 'TeamsTransfer.psd1')
         $script:Module = Get-Module TeamsTransfer
     }
-    It 'has a valid manifest: version 0.1.0, author, PowerShell 7.4, Core only' {
-        $script:Manifest.Version.ToString() | Should -Be '0.1.0'
+    It 'has a valid manifest: version 1.0.0, author, PowerShell 7.4, Core only' {
+        $script:Manifest.Version.ToString() | Should -Be '1.0.0'
         $script:Manifest.Author | Should -Be 'Nicolas Fabert'
         $script:Manifest.PowerShellVersion.ToString() | Should -Be '7.4'
         $script:Manifest.CompatiblePSEditions | Should -Be @('Core')
@@ -165,7 +165,7 @@ Describe 'Module: manifest, exported functions, parameter names' {
         @($script:Module.ExportedFunctions.Keys | Sort-Object) | Should -Be @($declared | Sort-Object)
     }
     It 'has the same version in the manifest and in the console banner' {
-        & (Get-Module TeamsTransfer) { $script:ToolVersion } | Should -Be '0.1.0'
+        & (Get-Module TeamsTransfer) { $script:ToolVersion } | Should -Be '1.0.0'
     }
     It 'has comment-based help (a synopsis) on every exported function' {
         foreach ($name in $script:Module.ExportedFunctions.Keys) {
@@ -257,7 +257,7 @@ Describe 'Colours and icons' {
         $r.Out | Should -Not -Match '[^\x00-\x7F]'
         $r.Out | Should -Match '\+-{70,}\+'
         $r.Out | Should -Match '\|  \*  Teams Transfer'
-        $r.Out | Should -Match 'v0\.1\.0 - Nicolas Fabert'
+        $r.Out | Should -Match 'v1\.0\.0 - Nicolas Fabert'
     }
     It 'writes no ANSI sequence with NO_COLOR, also for the warning and the error' {
         $r = Invoke-Entry -Arguments @('-Mode', 'Status', '-ConfigPath', (Join-Path $TestDrive 'missing.psd1'), '-LogFolder', (Join-Path $TestDrive 'logs-nc')) -Env @{ NO_COLOR = '1' }
@@ -347,7 +347,7 @@ Describe 'Log file' {
         } 6>&1
         $text = Get-Content -LiteralPath $path -Raw
         foreach ($level in 'STEP', 'INFO', 'OK', 'WARN', 'FAIL', 'SKIP', 'DETAIL') { $text | Should -Match "\[$level\s*\]" -Because $level }
-        $text | Should -Match '=== Teams Transfer v0\.1\.0 ==='
+        $text | Should -Match '=== Teams Transfer v1\.0\.0 ==='
         $text | Should -Match '\[1/2\] Opening the store'
         $text | Should -Match 'Summary - Counts: chats 1,204'
         $text | Should -Not -Match $script:Esc
@@ -662,7 +662,7 @@ Describe 'Package integrity' {
             $o | Should -Match 'Manifest written'
             $o | Should -Match 'UnsignedDevelopmentPackage'
             $m = Import-PowerShellDataFile -LiteralPath (Join-Path $script:Pkg 'PackageIntegrity.psd1')
-            $m.SchemaVersion | Should -Be 1; $m.Algorithm | Should -Be 'SHA256'; $m.Version | Should -Be '0.1.0'
+            $m.SchemaVersion | Should -Be 1; $m.Algorithm | Should -Be 'SHA256'; $m.Version | Should -Be '1.0.0'
             $paths = @($m.Files | ForEach-Object { $_.Path })
             $paths | Should -Contain 'Invoke-TeamsTransfer.ps1'
             $paths | Should -Contain 'src\Test-PackageIntegrity.ps1'

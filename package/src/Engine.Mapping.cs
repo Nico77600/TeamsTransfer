@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 5b: identity and target mapping (lot H)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 0.1.0
+//  Version : 1.0.0
 //
 //  IdentityMapper   decides, for every source user that appears in the planned conversations (message authors AND members),
 //                   who that person is in the target: IdentityKind Mapped | Same | Ghost | ServiceAccount | Unresolved.
