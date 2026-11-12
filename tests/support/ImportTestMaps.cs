@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer tests - in-memory implementations of the three import maps (lot I)
+//  TeamsTransfer tests - in-memory implementations of the three import maps
 //  IIdentityMap, ITargetMap and IFileCopyMap over concurrent dictionaries. Every Get returns a COPY and every Upsert stores a copy,
 //  like a database would: a test can never rely on sharing an instance with the importer.
 // =============================================================================

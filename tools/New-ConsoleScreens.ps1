@@ -29,7 +29,7 @@
 
 .NOTES
     Author  : Nicolas Fabert
-    Version : 1.0.1
+    Version : 1.0.2
 
     This Script is a Personal project.
     It's provided "AS-IS". It's not an official Microsoft product so no support can be expected from Microsoft.

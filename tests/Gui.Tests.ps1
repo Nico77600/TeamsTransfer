@@ -1,4 +1,4 @@
-# Tests of the console (lot L): TeamsTransfer.Gui.ps1, ui\*.xaml, Jobs, Demo mode.
+# Tests of the console: TeamsTransfer.Gui.ps1, ui\*.xaml, Jobs, Demo mode.
 # The window runs in a child process on an STA thread (pwsh -STA): the Demo mode compiles the engine with the synthetic tenant, builds the window,
 # drives the pages through the console's own functions and writes what it saw to a JSON file, which the tests assert on.
 # Skipped when there is no desktop session or when lib\gui is not installed (tools\Get-TeamsTransferDependencies.ps1).

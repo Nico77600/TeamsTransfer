@@ -197,7 +197,7 @@ Describe 'Verify: everything agrees' {
         $hist = @($e.Store.LotHistory($e.LotId) | ForEach-Object { [string]$_.To })
         $hist[-1] | Should -Be 'Verified'
         $hist[-2] | Should -Be 'Completing'
-        # the target was read the way phase 0 requires: pages of 50, no $filter / $orderby, replies expanded for channels
+        # the target was read the way the service requires: pages of 50, no $filter / $orderby, replies expanded for channels
         $urls = @($e.Gf.Requests | ForEach-Object { [Uri]::UnescapeDataString($_.Url) })
         @($urls | Where-Object { $_ -match '/messages' -and $_ -match 'filter|orderby' }).Count | Should -Be 0
         @($urls | Where-Object { $_ -match 'chats/.*/messages\?\$top=50' }).Count | Should -BeGreaterOrEqual 1
@@ -477,7 +477,7 @@ Describe 'Reports and persistence' {
         $r.ResultsFile | Should -Exist
         $folder = Join-Path $script:TempRoot 'vreport'
         [TeamsTransfer.VerifyReport]::WriteCsv((Join-Path $folder 'verify.csv'), $r.Items)
-        [TeamsTransfer.VerifyReport]::WriteHtml((Join-Path $folder 'verify.html'), 'L1', $r.Items, $script:Now, '1.0.1')
+        [TeamsTransfer.VerifyReport]::WriteHtml((Join-Path $folder 'verify.html'), 'L1', $r.Items, $script:Now, '1.0.2')
         $csv = Import-Csv -LiteralPath (Join-Path $folder 'verify.csv')
         @($csv).Count | Should -Be 1
         $csv[0].Outcome | Should -Be 'Mismatch'
@@ -614,7 +614,7 @@ Describe 'Entry script: Ghosts, CopyFiles, Verify and Report modes' {
     }
 }
 
-Describe 'Verify: real-lab findings (unreadable target, system events, sampling, dropped parts)' {
+Describe 'Verify: unreadable target, system events, sampling, dropped parts)' {
     It 'reports a 403 on the target read as Unverified (permission named), not Mismatch, and leaves the lot alone' {
         $e = New-HappyEnv
         Move-Lot $e $e.LotId 'Completing'

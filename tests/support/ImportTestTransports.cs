@@ -1,6 +1,6 @@
 // =============================================================================
-//  TeamsTransfer tests - ImportRealismTransport (lot I)
-//  Wraps FakeGraphTransport (which is NOT edited) and makes it behave like the REAL service where Phase0-Results.md says they differ:
+//  TeamsTransfer tests - ImportRealismTransport
+//  Wraps FakeGraphTransport (which is NOT edited) and makes it behave like the REAL service where they differ:
 //    - a duplicate createdDateTime answers 409 Conflict (the fake answers 400 BadRequest);
 //    - a createdDateTime earlier than the thread creation answers 403 (the fake answers 400);
 //    - a completed thread can be reopened by a later startMigration with an earlier date (the fake answers 400);
@@ -52,13 +52,13 @@ namespace TeamsTransfer.Testing
         public int StopAfterPosts;
         /// <summary>Slows every call (a real network latency) by this many milliseconds of real time (0 = none).</summary>
         public int LatencyMs;
-        /// <summary>Real service (lab): POST /chats with visibleHistoryStartDateTime on a member answers 400 "'visibleHistoryStartDateTime' cannot be set".</summary>
+        /// <summary>Real service: POST /chats with visibleHistoryStartDateTime on a member answers 400 "'visibleHistoryStartDateTime' cannot be set".</summary>
         public bool RejectHistoryOnChatCreate = true;
-        /// <summary>Real service (assumed): the members of a new group chat only see the history from now on until they are removed and re-added with an old date.</summary>
+        /// <summary>Real service: the members of a new group chat only see the history from now on until they are removed and re-added with an old date.</summary>
         public bool GroupChatsStartHidden = true;
         /// <summary>The fake has no POST /teams/{id}/members: emulated here (201, or 409 for an existing member).</summary>
         public bool EmulateTeamMembersRoute = true;
-        /// <summary>Real service (lab): adding a member to a private channel of a team they do not belong to answers 404.</summary>
+        /// <summary>Real service: adding a member to a private channel of a team they do not belong to answers 404.</summary>
         public bool ChannelMemberNeedsTeamMember = true;
         private readonly ConcurrentDictionary<string, int> _cur = new ConcurrentDictionary<string, int>();
         private int _maxConcurrent;

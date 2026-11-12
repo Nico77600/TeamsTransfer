@@ -1,7 +1,7 @@
 // =============================================================================
-//  TeamsTransfer - engine, lot J part 3: verification after the import (design 5, "Verification") and the lot report
+//  TeamsTransfer - engine: verification after the import and the lot report
 // -----------------------------------------------------------------------------
-//  Phase 0: imported messages (lastModifiedDateTime = 0001-01-01) are INVISIBLE to getAllMessages, so the target is read per chat / per channel:
+//  Imported messages (lastModifiedDateTime = 0001-01-01) are INVISIBLE to getAllMessages, so the target is read per chat / per channel:
 //    chats     GET /chats/{id}/messages?$top=50, every page (an $orderby / $filter on lastModifiedDateTime is useless for imported messages), then the
 //              createdDateTime of each message is bucketed CLIENT-SIDE into the slice windows of the lot items.
 //    channels  GET /teams/{t}/channels/{c}/messages?$top=50&$expand=replies (the endpoint refuses $orderby and $filter); when the answer carries no
@@ -19,7 +19,7 @@
 //      Reactions per message are capped at 250 on the expected side (the import limit). The totals are compared only when the journal holds no
 //      Skipped / Rejected message, otherwise they are reported as "not compared".
 //    - migrationMode of the conversation: must read "completed"; an absent value is accepted only when the latest import session of the slice is
-//      recorded Completed in the journal (to be confirmed on the real service by the lab test); "inProgress" = NotCompleted.
+//      recorded Completed in the journal; "inProgress" = NotCompleted.
 //  BODY NORMALISATION (same function for source and target, so the hash ignores what the service and the importer rewrite):
 //    1. the fallback banner of ImportRunOptions.FallbackBannerFormat is removed from the START of the target text;
 //    2. tags <img>, <attachment>, <codeblock> content markers are dropped, <at id=..>name</at> keeps "name"; every other tag is removed;
@@ -247,7 +247,7 @@ namespace TeamsTransfer
 
         /// <summary>True when the target text is the source text with parts removed (equal after dropping the attachment names, or a word-by-word subsequence).</summary>
         // The importer writes a visible note in place of a file it could not copy: "<p><em>[Attachment not copied: name]</em></p>"
-        // (Engine.Import.cs). It is not source text: remove it before comparing (real lab case, 2026-11-10).
+        // (Engine.Import.cs). It is not source text: remove it before comparing.
         private static readonly Regex DroppedNoteRx = new Regex(@"\[attachment not copied:[^\]]*\]", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         private static bool EqualWithoutDroppedParts(Brief src, Brief tgt)

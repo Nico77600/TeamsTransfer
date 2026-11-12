@@ -1,4 +1,4 @@
-﻿# TeamsTransfer - thin PowerShell surface over the C# mapping / plan engine (lot H).
+﻿# TeamsTransfer - thin PowerShell surface over the C# mapping / plan engine.
 # Dot-sourced by TeamsTransfer.psm1. All the logic lives in package\src\Engine.Mapping.cs, Engine.Plan.cs and Engine.CatalogImport.cs; this
 # file builds the options, creates a lot on the fly when asked, runs the async planner, shows a text progress line every -IntervalSeconds by
 # POLLING (Wait-TmtEngineTask, TeamsTransfer.Export.ps1) and returns the engine's result. The plan never writes to a tenant: the target is read
@@ -22,7 +22,7 @@ function ConvertTo-TmtWindowBoundaries {
     .PARAMETER Window
         Nm only (a lot is cut in waves of months).
     #>
-    # -Window for a lot created on the fly: '24m' -> 24; '60m' -> 24,36,48,60 (the waves of design 3.7: 24 months, then 12 months each).
+    # -Window for a lot created on the fly: '24m' -> 24; '60m' -> 24,36,48,60 (the waves: 24 months, then 12 months each).
     param([string]$Window)
     # A lot is cut in waves of months: Nm only (a date range <from>..<to> has no waves, it applies to Export and Archive).
     $expected = "expected Nm with N from 1 to 600 (the last N months, for example 24m or 60m; a lot is cut in waves of months, so a <from>..<to> date range is not accepted here)"
@@ -220,14 +220,14 @@ function New-TmtImportPlan {
     }
 }
 
-# Cumulative with the Export-ModuleMember of TeamsTransfer.psm1 (lot H owns this file only).
+# Cumulative with the Export-ModuleMember of TeamsTransfer.psm1.
 Export-ModuleMember -Function New-TmtImportPlan
 
 # SIG # Begin signature block
-# MIImKQYJKoZIhvcNAQcCoIImGjCCJhYCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIImKwYJKoZIhvcNAQcCoIImHDCCJhgCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCIJvTxJeNlH3nC
-# qvJlmSqoDX1NPsGF9BygawzyrkMmQqCCDW8wggZyMIIEWqADAgECAghkM1HTxzif
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCXFm56ATQ9FQWu
+# YeQq99QJrD2L9BjZ/L0W23Y/NXWPv6CCDW8wggZyMIIEWqADAgECAghkM1HTxzif
 # CDANBgkqhkiG9w0BAQsFADB8MQswCQYDVQQGEwJVUzEOMAwGA1UECAwFVGV4YXMx
 # EDAOBgNVBAcMB0hvdXN0b24xGDAWBgNVBAoMD1NTTCBDb3Jwb3JhdGlvbjExMC8G
 # A1UEAwwoU1NMLmNvbSBSb290IENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFJTQTAe
@@ -299,28 +299,28 @@ Export-ModuleMember -Function New-TmtImportPlan
 # ULeH38N0Vr83psiJVuBSxQyt5nRVrpYz7FACq5gtXELkyViq/rGOlJKaRrgQ6WWq
 # eoIXqKhVFAdP/jAEm2M8ezoVYsUgPyKY2OcuecV9coulAcxUIUydx6qYiOfsGj5u
 # Dy7l4aYjvB771wkUMzUQwxzcDYXJtMMTaWRe6n9EemR67jc73u5CJyFg3PfA5WR1
-# wZislcdCZuS6MYIYEDCCGAwCAQEwgYwweDELMAkGA1UEBhMCVVMxDjAMBgNVBAgM
+# wZislcdCZuS6MYIYEjCCGA4CAQEwgYwweDELMAkGA1UEBhMCVVMxDjAMBgNVBAgM
 # BVRleGFzMRAwDgYDVQQHDAdIb3VzdG9uMREwDwYDVQQKDAhTU0wgQ29ycDE0MDIG
 # A1UEAwwrU1NMLmNvbSBDb2RlIFNpZ25pbmcgSW50ZXJtZWRpYXRlIENBIFJTQSBS
 # MQIQBof4ljXihJpmCqqt2mhAWzANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCBKfxWfWieL
-# Wg0V4u6qyrnOGzHnxu1lmsqxmGgBwBayPTANBgkqhkiG9w0BAQEFAASCAgADNQjR
-# l8GWSOALXHgVSVmfM+Vk98n3kp8J+vIP8KPY0wkQ2m8o4QZ7Ntvz23S0VdTC/YHy
-# PQ0rujGJKKitYU554uUQyDIDMOren6WB+fGuFjKMLimqE1C6Ktm8SgpdDnwSQQKT
-# TjA3ZZetTzU/+tcybKYc68HxO7Y2GwLH3TMWUdRC+zwx+uAaxSXQt8DVhtp6u1M1
-# vHJJo6l0X9rQfc/8+c4Py9TuVdgcRasBNYVpHmuMtoD0+X7OIlJG69iSeqX+HQ44
-# /ZUTDwyM9DmF6c9cYS4jvW577lmiqf+6CC0Tc5t8xZ+edbW0xG5rZbycH90K0elD
-# FSihCm24rbDfZrAKJLse4GMDg6cJEpKtW9TUMGVwsTCmartCVQR8tkqSbMydTVFf
-# HD/NNz4cDYSH5NsKKqbk90nT2F82aji34Z0mAcA0mxBV2fXhnZcbsvpm0fkSdKG2
-# dPgcuVU1QE1WfgpdXINi96VnedSJajr4owBx5WROpy7C+x6iY6706+dkA9tLtKxO
-# iLmZh9+EX2k3KEQnceIhESbjTUivtI2YeDj4wphwRlU+2RpVQc1I3ozhUTWot+UH
-# oRgQXK14gyYJVS83XQFDPIvhT4OJnpnZuY8MRmAlkSU4YeWTA2fWY11Qd3XLzWRa
-# Rm4CRWEeyBqw4X//VJ3gU5FAI8/zZxC8M4vj9qGCFM0wghTJBgorBgEEAYI3AwMB
-# MYIUuTCCFLUGCSqGSIb3DQEHAqCCFKYwghSiAgEDMQ0wCwYJYIZIAWUDBAIBMIGJ
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCADFWRh/A8b
+# AmkeMA6AP6lS5sW0IY8oOMqelK+bOuCkHTANBgkqhkiG9w0BAQEFAASCAgBgdav2
+# rZbipmZh6OOtwZBdNc9pLv6ZWAl1DvYntfDw/9970Ljd66yH7bBxdhNwWGMWJEtr
+# L9FHuAHa/Zd3B6pqF910yVMT1jwZT8FBX0x2RHv4yuzHXsLsk/yZxRRsGcfswu1s
+# kYeS80PknsBd1iAhw2gTtOInpww5K2si2j9ET2FRy9rw6CmqL/T28SwwI3kA2LoB
+# Lg16sOSgl5lKRNmiS0KNVxzFTiqevHUpzQ0iRolBKiitWnBwC3Uug9EM8oRVKSyU
+# UdI4DYrumYC+zwn5K5ZRbrc72tJ70azVW3f0jHYnFjga2seG++p8L+xzPLuAN3QV
+# rUIWKgRcBAlRVzms55oPzHarZBhaJEw/tp/omMxRUTxnRvH161vbARcsUJ5CInqD
+# UOy0mBK/Y0hFAiV9a8U/Tqe7/Rf23ohh+YsXQ+gJsWRzsKMZ6kWmNsEbByEsNTo5
+# jTK5F46uxzlYN8y1eCQiQQD02MVFX8xkx5YMzvSaUw4av/l+zMuK5vEzXFRCLodT
+# CvqDtTznRESIlxm0zVh/LcTyaA5UPzvi9zygWxVMievso8w/8xIjm9HCvkm5gjjS
+# LA9l1VdGh5wJh87xJ3URNgPqcrs9sA98QPSiiE1EML2soKExZpnnKpinSWkCAuf7
+# 8FsLuDF59WGg3vfb26VaSjHp8T86pgeZm5W+fKGCFM8wghTLBgorBgEEAYI3AwMB
+# MYIUuzCCFLcGCSqGSIb3DQEHAqCCFKgwghSkAgEDMQ0wCwYJYIZIAWUDBAIBMIGJ
 # BgsqhkiG9w0BCRABBKB6BHgwdgIBAQYMKwYBBAGCqTABAwYBMDEwDQYJYIZIAWUD
-# BAIBBQAEIJhz7Nh6yQGg64mUZHBOvH+ARvlgWH1HuyPgdC/YjUNwAghfAIRsZb8Y
-# ZxgPMjAyNjExMTExNzU3MzlaMAMCAQECEB/86kTML3S4i8AcYibHrzegghGnMIIE
+# BAIBBQAEIJlhr4H8ZDCvW0LfT9dpLCiLH8NZP5L+JN/4DIslr/O5AghVS9smTTu6
+# wRgPMjAyNjExMTIxNzI1MTNaMAMCAQECEFGnnzYugUa7A0Y+CVmjqWGgghGnMIIE
 # 8zCCAtugAwIBAgIQVEP4N71a7hgBhHK4XNqO4zANBgkqhkiG9w0BAQsFADByMQsw
 # CQYDVQQGEwJVUzEOMAwGA1UECAwFVGV4YXMxEDAOBgNVBAcMB0hvdXN0b24xETAP
 # BgNVBAoMCFNTTCBDb3JwMS4wLAYDVQQDDCVTU0wuY29tIFRpbWVzdGFtcGluZyBJ
@@ -415,17 +415,17 @@ Export-ModuleMember -Function New-TmtImportPlan
 # rDMtXndUg3qhJL4pA3ZUlo7w5lM5ml+A7ijr/3Gk2v4QRoDeE2ShmTXdHgtqo8L/
 # fT119mYcETycE2NYGRXsBl3N0rzDsHRr8P3TrprqhRrX04iS0P7eQ+lDxgS3yhGn
 # 3OzWGhDt9Gf2x1qe0/qdhFAVOkXxzMZz4Uat6xsAfzX0+/m8GEKW5Ojw/HY+kLvV
-# wzSPOzGCAlUwggJRAgEBMIGGMHIxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIDAVUZXhh
+# wzSPOzGCAlcwggJTAgEBMIGGMHIxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIDAVUZXhh
 # czEQMA4GA1UEBwwHSG91c3RvbjERMA8GA1UECgwIU1NMIENvcnAxLjAsBgNVBAMM
 # JVNTTC5jb20gVGltZXN0YW1waW5nIElzc3VpbmcgUlNBIENBIDICEFRD+De9Wu4Y
 # AYRyuFzajuMwCwYJYIZIAWUDBAIBoIIBYDAaBgkqhkiG9w0BCQMxDQYLKoZIhvcN
-# AQkQAQQwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMTE3NTczOVowKAYJKoZIhvcNAQk0
-# MRswGTALBglghkgBZQMEAgGhCgYIKoZIzj0EAwIwLwYJKoZIhvcNAQkEMSIEIIwm
-# GfNroWHliBOm58WN96orzutiw8FctaSyL7kpW2L4MIHIBgsqhkiG9w0BCRACLzGB
+# AQkQAQQwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMjE3MjUxM1owKAYJKoZIhvcNAQk0
+# MRswGTALBglghkgBZQMEAgGhCgYIKoZIzj0EAwIwLwYJKoZIhvcNAQkEMSIEIIjl
+# gW/9dWy76RFv/1eaeoHlphRn2zuADOF+KPrk4kkQMIHIBgsqhkiG9w0BCRACLzGB
 # uDCBtTCBsjCBrwQgV0/qF6r6XnxqK5sIyZixc15FCzhzykTmokygkw5j87AwgYow
 # dqR0MHIxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIDAVUZXhhczEQMA4GA1UEBwwHSG91
 # c3RvbjERMA8GA1UECgwIU1NMIENvcnAxLjAsBgNVBAMMJVNTTC5jb20gVGltZXN0
 # YW1waW5nIElzc3VpbmcgUlNBIENBIDICEFRD+De9Wu4YAYRyuFzajuMwCgYIKoZI
-# zj0EAwIERjBEAiBKtDTEB1hFyuvZjjID1AGFkCuHclvyaDksLTySG/MRjQIgDTy7
-# cTOvf3aMxnAXsxFyxj1pIfmWPpMD2FkfJKCpJCc=
+# zj0EAwIESDBGAiEAlMjEBzvJWdR7ASNFHjQGfZhgBUcQR+21p4f0cYuxXdMCIQDO
+# 30BT2MrUz0em9ofMTxbAfZpB7EYqfztBYuUC75nadQ==
 # SIG # End signature block

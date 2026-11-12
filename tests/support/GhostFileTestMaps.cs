@@ -1,4 +1,4 @@
-// Test helpers of lot J (ghosts, file copy, verify): thread-safe in-memory implementations of the three import maps. Used when a test does not
+// Test helpers (ghosts, file copy, verify): thread-safe in-memory implementations of the three import maps. Used when a test does not
 // need the persistence of the real store (TmtStore implements the same interfaces in Engine.CatalogImport.cs). Names are prefixed Gf to stay clear
 // of the helpers of the other lots.
 using System;

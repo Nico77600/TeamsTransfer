@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 0b: store contracts
+//  TeamsTransfer - engine: store contracts
 // -----------------------------------------------------------------------------
 //  The seam between the exporter (Engine.Inventory.cs, Engine.Export.cs) and the local store (Engine.Store*.cs).
 //  The exporter only knows IExportStore; the store implementation (partitioned SQLite + jsonl.gz segments +
@@ -11,7 +11,7 @@
 //    ConversationKey  chat:<chatId>  |  channel:<teamId>/<channelId>
 //    message identity (ConversationKey, MessageId); a reply of a channel message has its own MessageId and ReplyToId.
 //  A message seen again with a later lastModifiedDateTime (edit, deletion, reaction) is a new VERSION: the store keeps
-//  the latest as current and counts the versions. Imported messages have lastModifiedDateTime = 0001-01-01 (phase 0):
+//  the latest as current and counts the versions. Imported messages have lastModifiedDateTime = 0001-01-01:
 //  the store must not treat that as "older" than nothing; compare (lastModifiedDateTime, etag, content hash).
 //
 //  OWNERSHIP: coordinator. Agents do not change this file; a needed change is reported.

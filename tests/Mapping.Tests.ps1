@@ -1,6 +1,6 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    Lot H, part 1: Engine.CatalogImport.cs (identity_map / target_map / file_copy_map in catalog.db) and Engine.Mapping.cs (CSV reader,
+    Engine.CatalogImport.cs (identity_map / target_map / file_copy_map in catalog.db) and Engine.Mapping.cs (CSV reader,
     TargetDirectory look-ups, IdentityMapper). Offline: the target tenant is a second FakeTenant behind a GraphClient; the store is a real
     TmtStore in a temp folder. The conversation mapping (TargetMapper) is exercised through the planner in Plan.Tests.ps1.
 #>
@@ -69,7 +69,7 @@ Describe 'Catalog persistence of the import maps (Engine.CatalogImport.cs)' {
             @($s.ListIdentities()).Count | Should -Be 3
         } finally { $s.Dispose() }
     }
-    It 'is reachable through the three interfaces (the contract of lots I and J)' {
+    It 'is reachable through the three interfaces (the contract of the Importer, the Ghosts and the Verify stages)' {
         $s = New-TestStore
         try {
             $s -is [TeamsTransfer.IIdentityMap] | Should -BeTrue

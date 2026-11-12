@@ -1,6 +1,6 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    Lot K (fixes from the first real import runs): cancelling a lot that has not started importing (TmtStore.CancelLot, -Mode Status -CancelLot),
+    Lots: cancelling a lot that has not started importing (TmtStore.CancelLot, -Mode Status -CancelLot),
     a failed Plan that must not leave conversations reserved, -Mode Export -Lot with chat / channel members (Invoke-TmtLotExport) and the
     Status lines (conversations inventoried vs with messages, lots with items and journal). Offline: real TmtStore in a temp folder, the SOURCE
     is SyntheticTenant.Tiny behind a fake Graph.

@@ -5,7 +5,7 @@
     Builds the release package of Teams Transfer: tests, documentation, integrity manifest, verification, ZIP and SHA256SUMS.txt.
 
 .DESCRIPTION
-    The release ZIP holds exactly the content of the package folder and nothing else (no tests, no tools, no docs\design, no .local-test-data,
+    The release ZIP holds exactly the content of the package folder and nothing else (no tests, no tools, no .local-test-data,
     no config\*.local.psd1, no store, out, logs, reports, bin or data folder). The integrity model is the one of ExchangeLogReport and
     PraRemoteMailbox: PackageIntegrity.psd1 lists the SHA256 of every file of the package, src\Test-PackageIntegrity.ps1 verifies it before any
     code runs, and the owner signs the PowerShell files, the verifier and the manifest. This script never signs anything.
@@ -62,7 +62,7 @@
 
 .NOTES
     Author  : Nicolas Fabert
-    Version : 1.0.1
+    Version : 1.0.2
 
     This Script is a Personal project.
     It's provided "AS-IS". It's not an official Microsoft product so no support can be expected from Microsoft.

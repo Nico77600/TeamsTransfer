@@ -1,6 +1,6 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    Product consistency fixes found while documenting v0.1.0: one fallback order for the service account, one rule for -Window, messages that
+    Product consistency: one fallback order for the service account, one rule for -Window, messages that
     name real parameters, one documented default per mode for the parallelism, named lots (-Lot / -LotFile), the default output folder next to
     the package, the SQLite licence texts and their lock, the release builder, -Mode Merge and the English-only preview schema.
     Offline: real stores in a temp folder, the entry script in a child pwsh, no tenant.
@@ -197,7 +197,7 @@ Describe '2. -Window: the message and the validation agree' {
         $r = Invoke-Entry @('-Mode', 'Archive', '-Window', 'nope')
         $r.ExitCode | Should -Be 1
     }
-    It 'the help states the same rule and no longer says 24m, 36m, 48m or 60m' {
+    It 'the help states the same rule and does not say 24m, 36m, 48m or 60m' {
         $help = (Get-Help $script:Entry -Full | Out-String)
         $help | Should -Match 'Nm with N from 1 to 600'
         $help | Should -Not -Match '24m, 36m, 48m or 60m'
@@ -289,7 +289,7 @@ Describe '4. Parallelism: one documented default per mode' {
         [TeamsTransfer.ExportOptions]::new().ConversationParallelism | Should -Be 8
         [TeamsTransfer.ExportOptions]::new().UserParallelism | Should -Be 8
     }
-    It 'Import passes its parameter always (32 unless given), and Ghosts is no longer capped silently at 32' {
+    It 'Import passes its parameter always (32 unless given), and Ghosts is not capped silently at 32' {
         $src = Get-Content -LiteralPath $script:Entry -Raw
         $src | Should -Match '\$importArgs\.ConversationParallelism = \$ConversationParallelism'
         $src | Should -Not -Match 'Math\]::Min\(32, \$UserParallelism\)'
@@ -522,12 +522,12 @@ Describe '8. tools\Build-Package.ps1' {
         $b.ExitCode | Should -Be 0 -Because $b.Out
         $b.Out | Should -Match 'SkipTests'
         $b.Out | Should -Match 'UNSIGNED development ZIP'
-        $zipPath = Join-Path $t 'out\release\TeamsTransfer-1.0.1-win-x64.zip'
+        $zipPath = Join-Path $t 'out\release\TeamsTransfer-1.0.2-win-x64.zip'
         Test-Path -LiteralPath $zipPath | Should -BeTrue
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         $z = [IO.Compression.ZipFile]::OpenRead($zipPath)
         try { $names = @($z.Entries | ForEach-Object FullName) } finally { $z.Dispose() }
-        $top = 'TeamsTransfer-1.0.1/'
+        $top = 'TeamsTransfer-1.0.2/'
         $names | Where-Object { -not $_.StartsWith($top) } | Should -BeNullOrEmpty
         $rel = @($names | ForEach-Object { $_.Substring($top.Length) })
         # exactly the package content: the manifest files + the manifest + the editable configuration
@@ -540,11 +540,11 @@ Describe '8. tools\Build-Package.ps1' {
         $rel | Should -Contain 'config/TeamsTransfer.config.psd1'
         $rel | Should -Contain 'lib/licenses/SQLite/PUBLIC-DOMAIN.txt'
         $rel | Should -Contain 'dependency-lock.json'
-        $rel | Where-Object { $_ -match '\.local\.psd1$|^out/|^logs/|^store/|^reports/|^tests/|^tools/|docs/design|\.local-test-data|\.log$' } | Should -BeNullOrEmpty
+        $rel | Where-Object { $_ -match '\.local\.psd1$|^out/|^logs/|^store/|^reports/|^tests/|^tools/|docs/desig[n]|\.local-test-data|\.log$' } | Should -BeNullOrEmpty
         $rel | Where-Object { $_ -match '^docs/' } | Should -Not -BeNullOrEmpty
         # SHA256SUMS.txt
         $sums = Get-Content -LiteralPath (Join-Path $t 'out\release\SHA256SUMS.txt') -Raw
-        $sums | Should -Be ("{0}  TeamsTransfer-1.0.1-win-x64.zip`n" -f (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant())
+        $sums | Should -Be ("{0}  TeamsTransfer-1.0.2-win-x64.zip`n" -f (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant())
         # the manifest it wrote verifies (development mode) and the second run needs -Force
         (& (Join-Path $t 'package\src\Test-PackageIntegrity.ps1') -Root (Join-Path $t 'package') -DevelopmentMode).Status | Should -Be 'UnsignedDevelopmentPackage'
         (Invoke-Build $t @('-SkipTests', '-Stage', 'Package')).ExitCode | Should -Not -Be 0

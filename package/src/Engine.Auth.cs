@@ -1,8 +1,8 @@
 // =============================================================================
-//  TeamsTransfer - engine, part 1: app-only authentication (client credentials, no MSAL)
+//  TeamsTransfer - engine: app-only authentication (client credentials, no MSAL)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.1
+//  Version : 1.0.2
 //
 //  Why this file exists, and why there is no MSAL here:
 //    The export and the import run unattended, app-only (Chat.Read.All, Teamwork.Migrate.All...), for days.
@@ -11,7 +11,7 @@
 //      - CertificateTokenProvider (production): signs a JWT client assertion (RS256) with the certificate private
 //        key. No secret is ever stored in a file or a config; the key stays in the Windows certificate store.
 //      - ClientSecretTokenProvider (LAB ONLY): same flow with client_secret. A secret has no place in a
-//        production run; it exists so that a lab can be driven without issuing a certificate.
+//        production run; it exists so that a test tenant can be driven without issuing a certificate.
 //    Both cache the access token in memory, refresh it 5 minutes before it expires, and allow a single refresh at
 //    a time (SemaphoreSlim) however many workers ask at once. The HTTP call goes through an injectable HttpClient
 //    so that the tests run offline.

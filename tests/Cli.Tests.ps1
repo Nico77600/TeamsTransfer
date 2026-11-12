@@ -1,6 +1,6 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    The command-line surface (docs\design\CLI-Conventions.md): help of the entry script, modes, exit codes, preview / apply / WhatIf,
+    The command-line surface: help of the entry script, modes, exit codes, preview / apply / WhatIf,
     console formats, colours and icons, the log file, the end card, the package integrity check, the module manifest.
     The entry script runs in a child pwsh (exit codes, redirected output); the Write-Tmt* helpers run in this process.
     Offline: no mode that needs the network is run to the end (they stop at the configuration, the stop file or -WhatIf).
@@ -117,7 +117,7 @@ Describe 'Entry script: built-in help' {
     It 'has NOTES with the author, the version, the exit codes and the exact disclaimer' {
         $notes = ($script:Help.alertSet | Out-String)
         $notes | Should -Match 'Author\s*:\s*Nicolas Fabert'
-        $notes | Should -Match 'Version\s*:\s*1\.0\.1'
+        $notes | Should -Match 'Version\s*:\s*1\.0\.2'
         $notes | Should -Match 'Exit codes'
         $script:Source | Should -Match ([regex]::Escape("    This Script is a Personal project.`n    It's provided `"AS-IS`". It's not an official Microsoft product so no support can be expected from Microsoft.`n`n    As any scripts you must read carefully the documentation and test it first in a Test environment before any run in Production.").Replace('\n', '\r?\n'))
     }
@@ -152,8 +152,8 @@ Describe 'Module: manifest, exported functions, parameter names' {
         $script:Manifest = Test-ModuleManifest -Path (Join-Path $script:PackageRoot 'TeamsTransfer.psd1')
         $script:Module = Get-Module TeamsTransfer
     }
-    It 'has a valid manifest: version 1.0.1, author, PowerShell 7.4, Core only' {
-        $script:Manifest.Version.ToString() | Should -Be '1.0.1'
+    It 'has a valid manifest: version 1.0.2, author, PowerShell 7.4, Core only' {
+        $script:Manifest.Version.ToString() | Should -Be '1.0.2'
         $script:Manifest.Author | Should -Be 'Nicolas Fabert'
         $script:Manifest.PowerShellVersion.ToString() | Should -Be '7.4'
         $script:Manifest.CompatiblePSEditions | Should -Be @('Core')
@@ -165,7 +165,7 @@ Describe 'Module: manifest, exported functions, parameter names' {
         @($script:Module.ExportedFunctions.Keys | Sort-Object) | Should -Be @($declared | Sort-Object)
     }
     It 'has the same version in the manifest and in the console banner' {
-        & (Get-Module TeamsTransfer) { $script:ToolVersion } | Should -Be '1.0.1'
+        & (Get-Module TeamsTransfer) { $script:ToolVersion } | Should -Be '1.0.2'
     }
     It 'has comment-based help (a synopsis) on every exported function' {
         foreach ($name in $script:Module.ExportedFunctions.Keys) {
@@ -198,7 +198,7 @@ Describe 'Module: manifest, exported functions, parameter names' {
         Get-Command Export-TmtPreview -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
         Get-Command Export-TmtArchive | Should -Not -BeNullOrEmpty
     }
-    It 'has no Write-Progress, Write-Information or Write-Warning left for operator messages in the lot E / F files' {
+    It 'has no Write-Progress, Write-Information or Write-Warning left for operator messages in the export and archive scripts' {
         foreach ($f in 'TeamsTransfer.Export.ps1', 'TeamsTransfer.Archive.ps1') {
             $text = Get-Content -LiteralPath (Join-Path $script:PackageRoot $f) -Raw
             $text | Should -Not -Match 'Write-Progress|Write-Information|Write-Warning' -Because $f
@@ -257,7 +257,7 @@ Describe 'Colours and icons' {
         $r.Out | Should -Not -Match '[^\x00-\x7F]'
         $r.Out | Should -Match '\+-{70,}\+'
         $r.Out | Should -Match '\|  \*  Teams Transfer'
-        $r.Out | Should -Match 'v1\.0\.1 - Nicolas Fabert'
+        $r.Out | Should -Match 'v1\.0\.2 - Nicolas Fabert'
     }
     It 'writes no ANSI sequence with NO_COLOR, also for the warning and the error' {
         $r = Invoke-Entry -Arguments @('-Mode', 'Status', '-ConfigPath', (Join-Path $TestDrive 'missing.psd1'), '-LogFolder', (Join-Path $TestDrive 'logs-nc')) -Env @{ NO_COLOR = '1' }
@@ -347,7 +347,7 @@ Describe 'Log file' {
         } 6>&1
         $text = Get-Content -LiteralPath $path -Raw
         foreach ($level in 'STEP', 'INFO', 'OK', 'WARN', 'FAIL', 'SKIP', 'DETAIL') { $text | Should -Match "\[$level\s*\]" -Because $level }
-        $text | Should -Match '=== Teams Transfer v1\.0\.1 ==='
+        $text | Should -Match '=== Teams Transfer v1\.0\.2 ==='
         $text | Should -Match '\[1/2\] Opening the store'
         $text | Should -Match 'Summary - Counts: chats 1,204'
         $text | Should -Not -Match $script:Esc
@@ -662,7 +662,7 @@ Describe 'Package integrity' {
             $o | Should -Match 'Manifest written'
             $o | Should -Match 'UnsignedDevelopmentPackage'
             $m = Import-PowerShellDataFile -LiteralPath (Join-Path $script:Pkg 'PackageIntegrity.psd1')
-            $m.SchemaVersion | Should -Be 1; $m.Algorithm | Should -Be 'SHA256'; $m.Version | Should -Be '1.0.1'
+            $m.SchemaVersion | Should -Be 1; $m.Algorithm | Should -Be 'SHA256'; $m.Version | Should -Be '1.0.2'
             $paths = @($m.Files | ForEach-Object { $_.Path })
             $paths | Should -Contain 'Invoke-TeamsTransfer.ps1'
             $paths | Should -Contain 'src\Test-PackageIntegrity.ps1'

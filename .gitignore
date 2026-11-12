@@ -27,3 +27,5 @@ package/config/*.local.psd1
 # A directory is never a database: the licence folder of Microsoft.Data.Sqlite must stay tracked
 # (the *.sqlite rule above matches its name, a rule cannot tell a file from a directory).
 !*.sqlite/
+# private deny-list of the hygiene and privacy tests (lab tenant, accounts)
+tests/*.local.txt

@@ -1,4 +1,4 @@
-# Shared by tests\Mapping.Tests.ps1 and tests\Plan.Tests.ps1 (lot H): a real TmtStore in a temp folder filled by the real exporter
+# Shared by tests\Mapping.Tests.ps1 and tests\Plan.Tests.ps1: a real TmtStore in a temp folder filled by the real exporter
 # against the fake SOURCE tenant (SyntheticTenant.Tiny), and a fake TARGET tenant (a second FakeTenant) behind a GraphClient.
 # Dot-source it AFTER tests\TestHelpers.ps1 (the engine and the fake are compiled together).
 

@@ -315,7 +315,7 @@ Describe 'Export - resume, errors, stop, throttling' {
     }
 }
 
-Describe 'Regressions found on the real lab' {
+Describe 'Export: window filters and edge cases' {
     It 'getAllMessages filters are always two-sided (the strict test transport would answer 400 otherwise)' {
         $t = [TeamsTransfer.Testing.SyntheticTenant]::Tiny(1)
         $e = New-Env $t
@@ -562,7 +562,7 @@ Describe 'Per-channel reading uses no $filter and no $orderby (real Graph reject
     }
 }
 
-Describe 'Channel reading performance (lab run 5: 2269 s for 558 messages)' {
+Describe 'Channel reading performance' {
     BeforeAll { $script:t = [TeamsTransfer.Testing.SyntheticTenant]::Small(1) }
     It 'with $expand=replies honoured, no replies call is made and the stored messages are the same' {
         $e1 = New-Env $t
@@ -953,7 +953,7 @@ Describe 'Assess' {
         $all.Waves[0].Messages | Should -BeGreaterThan ($all.Waves[1].Messages * 0.5)
         $all.Waves[2].Messages | Should -BeGreaterThan 0         # 3.5 years of history reaches the 37-48 month wave
     }
-    It 'durations follow from the measured rate and the import rates of phase 0' {
+    It 'durations follow from the measured rate and the import rates of the service' {
         $all.ImportDaysCentral | Should -BeGreaterThan 0
         [Math]::Abs($all.ImportDaysCentral - $all.Messages / 75 / 86400) | Should -BeLessThan 1e-9
         [Math]::Abs($all.ImportDaysLow - $all.Messages / 90 / 86400) | Should -BeLessThan 1e-9

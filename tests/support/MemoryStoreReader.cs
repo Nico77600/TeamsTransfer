@@ -1,5 +1,5 @@
 // =============================================================================
-//  TeamsTransfer - tests: an in-memory IStoreReader (lot F, preview)
+//  TeamsTransfer - tests: an in-memory IStoreReader (preview)
 // -----------------------------------------------------------------------------
 //  WHY: the preview exporter reads an IStoreReader; the real store is written elsewhere. Tests and screenshots fill this reader
 //  from a FakeTenant (SyntheticTenant.Tiny / Demo / Small) so they depend on nothing but the contract.

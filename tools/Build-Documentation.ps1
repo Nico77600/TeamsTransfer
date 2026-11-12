@@ -52,7 +52,7 @@
 
 .NOTES
     Author  : Nicolas Fabert
-    Version : 1.0.1
+    Version : 1.0.2
     PowerShell pitfall: never name a variable $matches (every -match overwrites the automatic $Matches).
 #>
 [CmdletBinding()]

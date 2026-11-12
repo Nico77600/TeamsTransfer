@@ -1,6 +1,6 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    Lot H, part 2: Engine.Plan.cs (ImportPlanner, TargetMapper through the planner), TeamsTransfer.Plan.ps1 (New-TmtImportPlan) and
+    Engine.Plan.cs (ImportPlanner, TargetMapper through the planner), TeamsTransfer.Plan.ps1 (New-TmtImportPlan) and
     Invoke-TeamsTransfer.ps1 -Mode Plan. Offline: the SOURCE is SyntheticTenant.Tiny exported by the real exporter into a real TmtStore
     (temp folder); the TARGET is a second FakeTenant (or the source tenant itself for scenarios B and C) behind a GraphClient whose request
     log proves that a plan never writes to a tenant.

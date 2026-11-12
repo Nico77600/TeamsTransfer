@@ -15,7 +15,7 @@
     Write-Information or Write-Warning.
 .NOTES
     Author  : Nicolas Fabert
-    Version : 1.0.1
+    Version : 1.0.2
     History : see CHANGELOG.md
 
     This Script is a Personal project.
@@ -47,13 +47,13 @@ $script:EngineFiles = @(
     'Engine.Export.cs'
     # --- Offline HTML archive ---
     'Engine.Preview.cs'
-    # --- Mapping + Plan (lot H) ---
+    # --- Mapping + Plan ---
     'Engine.CatalogImport.cs'
     'Engine.Mapping.cs'
     'Engine.Plan.cs'
-    # --- Importer (lot I) ---
+    # --- Importer ---
     'Engine.Import.cs'
-    # --- Ghosts + FileCopy + Verify (lot J) ---
+    # --- Ghosts + FileCopy + Verify ---
     'Engine.Ghosts.cs'
     'Engine.FileCopy.cs'
     'Engine.Verify.cs'
@@ -275,7 +275,7 @@ function Merge-TmtStore {
 . (Join-Path $PSScriptRoot 'TeamsTransfer.Export.ps1')
 . (Join-Path $PSScriptRoot 'TeamsTransfer.Archive.ps1')
 . (Join-Path $PSScriptRoot 'TeamsTransfer.Verify.ps1')
-Export-ModuleMember -Function Invoke-TmtGhosts, Invoke-TmtFileCopy, Invoke-TmtVerify, Invoke-TmtLotReport   # lot J (several Export-ModuleMember calls add up)
+Export-ModuleMember -Function Invoke-TmtGhosts, Invoke-TmtFileCopy, Invoke-TmtVerify, Invoke-TmtLotReport   # Ghosts, FileCopy, Verify (several Export-ModuleMember calls add up)
 . (Join-Path $PSScriptRoot 'TeamsTransfer.Import.ps1')
 . (Join-Path $PSScriptRoot 'TeamsTransfer.Plan.ps1')
 
@@ -288,10 +288,10 @@ Export-ModuleMember -Function Initialize-TmtEngine, Import-TmtConfiguration, Get
     Merge-TmtStore, Resolve-TmtWindow, ConvertTo-TmtWindowBoundaries, Get-TmtLotMembers, Initialize-TmtLot
 
 # SIG # Begin signature block
-# MIImKgYJKoZIhvcNAQcCoIImGzCCJhcCAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# MIImKQYJKoZIhvcNAQcCoIImGjCCJhYCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCuAgSU6Cup1lAx
-# d5v5nV1wfFIQiFu7hD48hxFbXX4aD6CCDW8wggZyMIIEWqADAgECAghkM1HTxzif
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAYd6tx1ZGJaJMn
+# 5v9cPh1r63qMEYXXb7Njxpfw0ZwQ7qCCDW8wggZyMIIEWqADAgECAghkM1HTxzif
 # CDANBgkqhkiG9w0BAQsFADB8MQswCQYDVQQGEwJVUzEOMAwGA1UECAwFVGV4YXMx
 # EDAOBgNVBAcMB0hvdXN0b24xGDAWBgNVBAoMD1NTTCBDb3Jwb3JhdGlvbjExMC8G
 # A1UEAwwoU1NMLmNvbSBSb290IENlcnRpZmljYXRpb24gQXV0aG9yaXR5IFJTQTAe
@@ -363,28 +363,28 @@ Export-ModuleMember -Function Initialize-TmtEngine, Import-TmtConfiguration, Get
 # ULeH38N0Vr83psiJVuBSxQyt5nRVrpYz7FACq5gtXELkyViq/rGOlJKaRrgQ6WWq
 # eoIXqKhVFAdP/jAEm2M8ezoVYsUgPyKY2OcuecV9coulAcxUIUydx6qYiOfsGj5u
 # Dy7l4aYjvB771wkUMzUQwxzcDYXJtMMTaWRe6n9EemR67jc73u5CJyFg3PfA5WR1
-# wZislcdCZuS6MYIYETCCGA0CAQEwgYwweDELMAkGA1UEBhMCVVMxDjAMBgNVBAgM
+# wZislcdCZuS6MYIYEDCCGAwCAQEwgYwweDELMAkGA1UEBhMCVVMxDjAMBgNVBAgM
 # BVRleGFzMRAwDgYDVQQHDAdIb3VzdG9uMREwDwYDVQQKDAhTU0wgQ29ycDE0MDIG
 # A1UEAwwrU1NMLmNvbSBDb2RlIFNpZ25pbmcgSW50ZXJtZWRpYXRlIENBIFJTQSBS
 # MQIQBof4ljXihJpmCqqt2mhAWzANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCCu/MXJskQv
-# wMhWuMx43cVAMsZ1G2g93TgzoQX7UpUM7DANBgkqhkiG9w0BAQEFAASCAgBIqJZl
-# /KBWL3bU2baY+qNP4+8Apb+e69PFrUg63GklaXchvwZLl7ntBj/p0ccul010EE+a
-# 1EYwsaRKM1ebCTadPpzjRYIhk0NHPVeSwl2usiOt0FiHHUOieY9VQfjAHayCkr/9
-# gVhCwrG6G0uI6ZFDOAa7GHyK0GRrSRHTv7QczlyiZuIgcRIEYD732MuDZP23Mu5j
-# HwZ/zH2p0+G7VatnqxExSPNqcMcOeLqMHie2ADri7wR1KjajL+qIuwoyRj7EjWOJ
-# WHrgc79jekoIUyCbD2wU6NK5Gq8u0ZcwpnRI1G9AOliqZGQGDoZlxSyrXOwDq//L
-# pWCfjxlqQ94wmo6PwcQE7emBBZoLl0TsPiRCqgEKE4eIgtQkORCw3GHFchuBBQDj
-# IWgfdQNA+B7os8PmoM4uqUom4/nhODmFgPThAr8sx34cpdxQdbYsHJdq44Kstnl8
-# wDL3DbdqB3yE5LTceM8EY5SBpC4MQWuoRwtSxZxxkgEz+iNhRGm29ssfDAkXxV9x
-# lfJTUtB3Mhmz/PQCdMltkPNV8RGNsYKhvh9SZaR87lrVdv0igDJzfoqQq4qwz4PJ
-# M8mH1GSLx2E35kq/4Lf57Wgx7HDgh0e4Srw2ErsrVe5BJow/taq7yMYXrTppaveq
-# MM3Ce1QXZ/sm2DV1CtnRSMWcRyDDIQQGziLrH6GCFM4wghTKBgorBgEEAYI3AwMB
-# MYIUujCCFLYGCSqGSIb3DQEHAqCCFKcwghSjAgEDMQ0wCwYJYIZIAWUDBAIBMIGJ
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCAmBZ/AsOAC
+# NhOtrg7+fjIGiEEa8XdoxIC3ouEOEuX0ezANBgkqhkiG9w0BAQEFAASCAgAqg3OB
+# GFz7r22ukqEWFUKm3mJy8HR+qFJJbgfoTszOyFMkRDKoLcesSJJ1VbecUBkYI5Ey
+# IMcCVmQ7u4MDezfTGliYWjQosEQVSEZ64rOMIKQPGaty6jZm6Q8EhlWEFxbNK5Yx
+# SVJsRzuGnZuuL8vyfC23PuHd46UbhapuXEo8+nh7OznuVwoaweKhMRjvPMR2O/Jv
+# ZH463zCpCIeTaI35xMLfZmP7VoGQn5mHw3syn6s8kjX+ousSRYGyy/Gw6Koq4bit
+# XngS469wNn7VySeu9yf3M2vZkKeCuLucK2BROzVKkbhmiI59KYp0WJpiuoaCjTp0
+# j9BZ1vIfFVRDrzzgu9mg/H+0/iQH8uTJlE4ZJmpL59ZClozgKlrdSpeqlYL3bM41
+# QHhzeHviERJQfIgOn5U9Qz20ZlowR+VJBPUpdtn9rb3rcZ1nF2dqAU4CHnkEapry
+# qjzyPED5wbSP6XcKYeB1QdbQV1+ff6AJXshRYD8g6hSMe7kxGrOee5oBpvUTIh1v
+# LGNNW2B1xS2N4B1gU55WtIpLkXushugnMaNaDPlO4e52c26XwRjuW2HtGCpXKvng
+# V5taqQHI62UEycrycD10emfRlJqyjWA19+5OPNZk61kh2RlWLUFxFekuG4wT6ufQ
+# AK9quLhFI4sblzd13RycAaHi3d1rbJfEIopaZ6GCFM0wghTJBgorBgEEAYI3AwMB
+# MYIUuTCCFLUGCSqGSIb3DQEHAqCCFKYwghSiAgEDMQ0wCwYJYIZIAWUDBAIBMIGJ
 # BgsqhkiG9w0BCRABBKB6BHgwdgIBAQYMKwYBBAGCqTABAwYBMDEwDQYJYIZIAWUD
-# BAIBBQAEII4U4DQVXahilWhkTeo27zU7WCseD3YM3V4pXQby4JADAghOiVx8C6q/
-# ZxgPMjAyNjExMTIxNDIwNTdaMAMCAQECED3y9CGmvSJkw5CeTh9+DKWgghGnMIIE
+# BAIBBQAEIKWxG32CEDqpOCdqX1vp75jnmX85uw1638rpjCfHGYhIAggOHalZ8PiJ
+# 1xgPMjAyNjExMTIxNzI1NTNaMAMCAQECEE1KAtopWy5WiqKBx3JlfbugghGnMIIE
 # 8zCCAtugAwIBAgIQVEP4N71a7hgBhHK4XNqO4zANBgkqhkiG9w0BAQsFADByMQsw
 # CQYDVQQGEwJVUzEOMAwGA1UECAwFVGV4YXMxEDAOBgNVBAcMB0hvdXN0b24xETAP
 # BgNVBAoMCFNTTCBDb3JwMS4wLAYDVQQDDCVTU0wuY29tIFRpbWVzdGFtcGluZyBJ
@@ -479,17 +479,17 @@ Export-ModuleMember -Function Initialize-TmtEngine, Import-TmtConfiguration, Get
 # rDMtXndUg3qhJL4pA3ZUlo7w5lM5ml+A7ijr/3Gk2v4QRoDeE2ShmTXdHgtqo8L/
 # fT119mYcETycE2NYGRXsBl3N0rzDsHRr8P3TrprqhRrX04iS0P7eQ+lDxgS3yhGn
 # 3OzWGhDt9Gf2x1qe0/qdhFAVOkXxzMZz4Uat6xsAfzX0+/m8GEKW5Ojw/HY+kLvV
-# wzSPOzGCAlYwggJSAgEBMIGGMHIxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIDAVUZXhh
+# wzSPOzGCAlUwggJRAgEBMIGGMHIxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIDAVUZXhh
 # czEQMA4GA1UEBwwHSG91c3RvbjERMA8GA1UECgwIU1NMIENvcnAxLjAsBgNVBAMM
 # JVNTTC5jb20gVGltZXN0YW1waW5nIElzc3VpbmcgUlNBIENBIDICEFRD+De9Wu4Y
 # AYRyuFzajuMwCwYJYIZIAWUDBAIBoIIBYDAaBgkqhkiG9w0BCQMxDQYLKoZIhvcN
-# AQkQAQQwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMjE0MjA1N1owKAYJKoZIhvcNAQk0
-# MRswGTALBglghkgBZQMEAgGhCgYIKoZIzj0EAwIwLwYJKoZIhvcNAQkEMSIEIIpU
-# 6WxSUWTSMqnvDiUBhrJtwwyx1bE4vgur3QvbXXhCMIHIBgsqhkiG9w0BCRACLzGB
+# AQkQAQQwHAYJKoZIhvcNAQkFMQ8XDTI2MTExMjE3MjU1M1owKAYJKoZIhvcNAQk0
+# MRswGTALBglghkgBZQMEAgGhCgYIKoZIzj0EAwIwLwYJKoZIhvcNAQkEMSIEIM/S
+# YAYicH7IulYj88w8w7aYRINixvp2x/KIWtUaAJknMIHIBgsqhkiG9w0BCRACLzGB
 # uDCBtTCBsjCBrwQgV0/qF6r6XnxqK5sIyZixc15FCzhzykTmokygkw5j87AwgYow
 # dqR0MHIxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIDAVUZXhhczEQMA4GA1UEBwwHSG91
 # c3RvbjERMA8GA1UECgwIU1NMIENvcnAxLjAsBgNVBAMMJVNTTC5jb20gVGltZXN0
 # YW1waW5nIElzc3VpbmcgUlNBIENBIDICEFRD+De9Wu4YAYRyuFzajuMwCgYIKoZI
-# zj0EAwIERzBFAiAuXHONsWM62DW0YufMFqsSUeW2t+CtLU8sxxvei+O7sQIhAKwj
-# GJ9xAxNKuZ5qiaooc6zuKOfzES9irz+NfZNHZHL1
+# zj0EAwIERjBEAiBQfaGCcLUu8BOZBBKE58zMO4o2ZnHbSNZDZSln67IGbgIgKwTv
+# tPQxbbRNykZ3/vFSCuXYjNZauvnu28IRYCvZT60=
 # SIG # End signature block

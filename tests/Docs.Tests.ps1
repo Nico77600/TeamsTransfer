@@ -1,6 +1,6 @@
 #Requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
 <#
-    The documentation (docs\design\... is not covered: it is the design record, not a shipped document).
+    The shipped documentation: the Markdown files, the HTML guides and the images.
     Offline, no network, no tenant. What is checked:
       - every link and every image of the Markdown files resolves (files, and the heading anchors of the target file);
       - every -Mode and every parameter that the guides show exists in Invoke-TeamsTransfer.ps1, and the reference guide names every parameter and mode;
@@ -36,7 +36,7 @@ BeforeAll {
     $script:EntryModes = @($validateSet.PositionalArguments | ForEach-Object { $_.Value })
     # Parameters of other programs that appear next to the entry script on a command line (pwsh itself) and the common parameters.
     $script:Foreign = @('NoProfile', 'NoLogo', 'STA', 'File', 'Command', 'Verbose', 'Debug', 'ErrorAction', 'WarningAction', 'InformationAction', 'ErrorVariable', 'WarningVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable', 'InformationVariable', 'ProgressAction', 'WhatIf', 'Confirm',
-        # parameters of the other scripts that the reference guide names (Test-PackageIntegrity, Get-TeamsTransferDependencies, New-LabCertificate)
+        # parameters of the other scripts that the reference guide names (Test-PackageIntegrity, Get-TeamsTransferDependencies)
         'Distribution', 'Verify', 'UpdateLock', 'ExportPfx', 'Stage', 'Package', 'SkipTests', 'RequireSignature')
 
     # A Markdown file as lines with a flag "inside a fenced code block" (a fence may sit inside a quote: "> ```powershell").
@@ -345,7 +345,7 @@ As any scripts you must read carefully the documentation and test it first in a 
         $text | Should -Match '<picture>'
         $text | Should -Match 'readme-banner-dark\.svg'
         $text | Should -Match 'readme-banner-light\.svg'
-        $text | Should -Match 'Version 1\.0\.1'
+        $text | Should -Match 'Version 1\.0\.2'
     }
 
     It 'no Markdown text is glued to a closing HTML block in <_> (it would be shown raw)' -ForEach @('README.md', 'package\README.md') {
@@ -366,7 +366,7 @@ As any scripts you must read carefully the documentation and test it first in a 
         $text | Should -Match 'Start-TeamsTransferConsole\.cmd'
     }
 
-    It 'the repository README has the standard sections, in order, each once, and no link to a folder or to the design record' {
+    It 'the repository README has the standard sections, in order, each once, and no link to a folder or to a private file' {
         $text = Read-Text (Join-Path $script:Repo 'README.md')
         $headings = @([regex]::Matches($text, '(?m)^## (.+)$') | ForEach-Object { $_.Groups[1].Value.Trim() })
         # The standard sections in their order, each once; the house pattern (MailboxTransfer, PraRemoteMailbox) adds Get started and Console.
@@ -432,7 +432,10 @@ Describe 'English only, no identifier of a customer or of the lab: <Name>' -ForE
     }
 
     It 'names no customer or lab tenant, no machine and no person of the author organisation' {
-        $script:Text | Should -Not -Match '(?i)M365CPI|nfabert|DESKTOP-|REDMOND|\\Users\\[a-z]+\\AppData'
+        $script:Text | Should -Not -Match '(?i)DESKTOP-|REDMOND|\\Users\\[a-z]+\\AppData'
+        # private names (lab tenant, accounts) live in the git-ignored tests\privacy-denylist.local.txt, one term per line, never in a public file
+        $deny = Join-Path $script:Repo 'tests\privacy-denylist.local.txt'
+        if (Test-Path -LiteralPath $deny) { foreach ($term in @(Get-Content -LiteralPath $deny | Where-Object { $_.Trim() })) { $script:Text | Should -Not -Match ([regex]::Escape($term.Trim())) } }
         # tenant names in examples are contoso, fabrikam (and northwind in the synthetic demo only)
         $tenants = [regex]::Matches($script:Text, '(?i)\b[a-z0-9\-]+\.onmicrosoft\.com') | ForEach-Object { $_.Value.ToLowerInvariant() } | Select-Object -Unique
         $tenants | Where-Object { $_ -notmatch '^(contoso|fabrikam)(-[a-z]+)?\.onmicrosoft\.com$' } | Should -BeNullOrEmpty
