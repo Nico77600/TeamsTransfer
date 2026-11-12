@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, lot E part 2: export (messages, hosted contents, file references) and Files stage
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.0
+//  Version : 1.0.1
 //
 //  STRATEGIES (design 3.2, Phase0-Results)
 //    U  per user  : GET /users/{id}/chats/getAllMessages?model=B&$filter=lastModifiedDateTime gt .. and lt ..

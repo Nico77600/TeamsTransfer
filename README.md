@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-banner-dark.svg">
-    <img alt="Teams Transfer: export Teams chats and channels to a local store, browse them offline, import them into a tenant and verify. Version 1.0.0, Windows x64, PowerShell 7.4 or later." src="package/docs/images/readme-banner-light.svg">
+    <img alt="Teams Transfer 1.0.1: move Microsoft Teams chats and channels between tenants. Export to a verified local store, read it offline, import in lots and waves, ghost accounts keep the original authors, every write is previewed first. PowerShell 7.4+, MIT license. 13 modes in one tool, 5 messages per second per conversation, 0 messages sent twice." src="package/docs/images/readme-banner-light.svg">
   </picture>
 </p>
 
@@ -21,16 +21,16 @@
 </p>
 
 **Author: Nicolas Fabert (Nico77600)**<br>
-**Version 1.0.0** ([changelog](package/CHANGELOG.md)) &middot; MIT license
+**Version 1.0.1** ([changelog](package/CHANGELOG.md)) &middot; MIT license
 
 > [!TIP]
-> **Download the latest release.** Open the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) and download **`TeamsTransfer-1.0.0-win-x64.zip`** under *Assets* (its SHA-256 is in the release notes). That ZIP is the signed tool, with the HTML guides. Do not use the **Source code** archives or the green **Code** button: they are a copy of the repository, not the release package.
+> **Download the latest release.** Open the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) and download **`TeamsTransfer-1.0.1-win-x64.zip`** under *Assets* (its SHA-256 is in the release notes). That ZIP is the signed tool, with the HTML guides. Do not use the **Source code** archives or the green **Code** button: they are a copy of the repository, not the release package.
 
 > [!IMPORTANT]
 > Windows marks files downloaded from the Internet. After you extract the ZIP, check the publisher first (right-click `Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures: `Nicolas Fabert`), then unblock the extracted folder once:
 >
 > ```powershell
-> Get-ChildItem "D:\Tools\TeamsTransfer-1.0.0" -Recurse -File -Force | Unblock-File
+> Get-ChildItem "D:\Tools\TeamsTransfer-1.0.1" -Recurse -File -Force | Unblock-File
 > ```
 >
 > Replace the example path with the folder the ZIP created. A release package is verified before anything runs; a source checkout starts only with `-DevelopmentMode`.
@@ -44,6 +44,11 @@ Teams Transfer exports Microsoft Teams **chats and channels** (messages, reactio
 
 Moving Teams conversations between tenants is not a copy: the service has no export for chats and channels, an author who left the company cannot be named in the target, and an import is slow and cannot be undone. Teams Transfer is made for that long, careful job.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-why-dark.png">
+  <img alt="Three ideas: the source tenant holds the chats and channels and is only read; the local store keeps them checked and readable offline in an archive; the target tenant receives ghost accounts then the messages with their original authors and dates, written only with -Apply" src="package/docs/images/readme-why-light.png">
+</picture>
+
 - **You see before you write.** Every mode that writes to a tenant is a preview unless you add `-Apply`. The plan says where each conversation goes, who writes it, which files are copied, what blocks and how long it will take.
 - **Nothing is lost on the way.** Messages, reactions, images and files go to a local store that is checked and de-duplicated. What you do not re-import stays readable in an offline archive.
 - **The original author is kept.** A person deleted at the source gets one disabled, unlicensed ghost account in the target, the same one for the whole project.
@@ -55,7 +60,12 @@ Moving Teams conversations between tenants is not a copy: the service has no exp
 
 ## Get started
 
-One path for everyone. Set the tool up once (**1 to 4**), then take task **A** to export and read offline, **B** to import into a tenant, or both. The commands use one example: the ZIP extracted in `D:\Tools` (it creates `D:\Tools\TeamsTransfer-1.0.0`) and the store in `D:\ttstore`. Change only these folders to yours. The [user guide](package/docs/TeamsTransfer-UserGuide.md) explains each step with a picture, what you should see and what to do if not, in plain words.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-path-dark.png">
+  <img alt="The guided path. Set up once: 1 get your rights, 2 put the tool on the PC, 3 fill in the settings file, 4 open the console. Then branch A, export and read offline: 5 estimate and inventory, 6 export, 7 open the archive. Or branch B, import into a tenant: 5 plan a lot, 6 ghosts, files, messages with a preview then Apply, 7 verify" src="package/docs/images/readme-path-light.png">
+</picture>
+
+One path for everyone. Set the tool up once (**1 to 4**), then take task **A** to export and read offline, **B** to import into a tenant, or both. The commands use one example: the ZIP extracted in `D:\Tools` (it creates `D:\Tools\TeamsTransfer-1.0.1`) and the store in `D:\ttstore`. Change only these folders to yours. The [user guide](package/docs/TeamsTransfer-UserGuide.md) explains each step with a picture, what you should see and what to do if not, in plain words.
 
 ### Set up once &middot; 1 to 4
 
@@ -63,16 +73,16 @@ One path for everyone. Set the tool up once (**1 to 4**), then take task **A** t
 # 1 · Get your rights. Give your administrator the section "Requirements" below and chapter 2 of the user guide:
 #     one app registration per side, with a certificate (a read-only source app, a target app that writes).
 
-# 2 · On the PC, in PowerShell 7.4+: download TeamsTransfer-1.0.0-win-x64.zip from the latest release
+# 2 · On the PC, in PowerShell 7.4+: download TeamsTransfer-1.0.1-win-x64.zip from the latest release
 #     (under Assets, not Source code), extract it to D:\Tools, then unblock the folder it created.
-Get-ChildItem D:\Tools\TeamsTransfer-1.0.0 -Recurse -File -Force | Unblock-File
+Get-ChildItem D:\Tools\TeamsTransfer-1.0.1 -Recurse -File -Force | Unblock-File
 
 # 3 · Write your tenant ids, application ids and certificate thumbprints in the file you create
 #     (the user guide, chapter 3, shows how; the console also shows what is missing).
-notepad D:\Tools\TeamsTransfer-1.0.0\config\TeamsTransfer.config.local.psd1
+notepad D:\Tools\TeamsTransfer-1.0.1\config\TeamsTransfer.config.local.psd1
 
 # 4 · Open the console: double-click Start-TeamsTransferConsole.cmd, or
-cd D:\Tools\TeamsTransfer-1.0.0
+cd D:\Tools\TeamsTransfer-1.0.1
 .\Start-TeamsTransferConsole.cmd           # or: pwsh -STA -File .\Invoke-TeamsTransfer.ps1 -Gui
 .\Start-TeamsTransferConsole.cmd -Demo     # try it on synthetic tenants first: nothing leaves the machine
 ```
@@ -148,13 +158,30 @@ cd D:\Tools\TeamsTransfer-1.0.0
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-how-dark.png">
+  <img alt="One tool: the source tenant is read by Export into a local store (SQLite catalog, compressed segments, files), from which the archive and the plan are made, then the target tenant receives ghosts, files and messages with -Apply, and Verify reads it back; the modes are grouped as read the source, work offline, prepare and check the target, and write to the target" src="package/docs/images/readme-how-light.png">
+</picture>
+
 1. **Export.** Reads the chats and the channels of the source tenant with application permissions and a certificate, obeys the throttling of the service and writes a local store (a SQLite catalog, compressed message segments, a content store for images and files). A second run reads only what changed.
 2. **Archive.** Writes an offline, Teams-like HTML archive that anybody can open without Teams.
 3. **Plan.** You group conversations into lots (by user, team or CSV). The plan is a dry run: destinations, author mapping, files, blockers, estimated duration.
 4. **Ghosts, copy files, import.** Ghost accounts first, then the files, then each conversation is opened with `startMigration`, filled with its messages at their original dates and authors, and closed with `completeMigration`.
 5. **Verify.** The target is read back and compared with the journal and the source.
 
-The first wave of a lot is the last 24 months; older history follows as extension waves. The service allows about 5 messages per second per conversation, so plan the volume you re-inject: everything else stays in the archive. The [package README](package/README.md) has the details and the [reference guide](package/docs/TeamsTransfer-Guide.md) explains every mode.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-principles-dark.png">
+  <img alt="Design principles: preview before you write, nothing is sent twice, the author is kept, a long job survives, the result is verified" src="package/docs/images/readme-principles-light.png">
+</picture>
+
+The first wave of a lot is the last 24 months; older history follows as extension waves (months 25 to 36, 37 to 48, 49 to 60). The service allows about 5 messages per second per conversation, so plan the volume you re-inject: everything else stays in the archive.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-waves-dark.png">
+  <img alt="Lots and waves: wave 1 is the last 24 months, then extension waves for months 25 to 36, 37 to 48 and 49 to 60; about 5 messages per second per conversation and 60 to 90 per second per application; years of history take weeks or months" src="package/docs/images/readme-waves-light.png">
+</picture>
+
+The [package README](package/README.md) has the details and the [reference guide](package/docs/TeamsTransfer-Guide.md) explains every mode.
 
 ## Console
 
@@ -182,14 +209,19 @@ The [reference guide](package/docs/TeamsTransfer-Guide.md) lists every file of e
 ## Requirements
 
 - Windows x64 with PowerShell 7.4 or later (`pwsh.exe`). Windows PowerShell 5.1 is refused.
-- One app registration per side (a read-only source app, a target app that writes) with certificate sign-in; the permissions are listed in the [user guide](package/docs/TeamsTransfer-UserGuide.md) and in the [reference guide](package/docs/TeamsTransfer-Guide.md).
+- One app registration per side (a read-only source app, a target app that writes) with certificate sign-in; the permissions of each mode are in the picture below, in the [user guide](package/docs/TeamsTransfer-UserGuide.md) and in the [reference guide](package/docs/TeamsTransfer-Guide.md).
 - A certificate whose public part is uploaded to each app registration. No secret is ever stored.
 - A local disk for the store. A network share is refused.
 - For the console: the Microsoft Edge WebView2 runtime (optional: only the Explorer preview needs it).
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="package/docs/images/readme-permissions-dark.png">
+  <img alt="The application permissions per mode. Source app, read only: Assess, Inventory, Export and Files need read permissions on users, chats, chat members, channel messages, teams, team members, channels, channel members, files and sites. Target app, reads and writes: Plan, Ghosts, CopyFiles, Import and Verify need the matching read and write permissions, including Teamwork.Migrate.All for Import" src="package/docs/images/readme-permissions-light.png">
+</picture>
+
 ## Quick start
 
-1. Download `TeamsTransfer-1.0.0-win-x64.zip` from the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) (under Assets, not Source code) and extract it into a writable, access-restricted local folder, for example `D:\Tools`.
+1. Download `TeamsTransfer-1.0.1-win-x64.zip` from the [latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) (under Assets, not Source code) and extract it into a writable, access-restricted local folder, for example `D:\Tools`.
 2. Check the publisher (right-click `Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures), then unblock the folder once:
 
    ```powershell

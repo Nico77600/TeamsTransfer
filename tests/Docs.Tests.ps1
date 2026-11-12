@@ -143,6 +143,39 @@ Describe 'Images: light and dark' {
         $missing | Should -BeNullOrEmpty
     }
 
+    It 'the drawings of the READMEs and the guides exist as a light and a dark PNG, 2160 px wide, and the banner as two SVG files' {
+        foreach ($n in 'readme-why', 'readme-path', 'readme-how', 'readme-principles', 'readme-waves', 'readme-permissions', 'guide-dictionary') {
+            foreach ($theme in 'light', 'dark') {
+                $file = Join-Path $script:Docs "images\$n-$theme.png"
+                $file | Should -Exist
+                $b = [IO.File]::ReadAllBytes($file)
+                $width = ([int]$b[16] -shl 24) + ([int]$b[17] -shl 16) + ([int]$b[18] -shl 8) + [int]$b[19]
+                $width | Should -Be 2160 -Because $file
+            }
+        }
+    }
+
+    It 'every picture of a README has a light source, a dark srcset and a non-empty alt text, and the README drawings are all used' {
+        $used = @()
+        foreach ($f in 'README.md', 'package\README.md') {
+            $text = Read-Text (Join-Path $script:Repo $f)
+            $blocks = [regex]::Matches($text, '(?s)<picture>(.*?)</picture>')
+            $blocks.Count | Should -BeGreaterThan 3
+            foreach ($b in $blocks) {
+                $b.Groups[1].Value | Should -Match 'srcset="[^"]+-dark\.(png|svg)"'
+                $b.Groups[1].Value | Should -Match 'src="[^"]+-light\.(png|svg)"'
+                $b.Groups[1].Value | Should -Match 'alt="[^"]{20,}"'
+                $used += [regex]::Matches($b.Groups[1].Value, 'images/([\w-]+)-light\.(?:png|svg)') | ForEach-Object { $_.Groups[1].Value }
+            }
+        }
+        foreach ($n in 'readme-banner', 'readme-why', 'readme-path', 'readme-how', 'readme-principles', 'readme-waves', 'readme-permissions') { $used | Should -Contain $n }
+    }
+
+    It 'the permission drawing is generated from Permissions.psd1 and checked for privacy by the drawing script' {
+        $s = Read-Text (Join-Path $script:Repo 'tools\New-DocumentationImages.ps1')
+        $s | Should -Match 'config\\Permissions\.psd1'
+        $s | Should -Match 'function Assert-PublicText'
+    }
     It 'the user guide has one picture per step: at least 20 console screenshots and 5 views of the archive' {
         $links = @(Get-MarkdownLinks (Join-Path $script:Docs 'TeamsTransfer-UserGuide.md'))
         @($links | Where-Object { $_ -match 'images/console-' }).Count | Should -BeGreaterOrEqual 20
@@ -312,7 +345,13 @@ As any scripts you must read carefully the documentation and test it first in a 
         $text | Should -Match '<picture>'
         $text | Should -Match 'readme-banner-dark\.svg'
         $text | Should -Match 'readme-banner-light\.svg'
-        $text | Should -Match 'Version 1\.0\.0'
+        $text | Should -Match 'Version 1\.0\.1'
+    }
+
+    It 'no Markdown text is glued to a closing HTML block in <_> (it would be shown raw)' -ForEach @('README.md', 'package\README.md') {
+        $text = Read-Text (Join-Path $script:Repo $_)
+        $glued = [regex]::Matches($text, '(?m)^\s*</(?:picture|p|details|table|div)>\r?\n[ \t]*([^\s<].*)$') | ForEach-Object { $_.Groups[1].Value }
+        $glued | Should -BeNullOrEmpty
     }
 
     It 'the package README has the house sections' {
@@ -431,8 +470,10 @@ Describe 'The HTML guides' {
     It 'embed every image of the Markdown file: <Name>' -ForEach $script:Guides {
         $links = @(Get-MarkdownLinks (Join-Path $script:Docs ($Name + '.md')) | Where-Object { $_ -match '\.png$' })
         $html = Read-Text $script:Built[$Name].Path
-        $embedded = ([regex]::Matches($html, '<img loading="lazy" src="data:image/png;base64,')).Count
-        $embedded | Should -Be $links.Count
+        # A drawing with a dark twin is two images (the light one counts here); a picture right after a path block is shown as the path, not as an image.
+        $embedded = ([regex]::Matches($html, '<img (?:class="img-light" )?loading="lazy" src="data:image/png;base64,')).Count
+        $asPath = ([regex]::Matches($html, '<!--path-->')).Count
+        ($embedded + $asPath) | Should -Be $links.Count
     }
 
     It 'have a section for every chapter and the light and dark theme: <Name>' -ForEach $script:Guides {

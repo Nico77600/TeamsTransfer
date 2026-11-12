@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 4b: catalog = work management (lots, slices, leases, import journal, ghosts, merge)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.0
+//  Version : 1.0.1
 //
 //  Why this file exists:
 //    The unit of work is the CONVERSATION, never the user (design 3.7): a group chat belongs to several people and is

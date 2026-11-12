@@ -1,10 +1,10 @@
 # Teams Transfer
 
-**Author: Nicolas Fabert (Nico77600)** | Version 1.0.0 | [Latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) | MIT license
+**Author: Nicolas Fabert (Nico77600)** | Version 1.0.1 | [Latest release](https://github.com/Nico77600/TeamsTransfer/releases/latest) | MIT license
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-banner-dark.svg">
-  <img alt="Teams Transfer: export Teams chats and channels to a local store, browse them offline, import them into a tenant and verify. Version 1.0.0, Windows x64, PowerShell 7.4 or later." src="docs/images/readme-banner-light.svg">
+  <img alt="Teams Transfer 1.0.1: move Microsoft Teams chats and channels between tenants. Export to a verified local store, read it offline, import in lots and waves, ghost accounts keep the original authors, every write is previewed first. PowerShell 7.4+, MIT license. 13 modes in one tool, 5 messages per second per conversation, 0 messages sent twice." src="docs/images/readme-banner-light.svg">
 </picture>
 
 Exports Microsoft Teams chats and channels (messages, reactions, images, files) from a tenant into a verified local store, lets you read them offline in a Teams-like HTML archive, and imports them into a tenant with the Microsoft Graph Teams migration API, in named lots and in waves, with a ghost account for every deleted author and a verification at the end. A guided WPF console and a scriptable command line drive the same engine.
@@ -30,6 +30,14 @@ This folder contains everything needed to run the tool: `Invoke-TeamsTransfer.ps
 - One app registration per side with certificate sign-in and the application permissions listed in the [user guide, chapter 2](docs/TeamsTransfer-UserGuide.md#2-before-you-start) (plain version) and in the [reference guide, chapter 5](docs/TeamsTransfer-Guide.md#5-minimum-permissions-per-mode) (derived from the code):
   - a read-only **source** app: `Chat.Read.All`, `ChannelMessage.Read.All`, `ChatMember.Read.All`, `Team.ReadBasic.All`, `TeamMember.Read.All`, `Channel.ReadBasic.All`, `ChannelMember.Read.All`, `User.Read.All`, `Files.Read.All`, `Sites.Read.All`;
   - a **target** app that writes: `Teamwork.Migrate.All` and the other write permissions of the reference guide.
+
+  The permissions of each mode, per side:
+
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-permissions-dark.png">
+    <img alt="The application permissions per mode. Source app, read only: Assess, Inventory, Export and Files need read permissions on users, chats, chat members, channel messages, teams, team members, channels, channel members, files and sites. Target app, reads and writes: Plan, Ghosts, CopyFiles, Import and Verify need the matching read and write permissions, including Teamwork.Migrate.All for Import" src="docs/images/readme-permissions-light.png">
+  </picture>
+
 - A certificate (private key in `Cert:\CurrentUser\My` or `Cert:\LocalMachine\My`) whose public part is uploaded to each app registration. No secret is ever stored.
 - A local disk for the store, outside the package folder. A network share is refused.
 - A current desktop browser to read the archive and the HTML reports.
@@ -91,6 +99,11 @@ Every run writes a log (`TeamsTransfer_yyyyMMdd.log`), numbered steps, and a fin
 
 ## How it works
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-how-dark.png">
+  <img alt="One tool: the source tenant is read by Export into a local store, from which the archive and the plan are made, then the target tenant receives ghosts, files and messages with -Apply, and Verify reads it back; the modes are grouped as read the source, work offline, prepare and check the target, and write to the target" src="docs/images/readme-how-light.png">
+</picture>
+
 1. **Export.** The tool reads the chats and the channels of the source tenant with application permissions and a certificate, obeys the throttling of the service, and writes them to a local store: a SQLite catalog, 256 message partitions in compressed append-only segments, and a content store for images and files, de-duplicated by SHA256. A second run reads only what changed.
 2. **Archive.** From the store, the tool writes an offline, Teams-like HTML archive that anybody can open without Teams. What is not re-imported stays readable there.
 3. **Plan.** You group conversations into **lots** (by user, team or CSV). The plan is a dry run: where every conversation goes, how every author is mapped (CSV, domain rule, same user, ghost, service account), which files must be copied, what blocks the import and how long it will take.
@@ -98,7 +111,17 @@ Every run writes a log (`TeamsTransfer_yyyyMMdd.log`), numbered steps, and a fin
 5. **Copy files, then Import.** The files are copied first. Then each conversation is opened with `startMigration`, filled with its messages at their original dates and authors, and closed with `completeMigration`. A journal makes the run resumable and idempotent: a message is never sent twice.
 6. **Verify.** The target is read back chat by chat and compared with the journal and the source.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-principles-dark.png">
+  <img alt="Design principles: preview before you write, nothing is sent twice, the author is kept, a long job survives, the result is verified" src="docs/images/readme-principles-light.png">
+</picture>
+
 **Lots and waves.** The first wave of a lot is the last 24 months. Older history comes later as extension waves (months 25 to 36, 37 to 48, 49 to 60, further if configured): a finished conversation is reopened with an earlier start date and filled with older messages. The service allows about 5 messages per second per conversation and roughly 60 to 90 messages per second per application, so importing years of history takes weeks or months. Plan the volume you re-inject; everything else stays in the archive.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/readme-waves-dark.png">
+  <img alt="Lots and waves: wave 1 is the last 24 months, then extension waves for months 25 to 36, 37 to 48 and 49 to 60; about 5 messages per second per conversation and 60 to 90 per second per application; years of history take weeks or months" src="docs/images/readme-waves-light.png">
+</picture>
 
 ## Content
 

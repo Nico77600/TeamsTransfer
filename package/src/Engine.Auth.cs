@@ -2,7 +2,7 @@
 //  TeamsTransfer - engine, part 1: app-only authentication (client credentials, no MSAL)
 // -----------------------------------------------------------------------------
 //  Author  : Nicolas Fabert
-//  Version : 1.0.0
+//  Version : 1.0.1
 //
 //  Why this file exists, and why there is no MSAL here:
 //    The export and the import run unattended, app-only (Chat.Read.All, Teamwork.Migrate.All...), for days.

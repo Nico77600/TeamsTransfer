@@ -11,6 +11,8 @@
       - sticky sidebar with the parts and chapters, highlighting the chapter being read,
       - each chapter ("## ...") in its own card, with an icon and a number badge,
       - callouts from GitHub alerts (> [!NOTE], [!TIP], [!IMPORTANT], [!WARNING], [!CAUTION]),
+      - the guided path, a fourth custom block (```path: "group | icon | title", then "group | N | step | text"; the first group is the
+        trunk, the others are branches; a picture right after it is the GitHub rendering of the same path and is not repeated),
       - three custom blocks written as fenced code in the Markdown:
           ```cards   icon | title | text          (grid of small cards)
           ```steps   title | text                 (numbered timeline)
@@ -50,7 +52,7 @@
 
 .NOTES
     Author  : Nicolas Fabert
-    Version : 1.0.0
+    Version : 1.0.1
     PowerShell pitfall: never name a variable $matches (every -match overwrites the automatic $Matches).
 #>
 [CmdletBinding()]
@@ -136,7 +138,12 @@ $Icons = @{
     folder    = '<path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'
     upload    = '<path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M4 4h16"/>'
     chat      = '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9h8M8 12h5"/>'
-    audit     = '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>'
+    chats     = '<path d="M4 4h10a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-3 3v-3H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M18 9h2a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3l-3-3h-4a2 2 0 0 1-2-2v-1"/>'
+    windows   = '<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>'
+    warning   = '<path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17v.5"/>'
+    speech    = '<path d="M4 4h16v12H9l-5 4z"/><path d="M12 7.5v3.5M12 13.3v.4"/>'
+    alert     = '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5v.5"/>'
+    audit     ='<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>'
 }
 function Get-Icon([string]$Name, [string]$Class = 'icon') {
     $path = $Icons[$Name]; if (-not $path) { $path = $Icons['info'] }
@@ -190,6 +197,13 @@ function Get-LocalImageSource([string]$Source) {
     if (-not $ok) { return $null }
     $script:ImageCount++
     return 'data:' + $mime + ';base64,' + [Convert]::ToBase64String($bytes)
+}
+
+function Get-DarkTwinSource([string]$Source) {
+    # A drawing readme-*-light.png or guide-*-light.png that has its -dark twin on disk is shown in both themes: the dark one is a second image, swapped by CSS.
+    $rel = [System.Net.WebUtility]::HtmlDecode($Source)
+    if ($rel -notmatch '^((?:[\w./-]*/)?(?:readme|guide)-[\w-]+)-light\.png$') { return $null }
+    return Get-LocalImageSource ($Matches[1] + '-dark.png')
 }
 
 function ConvertTo-SafeHtml([string]$Html) {
@@ -252,7 +266,9 @@ function ConvertTo-SafeHtml([string]$Html) {
         if ($name -eq 'input' -and $attrs.ToString() -notmatch 'type="checkbox"') { continue }
         if ($name -eq 'img') {
             $data = if ($src) { Get-LocalImageSource $src } else { $null }
-            if ($data) { [void]$out.Append('<img loading="lazy" src="' + $data + '" alt="' + [System.Net.WebUtility]::HtmlEncode($alt) + '"' + $(if ($title) { ' title="' + [System.Net.WebUtility]::HtmlEncode($title) + '"' } else { '' }) + ' />') }
+            $dark = if ($data) { Get-DarkTwinSource $src } else { $null }
+            if ($data -and $dark) { [void]$out.Append('<img class="img-light" loading="lazy" src="' + $data + '" alt="' + [System.Net.WebUtility]::HtmlEncode($alt) + '" /><img class="img-dark" loading="lazy" src="' + $dark + '" alt="" aria-hidden="true" />') }
+            elseif ($data) { [void]$out.Append('<img loading="lazy" src="' + $data + '" alt="' + [System.Net.WebUtility]::HtmlEncode($alt) + '"' + $(if ($title) { ' title="' + [System.Net.WebUtility]::HtmlEncode($title) + '"' } else { '' }) + ' />') }
             else { [void]$out.Append('<span class="img-missing">[Image not available: ' + [System.Net.WebUtility]::HtmlEncode($alt) + ']</span>') }
             continue
         }
@@ -268,8 +284,12 @@ function ConvertTo-SafeHtml([string]$Html) {
 function ConvertTo-DocumentationHtml([string]$Text) {
     $safe = (ConvertTo-SafeHtml (ConvertFrom-Markdown -InputObject $Text).Html).Replace("`r`n", "`n")
     # PowerShell 7.4 emits plain blockquotes; 7.6 adds native alert markup and decorative icons.
-    $safe = [regex]::Replace($safe, '(?s)<p class="markdown-alert-title">(?:<svg\b[^>]*>.*?</svg>)?\s*(Note|Tip|Important|Warning|Caution)</p>',
-        '<p class="markdown-alert-title">$1</p>')
+    $alertIcons = @{ note = 'info'; tip = 'lightbulb'; important = 'speech'; warning = 'warning'; caution = 'alert' }
+    # The native alert icon (7.6) is replaced by the icon of the house set, so that 7.4 and 7.6 give the same page.
+    $safe = [regex]::Replace($safe, '(?s)<p class="markdown-alert-title">(?:<svg\b[^>]*>.*?</svg>)?\s*(Note|Tip|Important|Warning|Caution)</p>', {
+            param($m)
+            '<p class="markdown-alert-title">' + (Get-Icon $alertIcons[$m.Groups[1].Value.ToLowerInvariant()] 'icon-sm') + $m.Groups[1].Value + '</p>'
+        })
     $out = [Text.StringBuilder]::new()
     $quotes = [Collections.Generic.Stack[bool]]::new()
     $position = 0
@@ -284,7 +304,7 @@ function ConvertTo-DocumentationHtml([string]$Text) {
             if ($prefix.Success) {
                 $kind = $prefix.Groups[1].Value.ToLowerInvariant()
                 $title = $kind.Substring(0, 1).ToUpperInvariant() + $kind.Substring(1)
-                [void]$out.Append('<div class="markdown-alert markdown-alert-' + $kind + '">'+ "`n" + '<p class="markdown-alert-title">' + $title + '</p>' + "`n")
+                [void]$out.Append('<div class="markdown-alert markdown-alert-' + $kind + '">'+ "`n" + '<p class="markdown-alert-title">' + (Get-Icon $alertIcons[$kind] 'icon-sm') + $title + '</p>' + "`n")
                 $position += $prefix.Length
                 if ($safe.Substring($position).StartsWith('</p>', [StringComparison]::Ordinal)) {
                     $position += 4
@@ -327,7 +347,7 @@ if ($front.Success) {
 $html = ConvertTo-DocumentationHtml $markdown
 
 # ---- Custom blocks ------------------------------------------------------------------------------------------------------
-$html = [regex]::Replace($html, '(?s)<pre><code class="language-(cards|steps|flow)">(.*?)</code></pre>', {
+$html = [regex]::Replace($html, '(?s)<pre><code class="language-(cards|steps|flow|path)">(.*?)</code></pre>', {
         param($m)
         $kind = $m.Groups[1].Value
         $lines = [System.Net.WebUtility]::HtmlDecode($m.Groups[2].Value) -split "`n" | Where-Object { $_.Trim() }
@@ -360,6 +380,33 @@ $html = [regex]::Replace($html, '(?s)<pre><code class="language-(cards|steps|flo
                 }
                 "<div class=""flow"">$($items -join '')</div>"
             }
+            'path' {
+                # Groups in their order of appearance: the first is the trunk (horizontal), the others are the branches.
+                $groups = [ordered]@{}
+                foreach ($l in $lines) {
+                    $parts = $l.Split('|').ForEach({ $_.Trim() })
+                    $g = $parts[0]
+                    if (-not $groups.Contains($g)) { $groups[$g] = [pscustomobject]@{ Icon = 'flow'; Title = $g; Steps = [Collections.Generic.List[object]]::new() } }
+                    if ($parts.Count -ge 4 -and $parts[1] -match '^\d+$') { $groups[$g].Steps.Add([pscustomobject]@{ N = $parts[1]; Title = $parts[2]; Text = ($parts[3..($parts.Count - 1)] -join '|') }) }
+                    else { $groups[$g].Icon = $parts[1]; $groups[$g].Title = ($parts[2..($parts.Count - 1)] -join '|') }
+                }
+                $arrow = '<div class="path-arrow"><svg viewBox="0 0 12 40" aria-hidden="true"><path d="M2 6l6 14-6 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+                $node = { param($s) "<div class=""path-node""><span class=""path-num"">$($s.N)</span><div><div class=""path-title"">$(ConvertTo-Inline $s.Title)</div><div class=""path-sub"">$(ConvertTo-Inline $s.Text)</div></div></div>" }
+                $keys = @($groups.Keys)
+                $trunk = $groups[$keys[0]]
+                $out = "<!--path--><div class=""path""><div class=""path-caption"">$(Get-Icon $trunk.Icon 'icon-sm')<span>$(ConvertTo-Inline $trunk.Title)</span></div><div class=""path-row"">" + (($trunk.Steps | ForEach-Object { & $node $_ }) -join $arrow) + '</div>'
+                if ($keys.Count -gt 1) {
+                    $down = '<div><svg viewBox="0 0 14 26" aria-hidden="true"><path d="M7 1v22M2 18l5 6 5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+                    $out += "<div class=""path-fork"">$($down * ($keys.Count - 1))</div><div class=""path-branches"">"
+                    foreach ($k in $keys[1..($keys.Count - 1)]) {
+                        $grp = $groups[$k]
+                        $steps = ($grp.Steps | ForEach-Object { "<li><span class=""path-num"">$($_.N)</span><div><div class=""path-title"">$(ConvertTo-Inline $_.Title)</div><div class=""path-sub"">$(ConvertTo-Inline $_.Text)</div></div></li>" }) -join ''
+                        $out += "<div class=""path-branch""><div class=""path-head""><span class=""path-letter"">$(& $enc $k)</span><span class=""path-icon"">$(Get-Icon $grp.Icon 'icon-sm')</span><span>$(ConvertTo-Inline $grp.Title)</span></div><ol class=""path-steps"">$steps</ol></div>"
+                    }
+                    $out += '</div>'
+                }
+                $out + '</div><!--/path-->'
+            }
         }
     })
 
@@ -374,10 +421,19 @@ $html = [regex]::Replace($html, '(?s)<pre><code(?: class="language-([\w-]+)")?>(
 
 # ---- Tables, images, links, alerts ----------------------------------------------------------------------------------------
 $html = $html.Replace('<table>', '<div class="table-wrap"><table>').Replace('</table>', '</table></div>')
+# A picture written right after a ```path block is the Markdown (GitHub) rendering of that same diagram: show the diagram once.
+$html = [regex]::Replace($html, '(<!--/path-->)\s*<p>(?:<img [^>]*/>)+</p>', '$1')
+# A drawing with a dark twin is two images (light, dark) swapped by the theme; the caption is the alt text of the light one.
+$html = [regex]::Replace($html, '<p><img class="img-light" loading="lazy" src="([^"]+)" alt="([^"]*)" /><img class="img-dark" loading="lazy" src="([^"]+)" alt="" aria-hidden="true" /></p>', {
+        param($m)
+        "<figure><img class=""img-light"" loading=""lazy"" src=""$($m.Groups[1].Value)"" alt=""$($m.Groups[2].Value)"" title=""Click to enlarge""><img class=""img-dark"" loading=""lazy"" src=""$($m.Groups[3].Value)"" alt="""" aria-hidden=""true"" title=""Click to enlarge""><figcaption>$($m.Groups[2].Value)</figcaption></figure>"
+    })
 $html = [regex]::Replace($html, '<p><img loading="lazy" src="([^"]+)" alt="([^"]*)"(?: title="[^"]*")? /></p>', {
         param($m)
         "<figure><img loading=""lazy"" src=""$($m.Groups[1].Value)"" alt=""$($m.Groups[2].Value)"" title=""Click to enlarge""><figcaption>$($m.Groups[2].Value)</figcaption></figure>"
     })
+# ---- Numbered steps of the guided path: "### 1 · List the servers" gets the number badge of the path ---------------------------------------
+$html = [regex]::Replace($html, '<h3 id="([^"]*)">(\d{1,2}) (?:·|&middot;|&#183;) (.*?)</h3>', '<h3 id="$1" class="step-h"><span class="path-num">$2</span><span>$3</span></h3>')
 # A link to another guide points to its HTML file; GitHub anchors keep the chapter number, the ids of this page do not.
 $html = [regex]::Replace($html, '<a href="([\w.-]+)\.md(?:#([^"]*))?"', {
         param($m)
@@ -405,8 +461,13 @@ function New-Hero([string]$Lead, [string]$Content) {
     if ($meta.updated) { $badgeList.Add("<span class=""badge"">$(Get-Icon 'calendar' 'icon-sm')Updated $(& $enc $meta.updated)</span>") }
     if ($meta.author) { $badgeList.Add("<span class=""badge"">$(Get-Icon 'user' 'icon-sm')$(& $enc $meta.author)</span>") }
     $badgeList.Add("<span class=""badge"">$(Get-Icon 'terminal' 'icon-sm')PowerShell 7.4+</span>")
-    foreach ($b in ($meta.badges -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })) { $badgeList.Add("<span class=""badge"">$(& $enc $b)</span>") }
-    "<header class=""hero"" id=""top""><div class=""hero-top""><div class=""hero-logo"">$(Get-Icon 'shield')</div><div><div class=""eyebrow"">$(& $enc $meta.subtitle)</div><h1>$(& $enc $meta.title)</h1></div>" +
+    $badgeIcons = @{ windows = 'windows'; console = 'flow'; archive = 'folder'; offline = 'folder' }
+    foreach ($b in ($meta.badges -split ',' | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+        $icon = ($badgeIcons.Keys | Where-Object { $b -match [regex]::Escape($_) } | Select-Object -First 1)
+        $badgeList.Add("<span class=""badge"">$(if ($icon) { Get-Icon $badgeIcons[$icon] 'icon-sm' })$(& $enc $b)</span>")
+    }
+    $badgeList.Add("<span class=""badge"">$(Get-Icon 'shield' 'icon-sm')Preview before every write</span>")
+    "<header class=""hero"" id=""top""><div class=""hero-top""><div class=""hero-logo"">$(Get-Icon 'chats')</div><div><div class=""eyebrow"">$(& $enc $meta.subtitle)</div><h1>$(& $enc $meta.title)</h1></div>" +
     "<button type=""button"" id=""theme"" class=""ghost"" title=""Light / dark"" aria-label=""Switch between light and dark theme"">$(Get-Icon 'moon' 'icon-sm')</button></div>" +
     "<div class=""badges"">$($badgeList -join '')</div><p class=""lead"">$Lead</p>$Content</header>"
 }
@@ -546,7 +607,7 @@ td:first-child { font-weight: 600; } tr:last-child td { border-bottom: 0; } tbod
 .markdown-alert { --tone: var(--cp-link); margin: 18px 0; padding: 14px 18px; border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--cp-border)); border-left: 4px solid var(--tone); border-radius: 12px; background: color-mix(in srgb, var(--tone) 7%, var(--cp-surface)); }
 .markdown-alert p { margin: 6px 0; }
 .markdown-alert-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--tone); margin: 0 0 4px !important; }
-.markdown-alert-title svg { width: 16px; height: 16px; fill: currentColor; }
+.markdown-alert-title svg { width: 16px; height: 16px; }
 .markdown-alert-tip { --tone: var(--cp-success); } .markdown-alert-important { --tone: var(--cp-accent); }
 .markdown-alert-warning { --tone: var(--cp-warning); } .markdown-alert-caution { --tone: var(--cp-danger); }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 18px 0 22px; position: relative; }
@@ -568,8 +629,35 @@ td:first-child { font-weight: 600; } tr:last-child td { border-bottom: 0; } tbod
 .flow-arrow { flex: 0 0 auto; min-width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--cp-border-strong); padding: 0 2px; }
 .flow-arrow svg { width: 44px; height: 14px; color: var(--cp-accent); }
 .flow-label { font-size: 12px; font-weight: 700; color: var(--cp-accent); } .flow-sub { font-size: 11px; color: var(--cp-text-muted); text-align: center; max-width: 110px; line-height: 1.3; }
+/* Path (guided path: trunk, then branches) */
+.path { margin: 20px 0 26px; padding: 20px 22px 22px; border-radius: 16px; background: var(--cp-surface-soft); border: 1px dashed var(--cp-border-strong); }
+.path-caption { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cp-accent); }
+.path-row { display: flex; align-items: stretch; }
+.path-node { flex: 1 1 0; min-width: 0; display: flex; gap: 10px; align-items: flex-start; padding: 12px; border-radius: 12px; background: var(--cp-surface); border: 1px solid var(--cp-border); }
+.path-arrow { flex: 0 0 18px; display: grid; place-items: center; color: var(--cp-accent); }
+.path-arrow svg { width: 10px; height: 34px; }
+.path-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; line-height: 1; background: var(--cp-accent); color: var(--cp-accent-fg); box-shadow: 0 0 0 3px var(--cp-accent-soft); }
+.path-title { font-weight: 700; font-size: 13.5px; line-height: 1.3; padding-top: 3px; }
+.path-sub { font-size: 12.5px; line-height: 1.4; color: var(--cp-text-muted); margin-top: 3px; }
+.path-sub code { font-size: 0.92em; padding: 0 4px; }
+.path-fork { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 16px; color: var(--cp-accent); }
+.path-fork > div { display: grid; place-items: center; height: 34px; }
+.path-fork svg { width: 14px; height: 26px; }
+.path-branches { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 16px; }
+.path-branch { border: 1px solid var(--cp-border); border-top: 3px solid var(--cp-accent); border-radius: 14px; background: var(--cp-surface); padding: 14px 16px 6px; }
+.path-head { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15.5px; margin: 0 0 12px; }
+.path-letter { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-size: 14px; background: var(--cp-text); color: var(--cp-surface); }
+.path-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--cp-accent-soft); color: var(--cp-accent); }
+.path-steps { list-style: none; padding: 0; margin: 0; }
+.path-steps li { position: relative; display: flex; gap: 12px; margin: 0; padding: 0 0 12px; }
+.path-steps li:not(:last-child)::before { content: ""; position: absolute; left: 13px; top: 30px; bottom: 0; width: 2px; background: var(--cp-border); }
+h3.step-h { display: flex; align-items: center; gap: 12px; padding-left: 0; border-left: 0; }
+@media (max-width: 900px) { .path-row { flex-direction: column; } .path-arrow { transform: rotate(90deg); height: 18px; } .path-branches, .path-fork { grid-auto-flow: row; } }
+ul.contains-task-list, ul:has(> li > input[type="checkbox"]) { list-style: none; padding-left: 4px; } .task-list-item input { width: 18px; height: 18px; margin-right: 10px; vertical-align: -3px; accent-color: var(--cp-accent); }
+.markdown-alert-title .icon-sm { flex-shrink: 0; }
+.img-dark { display: none; } html[data-theme="dark"] .img-light { display: none; } html[data-theme="dark"] .img-dark { display: block; }
 figure { margin: 18px 0 24px; }
-figure img { display: block; max-width: 100%; border: 1px solid var(--cp-border); border-radius: 12px; cursor: zoom-in; }
+figure img { display: block; max-width: 100%; border: 1px solid var(--cp-border); border-radius: 12px; box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14); cursor: zoom-in; }
 figcaption { font-size: 13px; color: var(--cp-text-muted); margin-top: 8px; text-align: center; }
 dialog#zoom { border: 0; padding: 0; background: transparent; max-width: 96vw; max-height: 96vh; }
 dialog#zoom::backdrop { background: rgba(0, 0, 0, 0.7); }
@@ -583,17 +671,18 @@ footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--cp-bor
   main { padding: 24px 16px 60px; } .section, .disclaimer { padding: 24px 20px; } .hero { padding: 28px 22px; }
 }
 @media (forced-colors: active) {
-  .hero, .section, .disclaimer, .code, .markdown-alert, .card-item, .flow-node { border: 1px solid CanvasText; }
-  .badge-accent, .nav-badge, .step-num { border: 1px solid ButtonText; forced-color-adjust: none; background: ButtonFace; color: ButtonText; }
+  .hero, .section, .disclaimer, .code, .markdown-alert, .card-item, .flow-node, .path-node, .path-branch { border: 1px solid CanvasText; }
+  .badge-accent, .nav-badge, .step-num, .path-num {border: 1px solid ButtonText; forced-color-adjust: none; background: ButtonFace; color: ButtonText; }
   aside a.active { outline: 2px solid Highlight; }
 }
 @media print {
   body { display: block; background: #fff; } aside, #to-top, #theme, .copy { display: none !important; }
+  html[data-theme="dark"] .img-light { display: block !important; } .img-dark { display: none !important; }
   main { padding: 0; max-width: none; } .section { break-inside: avoid-page; box-shadow: none; } .part { break-before: page; }
 }
 </style></head><body>
 <a class="skip" href="#content">Skip to the content</a>
-<aside><div class="brand"><div class="brand-logo">$(Get-Icon 'shield')</div><div><div class="brand-name">$(& $enc $meta.title)</div><div class="brand-sub">$(& $enc $meta.subtitle) $separator v$(& $enc $meta.version)</div></div></div>
+<aside><div class="brand"><div class="brand-logo">$(Get-Icon 'chats')</div><div><div class="brand-name">$(& $enc $meta.title)</div><div class="brand-sub">$(& $enc $meta.subtitle) $separator v$(& $enc $meta.version)</div></div></div>
 <nav aria-label="Contents">$($nav.ToString())</nav></aside>
 <main id="content">$hero$($body.ToString())
 $disclaimerHtml

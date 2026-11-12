@@ -1,7 +1,7 @@
 ---
 title: Teams Transfer
 subtitle: Reference guide
-version: 1.0.0
+version: 1.0.1
 author: Nicolas Fabert
 updated: 2026-11-10
 badges: Windows x64, Microsoft Graph
@@ -9,7 +9,7 @@ badges: Windows x64, Microsoft Graph
 
 # Teams Transfer — Reference guide
 
-> For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the [user guide](TeamsTransfer-UserGuide.md) (file `TeamsTransfer-UserGuide.html`, same `docs` folder). Everything here is derived from the code of version 1.0.0 and from the measurements of the lab (`docs\design\Phase0-Results.md`); a statement that comes from the lab and not from the code is marked *(lab)*.
+> For the engineer who installs, runs, schedules and troubleshoots the tool. The plain, step-by-step version is the [user guide](TeamsTransfer-UserGuide.md) (file `TeamsTransfer-UserGuide.html`, same `docs` folder). Everything here is derived from the code of version 1.0.1 and from the measurements of the lab (`docs\design\Phase0-Results.md`); a statement that comes from the lab and not from the code is marked *(lab)*.
 
 > [!IMPORTANT]
 > Files downloaded from the Internet may be blocked by Windows and fail to run. Check the publisher first (`Invoke-TeamsTransfer.ps1`, Properties, Digital Signatures: `Nicolas Fabert`), then unblock the extracted folder:
@@ -22,6 +22,8 @@ badges: Windows x64, Microsoft Graph
 
 <!-- icon: target -->
 ## 1. Scope and principles
+
+![Design principles: preview before you write, nothing is sent twice, the author is kept, a long job survives, the result is verified](images/readme-principles-light.png)
 
 Teams Transfer exports Microsoft Teams chats and channels (messages, replies, reactions, mentions, inline images, attached files, members) from a tenant into a local store, shows them offline in a Teams-like HTML archive, and imports them into a tenant with the Microsoft Graph Teams migration API.
 
@@ -46,6 +48,8 @@ Teams Transfer exports Microsoft Teams chats and channels (messages, replies, re
 
 <!-- icon: layers -->
 ## 2. Architecture
+
+![One tool: the source tenant is read by Export into a local store, from which the archive and the plan are made; the target tenant receives ghosts, files and messages with -Apply and Verify reads it back; the modes are grouped as read the source, work offline, prepare and check the target, and write to the target](images/readme-how-light.png)
 
 ```flow
 terminal | Invoke-TeamsTransfer.ps1 | modes, console
@@ -190,6 +194,8 @@ The configuration is **data**, parsed with `Import-PowerShellDataFile` and never
 
 <!-- icon: key -->
 ## 5. Minimum permissions per mode
+
+![The application permissions per mode. Source app, read only: Assess, Inventory, Export and Files. Target app, reads and writes: Plan, Ghosts, CopyFiles, Import and Verify. A filled dot is required by the mode, a ring is only for an option](images/readme-permissions-light.png)
 
 All permissions are Microsoft Graph **application** permissions with administrator consent. They come from **one table**, `package\config\Permissions.psd1` (per mode and side, required or optional, with the reason), which the console uses for its permission lights; the tables of this chapter are generated from it and `tests\Docs.Tests.ps1` compares them with the file. A broader permission covers a narrower one (`X.ReadWrite.All` covers `X.Read.All`, which covers `X.ReadBasic.All`); the console's check applies the same rule.
 
@@ -519,6 +525,8 @@ The entry script appends a `Hint` to the error text when it recognises the cause
 <!-- icon: layers -->
 ## 10. Lots, waves and the life cycle
 
+![Lots and waves: wave 1 is the last 24 months, then extension waves for months 25 to 36, 37 to 48 and 49 to 60; about 5 messages per second per conversation and 60 to 90 per second per application; years of history take weeks or months](images/readme-waves-light.png)
+
 The unit of import is the **conversation**, never the user alone. A **lot** freezes a list of members (`User`, `Team`, `Chat`, `Channel`, with a priority, default 100, lower first) and the **time slices**, computed once from an *as-of* date.
 
 **Slices (waves).** Wave 1 is the **last 24 months**, open ended (it also takes what arrives later). Extension waves cover months 25 to 36, 37 to 48 and 49 to 60 (the boundaries come from `-Window` of a lot created on the fly: `60m` gives `24, 36, 48, 60`). The unit of work is a **lot item** = (conversation, slice, fragment). A conversation reached through several members keeps the smallest priority.
@@ -753,7 +761,7 @@ These come from the service (Phase 0 and the Microsoft documentation) and from t
 <!-- icon: tag -->
 ## 20. Change log
 
-See [CHANGELOG.md](../CHANGELOG.md): version 1.0.0 is the first public release. The design and the lab findings are in `docs\design\TeamsTransfer-Design.md` and `docs\design\Phase0-Results.md` of the repository.
+See [CHANGELOG.md](../CHANGELOG.md): version 1.0.0 is the first public release, 1.0.1 brings the documentation to the house layout. The design and the lab findings are in `docs\design\TeamsTransfer-Design.md` and `docs\design\Phase0-Results.md` of the repository.
 
 <!-- icon: book -->
 ## Annex A — Certificates and app registrations for engineers
